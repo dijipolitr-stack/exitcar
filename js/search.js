@@ -100,7 +100,13 @@ function clearFilters() {
 
 function bookCar(id) {
   const car = CARS.find(c => c.id === id);
-  if (car) alert(`✅ "${car.model}" için rezervasyon sayfasına yönlendiriliyorsunuz...\n\nFiyat: ${car.price.toLocaleString('tr-TR')} TL/gün`);
+  if (!car) return;
+  // Save selected car to session and navigate to reservation
+  sessionStorage.setItem('selectedCar', JSON.stringify({
+    id: car.id, model: car.model, price: car.price, img: car.img,
+    transmission: car.transmission, fuel: car.fuel, seats: car.seats
+  }));
+  window.location.href = 'reservation.html';
 }
 
 // Load URL params into mini search

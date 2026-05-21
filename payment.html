@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ödeme | ExitCar Rezervasyon</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles/reservation.css">
+<style>
+/* Card flip animation */
+.credit-card-visual {
+  width: 100%; height: 180px; perspective: 1000px; margin-bottom: 20px;
+}
+.card-inner {
+  width: 100%; height: 100%; position: relative; transform-style: preserve-3d;
+  transition: transform 0.6s;
+}
+.credit-card-visual.flipped .card-inner { transform: rotateY(180deg); }
+.card-face {
+  position: absolute; width: 100%; height: 100%; border-radius: 16px;
+  backface-visibility: hidden; padding: 24px;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  color: white; box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+}
+.card-face.card-back { transform: rotateY(180deg); background: linear-gradient(135deg, #1a1a2e, #0f3460); }
+.card-chip { width: 44px; height: 32px; background: linear-gradient(135deg,#d4a843,#f0c040); border-radius: 6px; margin-bottom: 20px; }
+.card-number-display { font-size: 19px; letter-spacing: 3px; font-weight: 500; margin-bottom: 16px; font-family: monospace; }
+.card-info-row { display: flex; justify-content: space-between; }
+.card-info-label { font-size: 9px; opacity: 0.6; text-transform: uppercase; letter-spacing: 1px; }
+.card-info-val { font-size: 14px; font-weight: 600; margin-top: 2px; }
+.card-brand-logo { position: absolute; top: 20px; right: 20px; font-size: 28px; }
+.card-back-strip { background: #333; height: 40px; position: absolute; left: 0; right: 0; top: 40px; }
+.card-cvv-area { position: absolute; right: 24px; top: 110px; text-align: right; }
+.card-cvv-label { font-size: 10px; opacity: 0.6; }
+.card-cvv-val { background: white; color: #333; padding: 4px 14px; border-radius: 4px; font-weight: 700; font-size: 16px; letter-spacing: 3px; margin-top: 4px; font-family: monospace; }
+
+/* 3D Secure */
+.secure3d { border: 2px solid #2563EB; border-radius: var(--radius-sm); padding: 16px; display: flex; align-items: center; gap: 12px; background: var(--blue-light); }
+.secure3d-icon { font-size: 28px; }
+.secure3d-text { font-size: 13px; color: #1E40AF; line-height: 1.5; }
+
+/* Success overlay */
+.success-overlay {
+  display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6);
+  z-index: 999; align-items: center; justify-content: center;
+}
+.success-overlay.show { display: flex; }
+.success-box {
+  background: white; border-radius: 20px; padding: 48px 40px;
+  text-align: center; max-width: 440px; width: 90%;
+  animation: popIn 0.4s cubic-bezier(0.34,1.56,0.64,1);
+}
+@keyframes popIn { from { transform: scale(0.7); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+.success-icon { font-size: 64px; margin-bottom: 16px; animation: bounce 0.6s 0.3s ease; }
+@keyframes bounce { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+.success-title { font-size: 26px; font-weight: 900; color: var(--green); margin-bottom: 8px; }
+.success-sub { font-size: 14px; color: var(--gray-600); line-height: 1.6; margin-bottom: 24px; }
+.success-code { font-size: 22px; font-weight: 900; letter-spacing: 2px; color: var(--red); background: var(--red-light); padding: 12px 24px; border-radius: var(--radius-sm); display: inline-block; margin-bottom: 20px; }
+.success-actions { display: flex; flex-direction: column; gap: 10px; }
+.btn-success-primary { padding: 14px 28px; background: var(--red); color: white; border-radius: var(--radius-sm); font-weight: 700; font-size: 15px; display: block; }
+.btn-success-secondary { padding: 12px 28px; border: 1.5px solid var(--gray-200); color: var(--gray-600); border-radius: var(--radius-sm); font-weight: 600; font-size: 14px; display: block; }
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <a href="index.html" class="topbar-logo">
+    <div class="logo-icon">E</div> ExitCar
+  </a>
+  <div class="topbar-phone">📞 0800 123 45 67</div>
+</div>
+
+<!-- STEPS -->
+<div class="steps-bar">
+  <div class="steps-inner">
+    <div class="step done">
+      <div class="step-num">✓</div>
+      <div class="step-info"><div class="step-label">Adım 1/3</div><div class="step-name">Araç & Sigorta</div></div>
+    </div>
+    <div class="step-line done"></div>
+    <div class="step done">
+      <div class="step-num">✓</div>
+      <div class="step-info"><div class="step-label">Adım 2/3</div><div class="step-name">Sürücü Bilgileri</div></div>
+    </div>
+    <div class="step-line done"></div>
+    <div class="step active">
+      <div class="step-num">3</div>
+      <div class="step-info"><div class="step-label">Adım 3/3</div><div class="step-name">Ödeme</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- LAYOUT -->
+<div class="res-layout">
+  <div class="res-main">
+
+    <!-- Order Summary -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon">🧾</div>
+        <h3>Sipariş Özeti</h3>
+      </div>
+      <div class="card-body">
+        <div style="display:grid;grid-template-columns:80px 1fr;gap:16px;align-items:center;margin-bottom:16px">
+          <img src="assets/cars/compact.png" id="pay-car-img" alt="Araç" style="width:80px;object-fit:contain">
+          <div>
+            <div style="font-size:16px;font-weight:800" id="pay-car-name">Toyota Corolla</div>
+            <div style="font-size:12px;color:#9CA3AF;margin-bottom:8px">veya benzeri · Otomatik · Benzin · 5 Kişi</div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <span style="background:#F0FDF4;color:#16A34A;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700">✅ Ücretsiz İptal</span>
+              <span id="pay-ins-badge" style="background:#FEE2E2;color:#D42B2B;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700">🛡️ Güvenli Paket</span>
+            </div>
+          </div>
+        </div>
+        <div style="background:#F9FAFB;border-radius:8px;padding:16px;display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:13px">
+          <div><div style="color:#9CA3AF;font-size:11px;font-weight:700;text-transform:uppercase;margin-bottom:3px">📍 Alış</div><div id="pay-pickup" style="font-weight:600">İstanbul - SAW</div><div id="pay-pdate" style="color:#4B5563">22 Mayıs 2026, 10:00</div></div>
+          <div><div style="color:#9CA3AF;font-size:11px;font-weight:700;text-transform:uppercase;margin-bottom:3px">📍 İade</div><div id="pay-return" style="font-weight:600">İstanbul - SAW</div><div id="pay-rdate" style="color:#4B5563">29 Mayıs 2026, 10:00</div></div>
+          <div><div style="color:#9CA3AF;font-size:11px;font-weight:700;text-transform:uppercase;margin-bottom:3px">👤 Sürücü</div><div id="pay-driver" style="font-weight:600">Ad Soyad</div></div>
+          <div><div style="color:#9CA3AF;font-size:11px;font-weight:700;text-transform:uppercase;margin-bottom:3px">📧 E-posta</div><div id="pay-email" style="font-weight:600">email@ornek.com</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Payment Method -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon">💳</div>
+        <h3>Ödeme Yöntemi</h3>
+      </div>
+      <div class="card-body">
+        <div class="payment-methods">
+          <div class="pay-method selected" id="pm-card" onclick="selectPayMethod('card')">
+            <div class="pay-method-icon">💳</div>
+            <div class="pay-method-name">Kredi / Banka Kartı</div>
+          </div>
+          <div class="pay-method" id="pm-bkm" onclick="selectPayMethod('bkm')">
+            <div class="pay-method-icon">🏦</div>
+            <div class="pay-method-name">BKM Express</div>
+          </div>
+          <div class="pay-method" id="pm-transfer" onclick="selectPayMethod('transfer')">
+            <div class="pay-method-icon">🏧</div>
+            <div class="pay-method-name">EFT / Havale</div>
+          </div>
+        </div>
+
+        <!-- Card Visual -->
+        <div class="credit-card-visual" id="cardVisual">
+          <div class="card-inner">
+            <div class="card-face">
+              <div class="card-chip"></div>
+              <div class="card-number-display" id="vis-number">•••• •••• •••• ••••</div>
+              <div class="card-info-row">
+                <div><div class="card-info-label">Kart Sahibi</div><div class="card-info-val" id="vis-name">AD SOYAD</div></div>
+                <div><div class="card-info-label">Son Kullanma</div><div class="card-info-val" id="vis-exp">AA/YY</div></div>
+              </div>
+              <div class="card-brand-logo" id="vis-brand">💳</div>
+            </div>
+            <div class="card-face card-back">
+              <div class="card-back-strip"></div>
+              <div class="card-cvv-area">
+                <div class="card-cvv-label">CVV</div>
+                <div class="card-cvv-val" id="vis-cvv">•••</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card Form -->
+        <div id="cardForm">
+          <div class="form-group" style="margin-bottom:14px">
+            <label class="form-label">Kart Numarası <span class="req">*</span></label>
+            <div class="card-number-wrap">
+              <input type="text" class="form-input" id="cardNumber" placeholder="0000 0000 0000 0000" maxlength="19"
+                oninput="formatCardNumber(this)" onfocus="flipCard(false)">
+              <span class="card-brand" id="cardBrandIcon">💳</span>
+            </div>
+          </div>
+          <div class="form-group" style="margin-bottom:14px">
+            <label class="form-label">Kart Üzerindeki Ad Soyad <span class="req">*</span></label>
+            <input type="text" class="form-input" id="cardName" placeholder="AD SOYAD" style="text-transform:uppercase"
+              oninput="document.getElementById('vis-name').textContent=this.value.toUpperCase()||'AD SOYAD'" onfocus="flipCard(false)">
+          </div>
+          <div class="card-input-row">
+            <div class="form-group">
+              <label class="form-label">Son Kullanma Tarihi <span class="req">*</span></label>
+              <input type="text" class="form-input" id="cardExp" placeholder="AA/YY" maxlength="5"
+                oninput="formatExpiry(this)" onfocus="flipCard(false)">
+            </div>
+            <div class="form-group">
+              <label class="form-label">CVV / CVC <span class="req">*</span></label>
+              <input type="text" class="form-input" id="cardCvv" placeholder="•••" maxlength="4"
+                oninput="this.value=this.value.replace(/\D/g,''); document.getElementById('vis-cvv').textContent=this.value||'•••'" onfocus="flipCard(true)" onblur="flipCard(false)">
+            </div>
+          </div>
+
+          <div style="margin-top:16px">
+            <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer">
+              <input type="checkbox" id="saveCard" style="accent-color:#D42B2B">
+              Bu kartı kaydet (gelecek ödemelerde kullan)
+            </label>
+          </div>
+
+          <!-- Installment -->
+          <div style="margin-top:16px">
+            <label class="form-label">Taksit Seçeneği</label>
+            <select class="form-input form-select" id="installment" style="margin-top:6px">
+              <option value="1">Tek Çekim — 21.350 TL</option>
+              <option value="3">3 Taksit — 3 × 7.290 TL (0% faiz)</option>
+              <option value="6">6 Taksit — 6 × 3.680 TL (+%3 faiz)</option>
+              <option value="9">9 Taksit — 9 × 2.530 TL (+%6 faiz)</option>
+              <option value="12">12 Taksit — 12 × 1.950 TL (+%9 faiz)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- BKM -->
+        <div id="bkmForm" style="display:none;text-align:center;padding:20px">
+          <div style="font-size:48px;margin-bottom:12px">🏦</div>
+          <div style="font-size:16px;font-weight:700;margin-bottom:8px">BKM Express ile Öde</div>
+          <div style="font-size:13px;color:#6B7280;margin-bottom:20px">BKM Express hesabınız ile hızlı ve güvenli ödeme yapın.</div>
+          <button style="padding:12px 32px;background:#1B4F99;color:white;border-radius:8px;font-weight:700;font-size:15px;border:none;cursor:pointer">BKM Express'e Git →</button>
+        </div>
+
+        <!-- Transfer -->
+        <div id="transferForm" style="display:none">
+          <div class="info-box blue">
+            <div class="info-box-icon">🏧</div>
+            <div>
+              <strong>Banka Hesabı Bilgileri</strong><br>
+              Hesap Sahibi: ExitCar Araç Kiralama A.Ş.<br>
+              IBAN: TR00 0000 0000 0000 0000 0000 00<br>
+              Açıklama: <strong id="transfer-ref">EXT-000000</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3D Secure -->
+    <div class="secure3d">
+      <div class="secure3d-icon">🔐</div>
+      <div class="secure3d-text">
+        <strong>3D Secure ile güvende</strong><br>
+        Ödemeniz bankanızın 3D Secure sistemi ile doğrulanacaktır. Onay sonrasında rezervasyonunuz anında oluşturulur.
+      </div>
+    </div>
+
+    <!-- Pay Button -->
+    <button class="btn-continue" id="btnPay" onclick="completePayment()" style="margin-top:8px">
+      🔒 Güvenli Ödeme Yap — <span id="pay-btn-amount">21.350 TL</span>
+    </button>
+    <div style="display:flex;align-items:center;justify-content:center;gap:16px;margin-top:12px">
+      <div class="trusted-item">🔒 256-bit SSL</div>
+      <div class="trusted-item">🛡️ PCI DSS</div>
+      <div class="trusted-item">✅ 3D Secure</div>
+      <div class="trusted-item">💳 Visa / MC / Amex</div>
+    </div>
+    <a href="driver-info.html" style="display:block;margin-top:8px">
+      <button class="btn-back">← Geri Dön</button>
+    </a>
+  </div>
+
+  <!-- SIDEBAR -->
+  <div class="car-summary">
+    <div class="order-total-card">
+      <div class="order-total-label">Ödenecek Tutar</div>
+      <div class="order-total-amount" id="sidebar-total">21.350 TL</div>
+      <div class="order-total-sub">KDV Dahil · Tüm Vergiler Dahil</div>
+      <div class="order-divider"></div>
+      <div class="order-items">
+        <div class="order-item"><span>Araç Kirası (7 gün)</span><span id="oi-base">18.900 TL</span></div>
+        <div class="order-item" id="oi-ins-row"><span id="oi-ins-label">Güvenli Paket</span><span id="oi-ins">2.450 TL</span></div>
+        <div class="order-item" id="oi-ext-row" style="display:none"><span>Ekstralar</span><span id="oi-ext">0 TL</span></div>
+        <div class="order-divider"></div>
+        <div class="order-item" style="font-weight:800;font-size:15px"><span>TOPLAM</span><span id="oi-total">21.350 TL</span></div>
+      </div>
+    </div>
+    <div class="car-summary-card">
+      <div class="car-summary-info">
+        <div style="font-size:13px;font-weight:700;margin-bottom:10px">📋 Rezervasyon Detayı</div>
+        <div class="rental-point" style="margin-bottom:8px">
+          <div class="rental-point-label">📍 Alış</div>
+          <div class="rental-point-val" id="sb-pickup">İstanbul - Sabiha Gökçen</div>
+          <div class="rental-point-date" id="sb-pdate">22 Mayıs 2026, 10:00</div>
+        </div>
+        <div class="rental-point">
+          <div class="rental-point-label">📍 İade</div>
+          <div class="rental-point-val" id="sb-return">İstanbul - Sabiha Gökçen</div>
+          <div class="rental-point-date" id="sb-rdate">29 Mayıs 2026, 10:00</div>
+        </div>
+      </div>
+    </div>
+    <div class="info-box green">
+      <div class="info-box-icon">✅</div>
+      <div><strong>Anında Onay</strong> — Ödeme sonrası rezervasyon numaranız e-posta ile iletilir.</div>
+    </div>
+  </div>
+</div>
+
+<!-- SUCCESS OVERLAY -->
+<div class="success-overlay" id="successOverlay">
+  <div class="success-box">
+    <div class="success-icon">🎉</div>
+    <div class="success-title">Rezervasyon Onaylandı!</div>
+    <div class="success-sub">Ödemeniz başarıyla alındı. Rezervasyon detayları e-posta adresinize gönderildi.</div>
+    <div class="success-code" id="success-code">EXT-847291</div>
+    <div style="font-size:13px;color:#6B7280;margin-bottom:20px">Rezervasyon numaranızı aracı teslim alırken yanınızda bulundurun.</div>
+    <div class="success-actions">
+      <a href="index.html" class="btn-success-primary">🏠 Ana Sayfaya Dön</a>
+      <button class="btn-success-secondary" onclick="window.print()">🖨️ Rezervasyonu Yazdır</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/payment.js"></script>
+</body>
+</html>

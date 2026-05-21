@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sürücü Bilgileri | ExitCar Rezervasyon</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles/reservation.css">
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <a href="index.html" class="topbar-logo">
+    <div class="logo-icon">E</div> ExitCar
+  </a>
+  <div class="topbar-phone">📞 0800 123 45 67</div>
+</div>
+
+<!-- STEPS -->
+<div class="steps-bar">
+  <div class="steps-inner">
+    <div class="step done">
+      <div class="step-num">✓</div>
+      <div class="step-info">
+        <div class="step-label">Adım 1/3</div>
+        <div class="step-name">Araç & Sigorta</div>
+      </div>
+    </div>
+    <div class="step-line done"></div>
+    <div class="step active">
+      <div class="step-num">2</div>
+      <div class="step-info">
+        <div class="step-label">Adım 2/3</div>
+        <div class="step-name">Sürücü Bilgileri</div>
+      </div>
+    </div>
+    <div class="step-line"></div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-info">
+        <div class="step-label">Adım 3/3</div>
+        <div class="step-name">Ödeme</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- LAYOUT -->
+<div class="res-layout">
+  <div class="res-main">
+
+    <!-- Driver Info Form -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon">👤</div>
+        <h3>Sürücü Bilgileri</h3>
+      </div>
+      <div class="card-body">
+        <div class="info-box blue" style="margin-bottom:20px">
+          <div class="info-box-icon">ℹ️</div>
+          <div>Lütfen teslimatta kullanılacak sürücünün bilgilerini girin. Girilen bilgiler kimlik belgesi ile aynı olmalıdır.</div>
+        </div>
+
+        <div class="form-section-title">Kişisel Bilgiler</div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">Ad <span class="req">*</span></label>
+            <input type="text" class="form-input" id="firstName" placeholder="Adınız" oninput="validateField('firstName')">
+            <div class="form-error" id="firstName-err"></div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Soyad <span class="req">*</span></label>
+            <input type="text" class="form-input" id="lastName" placeholder="Soyadınız" oninput="validateField('lastName')">
+            <div class="form-error" id="lastName-err"></div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">E-posta <span class="req">*</span></label>
+            <input type="email" class="form-input" id="email" placeholder="ornek@email.com" oninput="validateField('email')">
+            <div class="form-error" id="email-err"></div>
+            <div class="form-hint">Rezervasyon onayı bu adrese gönderilecek</div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Telefon <span class="req">*</span></label>
+            <input type="tel" class="form-input" id="phone" placeholder="05XX XXX XX XX" oninput="formatPhone(this); validateField('phone')">
+            <div class="form-error" id="phone-err"></div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Doğum Tarihi <span class="req">*</span></label>
+            <input type="date" class="form-input" id="birthDate" oninput="validateField('birthDate')">
+            <div class="form-error" id="birthDate-err"></div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">TC Kimlik No <span class="req">*</span></label>
+            <input type="text" class="form-input" id="tcNo" placeholder="11 haneli TC No" maxlength="11" oninput="this.value=this.value.replace(/\D/g,''); validateField('tcNo')">
+            <div class="form-error" id="tcNo-err"></div>
+          </div>
+        </div>
+
+        <div class="form-section-title" style="margin-top:28px">Ehliyet Bilgileri</div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">Ehliyet Numarası <span class="req">*</span></label>
+            <input type="text" class="form-input" id="licenseNo" placeholder="Ehliyet numaranız" oninput="validateField('licenseNo')">
+            <div class="form-error" id="licenseNo-err"></div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Ehliyet Veriliş Tarihi <span class="req">*</span></label>
+            <input type="date" class="form-input" id="licenseDate" oninput="validateField('licenseDate')">
+            <div class="form-error" id="licenseDate-err"></div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Ehliyet Sınıfı <span class="req">*</span></label>
+            <select class="form-input form-select" id="licenseClass" onchange="validateField('licenseClass')">
+              <option value="">Seçin</option>
+              <option value="B">B — Otomobil</option>
+              <option value="B+E">B+E — Otomobil + Römork</option>
+              <option value="A2">A2 — Motosiklet</option>
+              <option value="C">C — Kamyon</option>
+            </select>
+            <div class="form-error" id="licenseClass-err"></div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Vatandaşlık</label>
+            <select class="form-input form-select" id="nationality">
+              <option value="TR" selected>🇹🇷 Türkiye</option>
+              <option value="DE">🇩🇪 Almanya</option>
+              <option value="GB">🇬🇧 Birleşik Krallık</option>
+              <option value="FR">🇫🇷 Fransa</option>
+              <option value="NL">🇳🇱 Hollanda</option>
+              <option value="OTHER">Diğer</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-section-title" style="margin-top:28px">Uçuş Bilgileri <span style="font-size:11px;color:#9CA3AF;text-transform:none;font-weight:400;letter-spacing:0">(havalimanı teslimleri için — isteğe bağlı)</span></div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">Uçuş Numarası</label>
+            <input type="text" class="form-input" id="flightNo" placeholder="TK1234">
+            <div class="form-hint">Gecikmeler durumunda sizi bekliyoruz</div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Gelen Uçuş Kalkış Noktası</label>
+            <input type="text" class="form-input" id="flightFrom" placeholder="İzmir, Amsterdam...">
+          </div>
+        </div>
+
+        <div class="form-section-title" style="margin-top:28px">Özel İstekler</div>
+        <div class="form-group full">
+          <label class="form-label">Not / İstek</label>
+          <textarea class="form-input" id="notes" rows="3" placeholder="Özel isteğiniz varsa buraya yazabilirsiniz..." style="resize:vertical"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- KVKK -->
+    <div class="card">
+      <div class="card-body" style="display:flex;flex-direction:column;gap:12px">
+        <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;font-size:13px;color:#4B5563">
+          <input type="checkbox" id="kvkk" style="margin-top:2px;accent-color:#D42B2B">
+          <span><strong>KVKK Aydınlatma Metni</strong>'ni okudum, kişisel verilerimin işlenmesini kabul ediyorum. <a href="#" style="color:#D42B2B">Metni oku →</a></span>
+        </label>
+        <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;font-size:13px;color:#4B5563">
+          <input type="checkbox" id="terms" style="margin-top:2px;accent-color:#D42B2B">
+          <span><strong>Kiralama Sözleşmesi</strong> ve <strong>Genel Kullanım Koşulları</strong>'nı okudum, kabul ediyorum. <a href="#" style="color:#D42B2B">Koşulları oku →</a></span>
+        </label>
+      </div>
+    </div>
+
+    <button class="btn-continue" id="btnContinue" onclick="goToPayment()">
+      Ödemeye Devam Et →
+    </button>
+    <a href="reservation.html" style="display:block">
+      <button class="btn-back">← Geri Dön</button>
+    </a>
+  </div>
+
+  <!-- SIDEBAR -->
+  <div class="car-summary">
+    <div class="car-summary-card">
+      <div class="car-summary-img">
+        <img src="assets/cars/compact.png" alt="Araç" id="summary-img">
+      </div>
+      <div class="car-summary-info">
+        <div class="car-model-name" id="s2-car">Toyota Corolla</div>
+        <div class="car-model-alt">veya benzeri</div>
+        <div class="car-features-row">
+          <div class="cfeat">⚙️ Otomatik</div>
+          <div class="cfeat">⛽ Benzin</div>
+          <div class="cfeat">👥 5 Kişi</div>
+        </div>
+        <div class="car-summary-divider"></div>
+        <div class="price-breakdown">
+          <div class="price-row">
+            <span>Araç (7 gün)</span>
+            <span id="s2-base">18.900 TL</span>
+          </div>
+          <div class="price-row" id="s2-ins-row">
+            <span id="s2-ins-label">Güvenli Paket</span>
+            <span id="s2-ins-val">2.450 TL</span>
+          </div>
+          <div class="price-row" id="s2-ext-row" style="display:none">
+            <span>Ekstralar</span>
+            <span id="s2-ext-val">0 TL</span>
+          </div>
+          <div class="price-row total">
+            <span>TOPLAM</span>
+            <span class="price-val" id="s2-total">21.350 TL</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="info-box yellow">
+      <div class="info-box-icon">⚠️</div>
+      <div>Teslimatta sürücü belgesi, kimlik ve rezervasyon belgesi yanınızda olmalıdır.</div>
+    </div>
+    <div class="trusted-row">
+      <div class="trusted-item">🔒 SSL Güvenli</div>
+      <div class="trusted-item">✅ Güvenli Ödeme</div>
+      <div class="trusted-item">🛡️ KVKK Uyumlu</div>
+    </div>
+  </div>
+</div>
+
+<script src="js/driver-info.js"></script>
+</body>
+</html>
