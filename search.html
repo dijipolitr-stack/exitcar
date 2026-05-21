@@ -82,24 +82,16 @@
         <span class="filter-chevron">▾</span>
       </div>
       <div class="filter-section-body">
-        ${[
-          {id:'garenta',name:'Garenta',count:1},
-          {id:'rentgo',name:'Rent Go',count:2},
-          {id:'avis',name:'Avis',count:2},
-          {id:'sixt',name:'Sixt',count:2},
-          {id:'hertz',name:'Hertz',count:2},
-          {id:'budget',name:'Budget',count:2},
-          {id:'europcar',name:'Europcar',count:1},
-          {id:'thrifty',name:'Thrifty',count:1},
-          {id:'oncars',name:'On Cars',count:1},
-          {id:'decar',name:'Decar',count:1},
-        ].map(s => `
-        <label class="filter-opt">
-          <div class="filter-opt-left">
-            <input type="checkbox" onchange="onCheckFilter('suppliers','${s.id}',this.checked)"> ${s.name}
-          </div>
-          <span class="filter-count-badge">${s.count}</span>
-        </label>`).join('')}
+        <label class="filter-opt"><div class="filter-opt-left"><input type="checkbox" onchange="onCheckFilter('suppliers','garenta',this.checked)"> Garenta</div><span class="filter-count-badge">1</span></label>
+        <label class="filter-opt"><div class="filter-opt-left"><input type="checkbox" onchange="onCheckFilter('suppliers','rentgo',this.checked)"> Rent Go</div><span class="filter-count-badge">2</span></label>
+        <label class="filter-opt"><div class="filter-opt-left"><input type="checkbox" onchange="onCheckFilter('suppliers','avis',this.checked)"> Avis</div><span class="filter-count-badge">2</span></label>
+        <label class="filter-opt"><div class="filter-opt-left"><input type="checkbox" onchange="onCheckFilter('suppliers','sixt',this.checked)"> Sixt</div><span class="filter-count-badge">2</span></label>
+        <label class="filter-opt"><div class="filter-opt-left"><input type="checkbox" onchange="onCheckFilter('suppliers','hertz',this.checked)"> Hertz</div><span class="filter-count-badge">2</span></label>
+        <label class="filter-opt"><div class="filter-opt-left"><input type="checkbox" onchange="onCheckFilter('suppliers','budget',this.checked)"> Budget</div><span class="filter-count-badge">2</span></label>
+        <label class="filter-opt"><div class="filter-opt-left"><input type="checkbox" onchange="onCheckFilter('suppliers','europcar',this.checked)"> Europcar</div><span class="filter-count-badge">1</span></label>
+        <label class="filter-opt"><div class="filter-opt-left"><input type="checkbox" onchange="onCheckFilter('suppliers','thrifty',this.checked)"> Thrifty</div><span class="filter-count-badge">1</span></label>
+        <label class="filter-opt"><div class="filter-opt-left"><input type="checkbox" onchange="onCheckFilter('suppliers','oncars',this.checked)"> On Cars</div><span class="filter-count-badge">1</span></label>
+        <label class="filter-opt"><div class="filter-opt-left"><input type="checkbox" onchange="onCheckFilter('suppliers','decar',this.checked)"> Decar</div><span class="filter-count-badge">1</span></label>
       </div>
     </div>
 
