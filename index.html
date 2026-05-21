@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ExitCar — Kiralık Araç Fiyatlarını Karşılaştır | Rent a Car</title>
+<meta name="description" content="ExitCar ile en uygun kiralık araç fiyatlarını karşılaştırın. Günlük ve aylık araç kiralama. Türkiye geneli 7/24 hizmet.">
+<link rel="stylesheet" href="styles/main.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar" id="navbar">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">
+      <div class="logo-icon">E</div>
+      ExitCar
+    </a>
+    <div class="nav-links">
+      <a href="#" class="active">🚗 Araç Kiralama</a>
+      <a href="#">🔄 Transfer</a>
+      <a href="#">🏢 Kurumsal</a>
+      <a href="#">🎁 Kampanyalar</a>
+      <a href="#">❓ Yardım</a>
+    </div>
+    <div class="nav-right">
+      <a href="tel:08001234567" class="nav-phone">📞 0800 123 45 67</a>
+      <a href="#" class="btn-login">Üye Ol / Giriş</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg">
+    <img src="assets/hero_bg.png" alt="ExitCar araç filosu">
+  </div>
+  <div class="hero-inner">
+    <h1 class="hero-title">Kiralık Araç Fiyatlarını<br><span>Anında Karşılaştır</span></h1>
+    <p class="hero-subtitle">Türkiye genelinde yüzlerce noktadan, en uygun fiyatlı araçları saniyeler içinde listeleyin.</p>
+    <div class="search-box">
+      <div class="search-tabs">
+        <button class="search-tab active" onclick="setTab(this,'yurtici')">🇹🇷 Yurt İçi</button>
+        <button class="search-tab" onclick="setTab(this,'yurtdisi')">🌍 Yurt Dışı</button>
+        <button class="search-tab" onclick="setTab(this,'transfer')">🚐 Transfer</button>
+      </div>
+      <label class="different-return">
+        <input type="checkbox" id="diffReturn" onchange="toggleReturn()">
+        Farklı bir noktaya bırak
+      </label>
+      <div class="search-fields">
+        <div class="field-group">
+          <div class="field-label">📍 Alış Yeri</div>
+          <div class="field-input" style="position:relative">
+            <span class="field-icon">📍</span>
+            <input type="text" id="pickupInput" placeholder="Şehir, havalimanı veya ofis" autocomplete="off" oninput="filterLocations(this,'pickup-ac')">
+            <div class="autocomplete-list" id="pickup-ac"></div>
+          </div>
+        </div>
+        <div class="field-group" id="returnGroup" style="display:none">
+          <div class="field-label">📍 İade Yeri</div>
+          <div class="field-input" style="position:relative">
+            <span class="field-icon">📍</span>
+            <input type="text" id="returnInput" placeholder="Şehir, havalimanı veya ofis" autocomplete="off" oninput="filterLocations(this,'return-ac')">
+            <div class="autocomplete-list" id="return-ac"></div>
+          </div>
+        </div>
+        <div class="field-group">
+          <div class="field-label">📅 Alış Tarihi</div>
+          <div class="field-input">
+            <span class="field-icon">📅</span>
+            <input type="text" id="pickupDate" placeholder="Tarih seçin" readonly>
+          </div>
+        </div>
+        <div class="field-group">
+          <div class="field-label">🕐 Alış Saati</div>
+          <div class="field-input">
+            <span class="field-icon">🕐</span>
+            <select id="pickupTime">
+              <option>08:00</option><option>09:00</option><option selected>10:00</option>
+              <option>11:00</option><option>12:00</option><option>13:00</option>
+              <option>14:00</option><option>15:00</option><option>16:00</option>
+              <option>17:00</option><option>18:00</option><option>19:00</option>
+            </select>
+          </div>
+        </div>
+        <div class="field-group">
+          <div class="field-label">📅 İade Tarihi</div>
+          <div class="field-input">
+            <span class="field-icon">📅</span>
+            <input type="text" id="returnDate" placeholder="Tarih seçin" readonly>
+          </div>
+        </div>
+        <div class="field-group">
+          <div class="field-label">🕐 İade Saati</div>
+          <div class="field-input">
+            <span class="field-icon">🕐</span>
+            <select id="returnTime">
+              <option>08:00</option><option>09:00</option><option selected>10:00</option>
+              <option>11:00</option><option>12:00</option><option>13:00</option>
+              <option>14:00</option><option>15:00</option><option>16:00</option>
+              <option>17:00</option><option>18:00</option><option>19:00</option>
+            </select>
+          </div>
+        </div>
+        <button class="btn-search" onclick="doSearch()">🔍 Araç Ara</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS BAR -->
+<div class="stats-bar">
+  <div class="stats-inner">
+    <div class="stat-item">
+      <div>
+        <div class="stat-num">500+</div>
+        <div class="stat-label">Kiralık Araç</div>
+      </div>
+    </div>
+    <div class="stat-divider"></div>
+    <div class="stat-item">
+      <div>
+        <div class="stat-num">81</div>
+        <div class="stat-label">İl Geneli Hizmet</div>
+      </div>
+    </div>
+    <div class="stat-divider"></div>
+    <div class="stat-item">
+      <div>
+        <div class="stat-num">50+</div>
+        <div class="stat-label">Ortak Firma</div>
+      </div>
+    </div>
+    <div class="stat-divider"></div>
+    <div class="stat-item">
+      <div>
+        <div class="stat-num">7/24</div>
+        <div class="stat-label">Müşteri Desteği</div>
+      </div>
+    </div>
+    <div class="stat-divider"></div>
+    <div class="stat-item">
+      <div>
+        <div class="stat-num">98%</div>
+        <div class="stat-label">Müşteri Memnuniyeti</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CAR CATEGORIES -->
+<section class="section">
+  <div class="container">
+    <div class="section-header fade-up">
+      <span class="section-tag">Araç Tipleri</span>
+      <h2 class="section-title">İhtiyacınıza Uygun Kiralık Araç</h2>
+      <p class="section-sub">Ekonomikten lükse, kompaktan SUV'a — her bütçeye uygun seçenekler</p>
+    </div>
+    <div class="categories-track">
+      <div class="car-card fade-up" onclick="searchByCategory('economy')">
+        <div class="car-card-img"><img src="assets/cars/economy.png" alt="Ekonomi Araç"></div>
+        <div class="car-card-body">
+          <span class="car-category-badge badge-economy">Ekonomi</span>
+          <div class="car-model">Fiat Egea veya benzeri</div>
+          <div class="car-desc">Otomatik · Benzin · 5 Kişi</div>
+          <div class="car-price-row">
+            <div><div class="car-price-from">başlayan fiyatlarla</div>
+              <div><span class="car-price-val">1.890</span> <span class="car-price-unit">TL/gün</span></div>
+            </div>
+            <button class="btn-rent">Kirala →</button>
+          </div>
+        </div>
+      </div>
+      <div class="car-card fade-up" onclick="searchByCategory('compact')">
+        <div class="car-card-img"><img src="assets/cars/compact.png" alt="Kompakt Araç"></div>
+        <div class="car-card-body">
+          <span class="car-category-badge badge-compact">Kompakt</span>
+          <div class="car-model">Renault Megane veya benzeri</div>
+          <div class="car-desc">Otomatik · Benzin · 5 Kişi</div>
+          <div class="car-price-row">
+            <div><div class="car-price-from">başlayan fiyatlarla</div>
+              <div><span class="car-price-val">2.450</span> <span class="car-price-unit">TL/gün</span></div>
+            </div>
+            <button class="btn-rent">Kirala →</button>
+          </div>
+        </div>
+      </div>
+      <div class="car-card fade-up" onclick="searchByCategory('suv')">
+        <div class="car-card-img"><img src="assets/cars/suv.png" alt="SUV Araç"></div>
+        <div class="car-card-body">
+          <span class="car-category-badge badge-suv">SUV</span>
+          <div class="car-model">Hyundai Tucson veya benzeri</div>
+          <div class="car-desc">Otomatik · Dizel · 5 Kişi</div>
+          <div class="car-price-row">
+            <div><div class="car-price-from">başlayan fiyatlarla</div>
+              <div><span class="car-price-val">3.200</span> <span class="car-price-unit">TL/gün</span></div>
+            </div>
+            <button class="btn-rent">Kirala →</button>
+          </div>
+        </div>
+      </div>
+      <div class="car-card fade-up" onclick="searchByCategory('van')">
+        <div class="car-card-img"><img src="assets/cars/van.png" alt="Van Araç"></div>
+        <div class="car-card-body">
+          <span class="car-category-badge" style="background:#FFF7ED;color:#C2410C;">Van</span>
+          <div class="car-model">Ford Tourneo veya benzeri</div>
+          <div class="car-desc">Otomatik · Dizel · 9 Kişi</div>
+          <div class="car-price-row">
+            <div><div class="car-price-from">başlayan fiyatlarla</div>
+              <div><span class="car-price-val">5.800</span> <span class="car-price-unit">TL/gün</span></div>
+            </div>
+            <button class="btn-rent">Kirala →</button>
+          </div>
+        </div>
+      </div>
+      <div class="car-card fade-up" onclick="searchByCategory('premium')">
+        <div class="car-card-img"><img src="assets/cars/premium.png" alt="Premium Araç"></div>
+        <div class="car-card-body">
+          <span class="car-category-badge badge-premium">Premium</span>
+          <div class="car-model">BMW 5 Serisi veya benzeri</div>
+          <div class="car-desc">Otomatik · Benzin · 5 Kişi</div>
+          <div class="car-price-row">
+            <div><div class="car-price-from">başlayan fiyatlarla</div>
+              <div><span class="car-price-val">8.500</span> <span class="car-price-unit">TL/gün</span></div>
+            </div>
+            <button class="btn-rent">Kirala →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ADVANTAGES -->
+<section class="section section-alt">
+  <div class="container">
+    <div class="section-header fade-up">
+      <span class="section-tag">Neden ExitCar?</span>
+      <h2 class="section-title">ExitCar ile Araç Kiralama Avantajları</h2>
+    </div>
+    <div class="advantages-grid">
+      <div class="adv-card fade-up">
+        <div class="adv-icon">🏆</div>
+        <div class="adv-title">7/24 Destek</div>
+        <div class="adv-text">Uzman ekibimiz her an yanınızda. Rezervasyondan teslime kadar kesintisiz destek.</div>
+      </div>
+      <div class="adv-card fade-up">
+        <div class="adv-icon">🔍</div>
+        <div class="adv-title">En Ucuz Fiyat</div>
+        <div class="adv-text">Yüzlerce araç seçeneği arasından en uygun fiyatı bulun, anında rezervasyon yapın.</div>
+      </div>
+      <div class="adv-card fade-up">
+        <div class="adv-icon">🛡️</div>
+        <div class="adv-title">Güvenli Kiralama</div>
+        <div class="adv-text">Tam kasko, trafik sigortası ve her şey dahil paket seçenekleriyle güvenle yola çıkın.</div>
+      </div>
+      <div class="adv-card fade-up">
+        <div class="adv-icon">🌍</div>
+        <div class="adv-title">Türkiye Geneli</div>
+        <div class="adv-text">81 ilde, tüm büyük havalimanlarında ve şehir merkezlerinde hizmet noktaları.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROMO BANNER -->
+<section class="section">
+  <div class="container">
+    <div class="promo-banner fade-up">
+      <div class="promo-content">
+        <span class="promo-tag">🎉 Özel Kampanya</span>
+        <div class="promo-title">İlk Kiralamanıza %25 İndirim!</div>
+        <div class="promo-sub">ExitCar'a üye olun, ilk rezervasyonunuzda anında indirim kazanın.</div>
+      </div>
+      <a href="#" class="btn-promo">Hemen Üye Ol →</a>
+    </div>
+  </div>
+</section>
+
+<!-- POPULAR LOCATIONS -->
+<section class="section section-alt">
+  <div class="container">
+    <div class="section-header fade-up">
+      <span class="section-tag">Popüler Destinasyonlar</span>
+      <h2 class="section-title">En Çok Tercih Edilen Lokasyonlar</h2>
+    </div>
+    <div class="locations-grid fade-up">
+      <div class="location-card" onclick="searchByCity('İstanbul')">
+        <img class="location-bg" src="https://images.unsplash.com/photo-1524231757912-21f4fe3a7200?w=600&q=80" alt="İstanbul">
+        <div class="location-overlay"></div>
+        <div class="location-info">
+          <div class="location-name">🏙️ İstanbul</div>
+          <div class="location-price"><span>1.890 TL</span>'den başlayan fiyatlarla</div>
+        </div>
+      </div>
+      <div class="location-card" onclick="searchByCity('Ankara')">
+        <img class="location-bg" src="https://images.unsplash.com/photo-1589758438368-0ad531db3366?w=400&q=80" alt="Ankara">
+        <div class="location-overlay"></div>
+        <div class="location-info">
+          <div class="location-name">🏛️ Ankara</div>
+          <div class="location-price"><span>1.750 TL</span>'den başlayan fiyatlarla</div>
+        </div>
+      </div>
+      <div class="location-card" onclick="searchByCity('İzmir')">
+        <img class="location-bg" src="https://images.unsplash.com/photo-1565793021578-a8abe3d2d29c?w=400&q=80" alt="İzmir">
+        <div class="location-overlay"></div>
+        <div class="location-info">
+          <div class="location-name">🌊 İzmir</div>
+          <div class="location-price"><span>1.650 TL</span>'den başlayan fiyatlarla</div>
+        </div>
+      </div>
+      <div class="location-card" onclick="searchByCity('Antalya')">
+        <img class="location-bg" src="https://images.unsplash.com/photo-1551890665-50e9de3b6a41?w=400&q=80" alt="Antalya">
+        <div class="location-overlay"></div>
+        <div class="location-info">
+          <div class="location-name">🌴 Antalya</div>
+          <div class="location-price"><span>1.490 TL</span>'den başlayan fiyatlarla</div>
+        </div>
+      </div>
+      <div class="location-card" onclick="searchByCity('Bodrum')">
+        <img class="location-bg" src="https://images.unsplash.com/photo-1568876194680-2e80a4863de5?w=500&q=80" alt="Bodrum">
+        <div class="location-overlay"></div>
+        <div class="location-info">
+          <div class="location-name">⛵ Bodrum</div>
+          <div class="location-price"><span>2.100 TL</span>'den başlayan fiyatlarla</div>
+        </div>
+      </div>
+      <div class="location-card" onclick="searchByCity('Trabzon')">
+        <img class="location-bg" src="https://images.unsplash.com/photo-1566041510394-cf7c1b1edc4e?w=400&q=80" alt="Trabzon">
+        <div class="location-overlay"></div>
+        <div class="location-info">
+          <div class="location-name">🏔️ Trabzon</div>
+          <div class="location-price"><span>1.800 TL</span>'den başlayan fiyatlarla</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BRANDS -->
+<section class="section">
+  <div class="container">
+    <div class="section-header fade-up">
+      <span class="section-tag">Araç Markaları</span>
+      <h2 class="section-title">En Popüler Kiralık Araç Markaları</h2>
+    </div>
+    <div class="brands-grid fade-up">
+      <div class="brand-item"><span class="brand-emoji">🚗</span>BMW</div>
+      <div class="brand-item"><span class="brand-emoji">🚙</span>Audi</div>
+      <div class="brand-item"><span class="brand-emoji">🚗</span>Mercedes</div>
+      <div class="brand-item"><span class="brand-emoji">🚗</span>Volkswagen</div>
+      <div class="brand-item"><span class="brand-emoji">🚗</span>Renault</div>
+      <div class="brand-item"><span class="brand-emoji">🚗</span>Fiat</div>
+      <div class="brand-item"><span class="brand-emoji">🚗</span>Opel</div>
+      <div class="brand-item"><span class="brand-emoji">🚙</span>Toyota</div>
+      <div class="brand-item"><span class="brand-emoji">🚗</span>Hyundai</div>
+      <div class="brand-item"><span class="brand-emoji">🚗</span>Kia</div>
+      <div class="brand-item"><span class="brand-emoji">🚙</span>Ford</div>
+      <div class="brand-item"><span class="brand-emoji">🚗</span>Peugeot</div>
+      <div class="brand-item"><span class="brand-emoji">🚗</span>Citroen</div>
+      <div class="brand-item"><span class="brand-emoji">🚙</span>Dacia</div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="section section-alt">
+  <div class="container">
+    <div class="section-header fade-up">
+      <span class="section-tag">Sık Sorulan Sorular</span>
+      <h2 class="section-title">Merak Ettikleriniz</h2>
+    </div>
+    <div class="faq-list">
+      <div class="faq-item fade-up">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          ExitCar'da araç kiralama nasıl yapılır?
+          <span class="faq-icon">+</span>
+        </div>
+        <div class="faq-a">Web sitemiz üzerinden alış yeri, tarih ve saat bilgilerini girin. "Araç Ara" butonuna tıklayarak uygun araçları listeleyin, istediğiniz aracı seçin ve anında rezervasyon tamamlayın. 7/24 destek hattımızı da arayabilirsiniz.</div>
+      </div>
+      <div class="faq-item fade-up">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          Araç kiralamak için hangi belgeler gerekli?
+          <span class="faq-icon">+</span>
+        </div>
+        <div class="faq-a">Geçerli sürücü belgesi, kimlik belgesi (TC kimlik veya pasaport) ve kredi kartı gereklidir. Bazı araç sınıflarında ek belgeler talep edilebilir.</div>
+      </div>
+      <div class="faq-item fade-up">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          Minimum yaş sınırı nedir?
+          <span class="faq-icon">+</span>
+        </div>
+        <div class="faq-a">Çoğu araç için minimum yaş 21, minimum ehliyet süresi 1 yıldır. Bazı premium araçlarda bu şartlar farklılık gösterebilir. Genç sürücü paketi ile 19-21 yaş arasındaki sürücülere de hizmet sunulmaktadır.</div>
+      </div>
+      <div class="faq-item fade-up">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          İptal veya değişiklik yapabilir miyim?
+          <span class="faq-icon">+</span>
+        </div>
+        <div class="faq-a">Evet! Rezervasyonunuzu kolayca iptal edebilir veya değiştirebilirsiniz. Esnek iptal politikamız sayesinde birçok rezervasyon ücretsiz iptal edilebilmektedir.</div>
+      </div>
+      <div class="faq-item fade-up">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          Aylık araç kiralama mümkün mü?
+          <span class="faq-icon">+</span>
+        </div>
+        <div class="faq-a">Evet, aylık araç kiralama için alış ve iade tarihlerini 30 gün veya daha fazla seçmeniz yeterlidir. Uzun dönem kiralamalarda özel indirimli fiyatlar uygulanmaktadır.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <div class="footer-logo">🚗 ExitCar</div>
+      <p class="footer-desc">Türkiye'nin güvenilir araç kiralama platformu. 81 ilde, yüzlerce araç seçeneği ile hizmetinizdeyiz.</p>
+      <div class="footer-socials">
+        <a href="#" class="social-btn">📘</a>
+        <a href="#" class="social-btn">📸</a>
+        <a href="#" class="social-btn">🐦</a>
+        <a href="#" class="social-btn">▶️</a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h4>Hizmetler</h4>
+      <ul>
+        <li><a href="search.html">Araç Kiralama</a></li>
+        <li><a href="#">Havalimanı Araç Kiralama</a></li>
+        <li><a href="#">Aylık Araç Kiralama</a></li>
+        <li><a href="#">Kurumsal Kiralama</a></li>
+        <li><a href="#">Transfer Hizmetleri</a></li>
+        <li><a href="#">Lüks Araç Kiralama</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Popüler Lokasyonlar</h4>
+      <ul>
+        <li><a href="#">İstanbul Araç Kiralama</a></li>
+        <li><a href="#">Ankara Araç Kiralama</a></li>
+        <li><a href="#">İzmir Araç Kiralama</a></li>
+        <li><a href="#">Antalya Araç Kiralama</a></li>
+        <li><a href="#">Bodrum Araç Kiralama</a></li>
+        <li><a href="#">İstanbul Havalimanı</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>İletişim</h4>
+      <div class="footer-contact">
+        <div class="contact-item"><span>📞</span><span>0800 123 45 67 (7/24)</span></div>
+        <div class="contact-item"><span>✉️</span><span>info@exitcar.com.tr</span></div>
+        <div class="contact-item"><span>🏢</span><span>İstanbul, Türkiye</span></div>
+        <div class="contact-item"><span>⏰</span><span>Pazartesi – Pazar: 7/24</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2025 ExitCar. Tüm hakları saklıdır.</span>
+    <div style="display:flex;gap:16px">
+      <a href="#">Gizlilik Politikası</a>
+      <a href="#">Kullanım Koşulları</a>
+      <a href="#">KVKK</a>
+    </div>
+    <div class="footer-badges">
+      <span class="badge-ssl">🔒 SSL Güvenli</span>
+      <span class="badge-secure">✅ Güvenli Ödeme</span>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://npmcdn.com/flatpickr/dist/l10n/tr.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
