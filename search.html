@@ -3,112 +3,197 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Araç Arama Sonuçları | ExitCar</title>
-<meta name="description" content="ExitCar araç kiralama arama sonuçları. En uygun fiyatlı kiralık araçları karşılaştırın.">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<title>Araç Listesi | ExitCar - Kiralık Araç Karşılaştır</title>
+<meta name="description" content="Türkiye'nin en büyük araç kiralama platformu. Garenta, Sixt, Avis, Hertz ve 50+ kiralama şirketini karşılaştır.">
 <link rel="stylesheet" href="styles/search.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 </head>
 <body>
 
 <!-- TOPBAR -->
 <div class="topbar">
-  <a href="index.html" class="topbar-logo">🚗 ExitCar</a>
-  <a href="index.html" class="topbar-back">← Ana Sayfaya Dön</a>
+  <a href="index.html" class="topbar-logo">
+    <div class="logo-icon">E</div> ExitCar
+  </a>
+  <div style="display:flex;align-items:center;gap:12px;font-size:13px;color:#6B7280">
+    <span>📞 0800 123 45 67</span>
+    <a href="index.html" style="padding:7px 14px;background:#D42B2B;color:white;border-radius:8px;font-weight:700;font-size:12px">Üye Ol / Giriş</a>
+  </div>
 </div>
 
-<!-- MINI SEARCH -->
-<div class="mini-search">
-  <div class="mini-field" id="ms-pickup">📍 <span id="ms-pickup-val">İstanbul</span></div>
-  <div style="color:#9CA3AF;font-size:12px">→</div>
-  <div class="mini-field">📅 <span id="ms-pdate">Yarın</span></div>
-  <div class="mini-field">🕐 <span id="ms-ptime">10:00</span></div>
-  <div style="color:#9CA3AF;font-size:12px">—</div>
-  <div class="mini-field">📅 <span id="ms-rdate">7 Gün Sonra</span></div>
-  <div class="mini-field">🕐 <span id="ms-rtime">10:00</span></div>
-  <button class="btn-search-mini" onclick="window.location.reload()">🔍 Güncelle</button>
+<!-- SEARCH SUMMARY BAR -->
+<div class="search-bar">
+  <span style="font-size:16px">📍</span>
+  <span class="search-bar-location" id="sb-location">İstanbul - Sabiha Gökçen Havalimanı (SAW)</span>
+  <span class="search-bar-sep">•</span>
+  <span class="search-bar-dates">
+    <span id="sb-pdate">22 May 2026</span> <span id="sb-ptime">10:00</span>
+    <span style="margin:0 6px">→</span>
+    <span id="sb-ddate">25 May 2026</span> <span id="sb-dtime">10:00</span>
+  </span>
+  <span class="search-bar-sep">•</span>
+  <span style="font-size:13px;color:#4B5563;font-weight:600">3 Gün</span>
+  <button class="btn-edit-search" onclick="window.location.href='index.html'">✏️ Aramayı Düzenle</button>
 </div>
 
-<!-- LAYOUT -->
-<div class="search-layout">
+<!-- CAMPAIGN BANNER -->
+<div class="campaign-banner" id="campaignBanner">
+  <strong>%50</strong>
+  <span>%50'ye varan indirim kaçmasın! 🎉 Şimdi kirala, iptal etmek istersen %100 iade garantisi var ✅</span>
+  <button class="btn-campaign">Kampanyayı Uygula!</button>
+  <span class="close-campaign" onclick="closeCampaign()">✕</span>
+</div>
 
-  <!-- SIDEBAR FILTERS -->
-  <aside class="sidebar">
-    <div class="filter-card">
-      <div class="filter-header">
-        <h3>🎛️ Filtreler</h3>
-        <span class="filter-clear" onclick="clearFilters()">Temizle</span>
+<!-- CATEGORY TABS -->
+<div class="category-tabs-wrap">
+  <div style="display:flex;align-items:center;overflow-x:auto;gap:0" id="categoryTabs">
+    <!-- Rendered by JS -->
+  </div>
+</div>
+
+<!-- MAIN LAYOUT -->
+<div class="main-layout">
+
+  <!-- FILTER SIDEBAR -->
+  <div class="filter-sidebar">
+    <div class="filter-top">
+      <div class="filter-title">🔧 Filtrele</div>
+      <button class="btn-clear-all" onclick="clearAllFilters()">Temizle</button>
+    </div>
+
+    <!-- Free Cancel -->
+    <div class="filter-section open">
+      <div class="filter-section-header" onclick="toggleSection(this)">
+        <div class="filter-section-title">Ücretsiz İptal</div>
+        <span class="filter-chevron">▾</span>
       </div>
-      <!-- Price -->
-      <div class="filter-section">
-        <h4>Günlük Fiyat (TL)</h4>
-        <div class="price-range-wrap">
-          <div class="price-labels">
-            <span id="priceMin">0</span>
-            <span id="priceMax">15.000</span>
+      <div class="filter-section-body">
+        <label class="filter-opt">
+          <div class="filter-opt-left">
+            <input type="checkbox" onchange="onFreeCancelFilter(this.checked)"> Ücretsiz İptal Olan Araçlar
           </div>
-          <input type="range" id="priceRange" min="0" max="15000" value="15000" step="100" oninput="updatePrice(this)">
-        </div>
-      </div>
-      <!-- Transmission -->
-      <div class="filter-section">
-        <h4>Vites</h4>
-        <div class="filter-option"><label><input type="checkbox" checked onchange="applyFilters()"> Otomatik</label><span class="filter-count">18</span></div>
-        <div class="filter-option"><label><input type="checkbox" checked onchange="applyFilters()"> Manuel</label><span class="filter-count">6</span></div>
-      </div>
-      <!-- Fuel -->
-      <div class="filter-section">
-        <h4>Yakıt</h4>
-        <div class="filter-option"><label><input type="checkbox" checked onchange="applyFilters()"> Benzin</label><span class="filter-count">10</span></div>
-        <div class="filter-option"><label><input type="checkbox" checked onchange="applyFilters()"> Dizel</label><span class="filter-count">8</span></div>
-        <div class="filter-option"><label><input type="checkbox" onchange="applyFilters()"> Elektrikli</label><span class="filter-count">3</span></div>
-        <div class="filter-option"><label><input type="checkbox" onchange="applyFilters()"> Hibrit</label><span class="filter-count">3</span></div>
-      </div>
-      <!-- Category -->
-      <div class="filter-section">
-        <h4>Araç Sınıfı</h4>
-        <div class="filter-option"><label><input type="checkbox" checked onchange="applyFilters()"> Ekonomi</label><span class="filter-count">5</span></div>
-        <div class="filter-option"><label><input type="checkbox" checked onchange="applyFilters()"> Kompakt</label><span class="filter-count">6</span></div>
-        <div class="filter-option"><label><input type="checkbox" checked onchange="applyFilters()"> SUV</label><span class="filter-count">5</span></div>
-        <div class="filter-option"><label><input type="checkbox" checked onchange="applyFilters()"> Van</label><span class="filter-count">3</span></div>
-        <div class="filter-option"><label><input type="checkbox" onchange="applyFilters()"> Premium</label><span class="filter-count">5</span></div>
-      </div>
-      <!-- Insurance -->
-      <div class="filter-section">
-        <h4>Sigorta</h4>
-        <div class="filter-option"><label><input type="checkbox" onchange="applyFilters()"> Her Şey Dahil</label><span class="filter-count">12</span></div>
-        <div class="filter-option"><label><input type="checkbox" onchange="applyFilters()"> Mini Hasar Dahil</label><span class="filter-count">8</span></div>
+        </label>
       </div>
     </div>
-  </aside>
 
-  <!-- RESULTS -->
-  <div class="results-area">
+    <!-- Kiralama Şirketi -->
+    <div class="filter-section open">
+      <div class="filter-section-header" onclick="toggleSection(this)">
+        <div class="filter-section-title">Kiralama Şirketi</div>
+        <span class="filter-chevron">▾</span>
+      </div>
+      <div class="filter-section-body">
+        ${[
+          {id:'garenta',name:'Garenta',count:1},
+          {id:'rentgo',name:'Rent Go',count:2},
+          {id:'avis',name:'Avis',count:2},
+          {id:'sixt',name:'Sixt',count:2},
+          {id:'hertz',name:'Hertz',count:2},
+          {id:'budget',name:'Budget',count:2},
+          {id:'europcar',name:'Europcar',count:1},
+          {id:'thrifty',name:'Thrifty',count:1},
+          {id:'oncars',name:'On Cars',count:1},
+          {id:'decar',name:'Decar',count:1},
+        ].map(s => `
+        <label class="filter-opt">
+          <div class="filter-opt-left">
+            <input type="checkbox" onchange="onCheckFilter('suppliers','${s.id}',this.checked)"> ${s.name}
+          </div>
+          <span class="filter-count-badge">${s.count}</span>
+        </label>`).join('')}
+      </div>
+    </div>
+
+    <!-- Vites Tipi -->
+    <div class="filter-section open">
+      <div class="filter-section-header" onclick="toggleSection(this)">
+        <div class="filter-section-title">Vites Tipi</div>
+        <span class="filter-chevron">▾</span>
+      </div>
+      <div class="filter-section-body">
+        <label class="filter-opt"><div class="filter-opt-left"><input type="checkbox" onchange="onCheckFilter('trans','Otomatik',this.checked)"> Otomatik</div><span class="filter-count-badge">12</span></label>
+        <label class="filter-opt"><div class="filter-opt-left"><input type="checkbox" onchange="onCheckFilter('trans','Manuel',this.checked)"> Manuel</div><span class="filter-count-badge">3</span></label>
+      </div>
+    </div>
+
+    <!-- Yakıt Tipi -->
+    <div class="filter-section open">
+      <div class="filter-section-header" onclick="toggleSection(this)">
+        <div class="filter-section-title">Yakıt Tipi</div>
+        <span class="filter-chevron">▾</span>
+      </div>
+      <div class="filter-section-body">
+        <label class="filter-opt"><div class="filter-opt-left"><input type="checkbox" onchange="onCheckFilter('fuel','Benzin',this.checked)"> Benzin</div><span class="filter-count-badge">7</span></label>
+        <label class="filter-opt"><div class="filter-opt-left"><input type="checkbox" onchange="onCheckFilter('fuel','Dizel',this.checked)"> Dizel</div><span class="filter-count-badge">5</span></label>
+        <label class="filter-opt"><div class="filter-opt-left"><input type="checkbox" onchange="onCheckFilter('fuel','Hibrit',this.checked)"> Hibrit</div><span class="filter-count-badge">2</span></label>
+        <label class="filter-opt"><div class="filter-opt-left"><input type="checkbox" onchange="onCheckFilter('fuel','Elektrik',this.checked)"> Elektrik</div><span class="filter-count-badge">1</span></label>
+      </div>
+    </div>
+
+    <!-- Araç Teslim Şekli -->
+    <div class="filter-section open">
+      <div class="filter-section-header" onclick="toggleSection(this)">
+        <div class="filter-section-title">Araç Teslim Şekli</div>
+        <span class="filter-chevron">▾</span>
+      </div>
+      <div class="filter-section-body">
+        <label class="filter-opt"><div class="filter-opt-left"><input type="checkbox" onchange="onCheckFilter('delivery','airport',this.checked)"> ✈️ Havalimanı İçi Ofis</div></label>
+        <label class="filter-opt"><div class="filter-opt-left"><input type="checkbox" onchange="onCheckFilter('delivery','office',this.checked)"> 🏢 Şehir Ofisi</div></label>
+      </div>
+    </div>
+
+    <!-- Fiyat Aralığı -->
+    <div class="filter-section open">
+      <div class="filter-section-header" onclick="toggleSection(this)">
+        <div class="filter-section-title">Fiyat Aralığı (3 Gün)</div>
+        <span class="filter-chevron">▾</span>
+      </div>
+      <div class="filter-section-body">
+        <div class="price-range-box">
+          <div class="price-range-labels">
+            <span>0 TL</span>
+            <span><span id="price-max-label">30.000</span> TL</span>
+          </div>
+          <input type="range" id="priceRange" min="3000" max="30000" step="500" value="30000"
+            oninput="onPriceChange(this.value)">
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- RESULTS PANEL -->
+  <div class="results-panel">
+
+    <!-- Results header -->
     <div class="results-header">
-      <div class="results-count"><strong id="resultCount">24</strong> araç bulundu</div>
-      <div class="sort-row">
-        <label>Sırala:</label>
-        <select class="sort-select" onchange="sortCars(this.value)">
-          <option value="price_asc">En Ucuz</option>
-          <option value="price_desc">En Pahalı</option>
-          <option value="rating">En Yüksek Puan</option>
+      <div class="results-count"><span id="resultCount">15</span> Araç Listeleniyor</div>
+      <div class="sort-wrap">
+        <span class="sort-label">↕ Sırala:</span>
+        <select class="sort-select" onchange="onSort(this.value)">
           <option value="recommended">Önerilen</option>
+          <option value="price_asc">En Ucuz Önce</option>
+          <option value="price_desc">En Pahalı Önce</option>
+          <option value="score">En Yüksek Puan</option>
         </select>
       </div>
     </div>
 
-    <div id="carList"></div>
+    <!-- Car list -->
+    <div id="carList">
+      <!-- Rendered by JS -->
+    </div>
 
+    <!-- Pagination -->
     <div class="pagination">
-      <div class="page-btn active">1</div>
-      <div class="page-btn">2</div>
-      <div class="page-btn">3</div>
-      <div class="page-btn">›</div>
+      <button class="page-btn active">1</button>
+      <button class="page-btn">2</button>
+      <button class="page-btn">3</button>
+      <button class="page-btn">›</button>
     </div>
   </div>
+
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script src="js/search.js"></script>
 </body>
 </html>
