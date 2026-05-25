@@ -86,7 +86,7 @@ function doSearch() {
 
   if (!pickup) {
     document.getElementById('pickupInput').focus();
-    document.getElementById('pickupInput').style.borderColor = '#D42B2B';
+    document.getElementById('pickupInput').style.borderColor = '#F30006';
     setTimeout(() => document.getElementById('pickupInput').style.borderColor = '', 2000);
     return;
   }
