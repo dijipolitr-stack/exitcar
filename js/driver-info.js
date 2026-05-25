@@ -77,6 +77,8 @@ window.addEventListener('DOMContentLoaded', () => {
     }
     const car = JSON.parse(sessionStorage.getItem('selectedCar') || '{}');
     if (car.model) document.getElementById('s2-car').textContent = car.model;
+    const sImg = document.getElementById('summary-img');
+    if (sImg && car.img) { sImg.src = car.img; sImg.alt = car.model; }
   } catch(e) {}
 });
 

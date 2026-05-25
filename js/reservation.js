@@ -4,9 +4,11 @@ const state = { insurance: 'medium', insurancePrice: 350, extras: {}, days: 7, b
 // ===== INIT =====
 window.addEventListener('DOMContentLoaded', () => {
   const p = new URLSearchParams(window.location.search);
-  const car = getCarFromSession() || { model: 'Toyota Corolla', price: 2700, img: 'assets/cars/compact.png' };
+  const car = getCarFromSession() || { model: 'Toyota Corolla', price: 2700, img: 'assets/cars/toyota-corolla.png' };
 
   document.getElementById('summary-car-name').textContent = car.model;
+  const carImg = document.getElementById('summary-car-img');
+  if (carImg && car.img) { carImg.src = car.img; carImg.alt = car.model; }
   document.getElementById('s-base-price').textContent = car.price.toLocaleString('tr-TR');
   if (p.get('pickup')) document.getElementById('disp-pickup').textContent = p.get('pickup');
 

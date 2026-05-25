@@ -72,6 +72,8 @@ window.addEventListener('DOMContentLoaded', () => {
       document.getElementById('pay-email').textContent = driver.email;
     }
     if (car.model) document.getElementById('pay-car-name').textContent = car.model;
+    const pImg = document.getElementById('pay-car-img');
+    if (pImg && car.img) { pImg.src = car.img; pImg.alt = car.model; }
 
     // Transfer ref
     document.getElementById('transfer-ref').textContent = 'EXT-' + Math.floor(100000 + Math.random()*900000);
