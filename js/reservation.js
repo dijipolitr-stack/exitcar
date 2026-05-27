@@ -9,7 +9,7 @@ window.addEventListener('DOMContentLoaded', () => {
   document.getElementById('summary-car-name').textContent = car.model;
   const carImg = document.getElementById('summary-car-img');
   if (carImg && car.img) { carImg.src = car.img; carImg.alt = car.model; }
-  document.getElementById('s-base-price').textContent = car.price.toLocaleString('tr-TR');
+  document.getElementById('s-base-price').textContent = fmtPrice(car.price);
   if (p.get('pickup')) document.getElementById('disp-pickup').textContent = p.get('pickup');
 
   state.basePrice = car.price;
@@ -54,25 +54,27 @@ function updateTotal() {
   const extTotal = Object.values(state.extras).reduce((a,b) => a+b, 0) * state.days;
   const grand = baseTotal + insTotal + extTotal;
 
-  document.getElementById('s-base-total').textContent = baseTotal.toLocaleString('tr-TR') + ' TL';
+  document.getElementById('s-base-total').textContent = fmtPrice(baseTotal);
   document.getElementById('s-days').textContent = state.days;
-  document.getElementById('s-base-price').textContent = state.basePrice.toLocaleString('tr-TR');
+  document.getElementById('s-base-price').textContent = fmtPrice(state.basePrice);
+  const daysNum = document.getElementById('disp-days-num');
+  if (daysNum) daysNum.textContent = state.days;
 
   const insRow = document.getElementById('s-ins-row');
   if (insTotal > 0) {
     insRow.style.display = 'flex';
-    const labels = { basic:'Temel Paket', medium:'Güvenli Paket', full:'Her Şey Dahil' };
+    const labels = { basic: t('res.basicName'), medium: t('res.mediumName'), full: t('res.fullName') };
     document.getElementById('s-ins-label').textContent = labels[state.insurance];
-    document.getElementById('s-ins-total').textContent = insTotal.toLocaleString('tr-TR') + ' TL';
+    document.getElementById('s-ins-total').textContent = fmtPrice(insTotal);
   } else { insRow.style.display = 'none'; }
 
   const extRow = document.getElementById('s-extra-row');
   if (extTotal > 0) {
     extRow.style.display = 'flex';
-    document.getElementById('s-extra-total').textContent = extTotal.toLocaleString('tr-TR') + ' TL';
+    document.getElementById('s-extra-total').textContent = fmtPrice(extTotal);
   } else { extRow.style.display = 'none'; }
 
-  document.getElementById('s-grand-total').textContent = grand.toLocaleString('tr-TR') + ' TL';
+  document.getElementById('s-grand-total').textContent = fmtPrice(grand);
 
   // Save to session
   sessionStorage.setItem('reservationData', JSON.stringify({ ...state, baseTotal, insTotal, extTotal, grand }));

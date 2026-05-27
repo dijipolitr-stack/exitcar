@@ -12,15 +12,16 @@ const CITIES = [
 document.addEventListener('DOMContentLoaded', () => {
   const tomorrow = new Date(); tomorrow.setDate(tomorrow.getDate() + 1);
   const weekLater = new Date(); weekLater.setDate(weekLater.getDate() + 7);
+  const fpLoc = (typeof EC_fpLocale === 'function') ? EC_fpLocale() : 'default';
 
   flatpickr("#pickupDate", {
-    locale: "tr", minDate: "today", dateFormat: "d M Y",
+    locale: fpLoc, minDate: "today", dateFormat: "d M Y",
     defaultDate: tomorrow,
     onChange: (sel) => { rpDp.set('minDate', sel[0]); }
   });
 
   const rpDp = flatpickr("#returnDate", {
-    locale: "tr", dateFormat: "d M Y",
+    locale: fpLoc, dateFormat: "d M Y",
     defaultDate: weekLater,
     minDate: tomorrow,
   });

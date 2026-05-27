@@ -1,28 +1,28 @@
 // ===== VALIDATION RULES =====
 const rules = {
-  firstName:   { required: true, minLen: 2, label: 'Ad' },
-  lastName:    { required: true, minLen: 2, label: 'Soyad' },
-  email:       { required: true, pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, label: 'E-posta' },
-  phone:       { required: true, minLen: 10, label: 'Telefon' },
-  birthDate:   { required: true, label: 'Doğum Tarihi', custom: validateAge },
-  tcNo:        { required: true, exactLen: 11, label: 'TC Kimlik No' },
-  licenseNo:   { required: true, minLen: 4, label: 'Ehliyet Numarası' },
-  licenseDate: { required: true, label: 'Ehliyet Veriliş Tarihi', custom: validateLicense },
-  licenseClass:{ required: true, label: 'Ehliyet Sınıfı' },
+  firstName:   { required: true, minLen: 2, lbl: 'lbl.firstName' },
+  lastName:    { required: true, minLen: 2, lbl: 'lbl.lastName' },
+  email:       { required: true, pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, lbl: 'lbl.email' },
+  phone:       { required: true, minLen: 10, lbl: 'lbl.phone' },
+  birthDate:   { required: true, lbl: 'lbl.birthDate', custom: validateAge },
+  tcNo:        { required: true, exactLen: 11, lbl: 'lbl.tcNo' },
+  licenseNo:   { required: true, minLen: 4, lbl: 'lbl.licenseNo' },
+  licenseDate: { required: true, lbl: 'lbl.licenseDate', custom: validateLicense },
+  licenseClass:{ required: true, lbl: 'lbl.licenseClass' },
 };
 
 function validateAge(val) {
   const d = new Date(val); const now = new Date();
   const age = (now - d) / (365.25 * 24 * 3600 * 1000);
-  if (age < 21) return 'Araç kiralama için minimum yaş 21\'dir.';
-  if (age > 100) return 'Geçersiz doğum tarihi.';
+  if (age < 21) return t('di.val.minAge');
+  if (age > 100) return t('di.val.badBirth');
   return null;
 }
 
 function validateLicense(val) {
   const d = new Date(val); const now = new Date();
   const years = (now - d) / (365.25 * 24 * 3600 * 1000);
-  if (years < 1) return 'En az 1 yıllık ehliyete sahip olmalısınız.';
+  if (years < 1) return t('di.val.license1yr');
   return null;
 }
 
@@ -30,12 +30,13 @@ function validateField(id) {
   const rule = rules[id]; if (!rule) return true;
   const val = document.getElementById(id).value.trim();
   const errEl = document.getElementById(id + '-err');
+  const label = t(rule.lbl);
   let error = '';
 
-  if (rule.required && !val) { error = `${rule.label} zorunludur.`; }
-  else if (rule.minLen && val.length < rule.minLen) { error = `${rule.label} en az ${rule.minLen} karakter olmalıdır.`; }
-  else if (rule.exactLen && val.replace(/\D/g,'').length !== rule.exactLen) { error = `${rule.label} ${rule.exactLen} haneli olmalıdır.`; }
-  else if (rule.pattern && !rule.pattern.test(val)) { error = `Geçerli bir ${rule.label.toLowerCase()} girin.`; }
+  if (rule.required && !val) { error = `${label} ${t('di.val.required')}`; }
+  else if (rule.minLen && val.length < rule.minLen) { error = `${label} ${t('di.val.minLen').replace('{n}', rule.minLen)}`; }
+  else if (rule.exactLen && val.replace(/\D/g,'').length !== rule.exactLen) { error = `${label} ${t('di.val.exactLen').replace('{n}', rule.exactLen)}`; }
+  else if (rule.pattern && !rule.pattern.test(val)) { error = t('di.val.pattern').replace('{label}', label.toLowerCase()); }
   else if (rule.custom) { error = rule.custom(val) || ''; }
 
   const inp = document.getElementById(id);
@@ -63,16 +64,16 @@ window.addEventListener('DOMContentLoaded', () => {
   try {
     const data = JSON.parse(sessionStorage.getItem('reservationData') || '{}');
     if (data.grand) {
-      document.getElementById('s2-total').textContent = data.grand.toLocaleString('tr-TR') + ' TL';
-      document.getElementById('s2-base').textContent = data.baseTotal.toLocaleString('tr-TR') + ' TL';
+      document.getElementById('s2-total').textContent = fmtPrice(data.grand);
+      document.getElementById('s2-base').textContent = fmtPrice(data.baseTotal);
       if (data.insTotal > 0) {
-        const labels = { basic:'Temel Paket', medium:'Güvenli Paket', full:'Her Şey Dahil' };
-        document.getElementById('s2-ins-label').textContent = labels[data.insurance] || 'Sigorta';
-        document.getElementById('s2-ins-val').textContent = data.insTotal.toLocaleString('tr-TR') + ' TL';
+        const labels = { basic: t('res.basicName'), medium: t('res.mediumName'), full: t('res.fullName') };
+        document.getElementById('s2-ins-label').textContent = labels[data.insurance] || t('step1.name');
+        document.getElementById('s2-ins-val').textContent = fmtPrice(data.insTotal);
       }
       if (data.extTotal > 0) {
         document.getElementById('s2-ext-row').style.display = 'flex';
-        document.getElementById('s2-ext-val').textContent = data.extTotal.toLocaleString('tr-TR') + ' TL';
+        document.getElementById('s2-ext-val').textContent = fmtPrice(data.extTotal);
       }
     }
     const car = JSON.parse(sessionStorage.getItem('selectedCar') || '{}');
@@ -90,10 +91,10 @@ function goToPayment() {
     return;
   }
   if (!document.getElementById('kvkk').checked) {
-    alert('Lütfen KVKK Aydınlatma Metni\'ni kabul edin.'); return;
+    alert(t('di.val.acceptKvkk')); return;
   }
   if (!document.getElementById('terms').checked) {
-    alert('Lütfen Kiralama Koşulları\'nı kabul edin.'); return;
+    alert(t('di.val.acceptTerms')); return;
   }
 
   // Save driver info

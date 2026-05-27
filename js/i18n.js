@@ -1,0 +1,564 @@
+// ============================================================
+// ExitCar — Çok Dilli Altyapı (i18n) + Para Birimi Dönüşümü
+// Diller: TR (varsayılan), EN, RU, DE, AR (RTL)
+// ------------------------------------------------------------
+// Bu dosya HER sayfada, diğer script'lerden ÖNCE yüklenir.
+// Çeviri eklemek/düzeltmek için aşağıdaki T sözlüğünü düzenle.
+// ============================================================
+
+// ===== DESTEKLENEN DİLLER =====
+const EC_LANGS = ['tr', 'en', 'ru', 'de', 'ar'];
+
+// ===== PARA BİRİMİ AYARI =====
+// rate = 1 birim yabancı para kaç TL eder (taban fiyatlar TL'dir).
+// >>> Kurları güncel tutmak için buradaki sayıları değiştir. <<<
+const EC_CUR = {
+  tr: { rate: 1,    loc: 'tr-TR', pre: '',  suf: ' TL' },
+  en: { rate: 47,   loc: 'en-US', pre: '€', suf: ''    },
+  de: { rate: 47,   loc: 'de-DE', pre: '€', suf: ''    },
+  ru: { rate: 0.50, loc: 'ru-RU', pre: '',  suf: ' ₽'  },
+  ar: { rate: 42,   loc: 'en-US', pre: '$', suf: ''    },
+};
+
+// ===== AKTİF DİL (script yüklenirken senkron belirlenir) =====
+function ecDetectLang() {
+  const saved = localStorage.getItem('ec_lang');
+  if (saved && EC_LANGS.includes(saved)) return saved;
+  const nav = (navigator.language || 'tr').slice(0, 2).toLowerCase();
+  if (EC_LANGS.includes(nav)) return nav;
+  return 'tr';
+}
+let EC_LANG = ecDetectLang();
+
+// ===== ÇEVİRİ FONKSİYONU =====
+function t(key) {
+  const e = EC_T[key];
+  if (!e) return key;
+  return e[EC_LANG] || e.tr || key;
+}
+
+// ===== FİYAT BİÇİMLENDİRME (taban TL → aktif para birimi) =====
+function fmtPrice(tryAmount) {
+  const c = EC_CUR[EC_LANG] || EC_CUR.tr;
+  const n = Math.round(Number(tryAmount) / c.rate);
+  return c.pre + n.toLocaleString(c.loc) + c.suf;
+}
+
+// ===== DİL DEĞİŞTİR (kaydet + yenile) =====
+function EC_setLang(lang) {
+  if (!EC_LANGS.includes(lang)) return;
+  localStorage.setItem('ec_lang', lang);
+  location.reload();
+}
+
+// ===== FLATPICKR LOCALE EŞLEMESİ =====
+function EC_fpLocale() {
+  return { tr: 'tr', de: 'de', ru: 'ru', ar: 'ar' }[EC_LANG] || 'default';
+}
+
+// ===== <html> lang + dir (mümkün olan en erken) =====
+(function () {
+  const html = document.documentElement;
+  html.lang = EC_LANG;
+  html.dir = (EC_LANG === 'ar') ? 'rtl' : 'ltr';
+})();
+
+// ===== DOM'A ÇEVİRİYİ UYGULA =====
+function ecApply(root) {
+  root = root || document;
+
+  root.querySelectorAll('[data-i18n]').forEach(el => {
+    el.textContent = t(el.getAttribute('data-i18n'));
+  });
+  root.querySelectorAll('[data-i18n-html]').forEach(el => {
+    el.innerHTML = t(el.getAttribute('data-i18n-html'));
+  });
+  root.querySelectorAll('[data-i18n-ph]').forEach(el => {
+    el.placeholder = t(el.getAttribute('data-i18n-ph'));
+  });
+  root.querySelectorAll('[data-i18n-content]').forEach(el => {
+    el.setAttribute('content', t(el.getAttribute('data-i18n-content')));
+  });
+  // Sabit fiyatlar: data-price (tam fiyat), data-price-day (+fiyat/gün)
+  root.querySelectorAll('[data-price]').forEach(el => {
+    el.textContent = fmtPrice(el.getAttribute('data-price'));
+  });
+  root.querySelectorAll('[data-price-day]').forEach(el => {
+    el.textContent = '+' + fmtPrice(el.getAttribute('data-price-day')) + t('common.perDay');
+  });
+}
+
+// ===== DİL DEĞİŞTİRİCİ ARAYÜZÜ + STİLLER =====
+function ecInjectStyles() {
+  const css = `
+  .ec-lang-switcher{position:relative;display:inline-flex;align-items:center}
+  .ec-lang-btn{display:inline-flex;align-items:center;gap:6px;padding:7px 12px;border:1.5px solid #E5E7EB;
+    background:#fff;border-radius:8px;font-size:13px;font-weight:700;color:#374151;cursor:pointer;font-family:inherit}
+  .ec-lang-btn:hover{border-color:#F30006}
+  .ec-lang-menu{position:absolute;top:calc(100% + 6px);right:0;background:#fff;border:1px solid #E5E7EB;
+    border-radius:10px;box-shadow:0 12px 32px rgba(0,0,0,.12);padding:6px;min-width:150px;z-index:2000;display:none}
+  .ec-lang-switcher.open .ec-lang-menu{display:block}
+  [dir=rtl] .ec-lang-menu{right:auto;left:0}
+  .ec-lang-opt{display:flex;align-items:center;gap:10px;width:100%;padding:9px 12px;border:none;background:none;
+    border-radius:8px;font-size:13px;font-weight:600;color:#374151;cursor:pointer;text-align:start;font-family:inherit}
+  .ec-lang-opt:hover{background:#F9FAFB}
+  .ec-lang-opt.active{background:#FEE2E2;color:#F30006}
+  .ec-lang-flag{font-size:16px}
+  /* --- Genel RTL düzeltmeleri (Arapça) --- */
+  [dir=rtl] .nav-links a,[dir=rtl] .footer-col,[dir=rtl] .info-box,[dir=rtl] .ins-feat{text-align:right}
+  [dir=rtl] .field-icon{left:auto;right:14px}
+  [dir=rtl] .field-input input,[dir=rtl] .field-input select{padding-left:14px;padding-right:38px}
+  `;
+  const s = document.createElement('style');
+  s.textContent = css;
+  document.head.appendChild(s);
+}
+
+function ecRenderSwitcher() {
+  const mount = document.getElementById('ec-lang-mount');
+  if (!mount) return;
+  const langs = [
+    { c: 'tr', flag: '🇹🇷', name: 'Türkçe' },
+    { c: 'en', flag: '🇬🇧', name: 'English' },
+    { c: 'ru', flag: '🇷🇺', name: 'Русский' },
+    { c: 'de', flag: '🇩🇪', name: 'Deutsch' },
+    { c: 'ar', flag: '🇸🇦', name: 'العربية' },
+  ];
+  const cur = langs.find(l => l.c === EC_LANG) || langs[0];
+  mount.innerHTML = `
+    <div class="ec-lang-switcher" id="ec-lang-sw">
+      <button type="button" class="ec-lang-btn" onclick="document.getElementById('ec-lang-sw').classList.toggle('open')">
+        <span class="ec-lang-flag">${cur.flag}</span><span>${cur.c.toUpperCase()}</span><span style="font-size:9px">▾</span>
+      </button>
+      <div class="ec-lang-menu">
+        ${langs.map(l => `
+          <button type="button" class="ec-lang-opt ${l.c === EC_LANG ? 'active' : ''}" onclick="EC_setLang('${l.c}')">
+            <span class="ec-lang-flag">${l.flag}</span><span>${l.name}</span>
+          </button>`).join('')}
+      </div>
+    </div>`;
+  document.addEventListener('click', e => {
+    const sw = document.getElementById('ec-lang-sw');
+    if (sw && !e.target.closest('#ec-lang-sw')) sw.classList.remove('open');
+  });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  ecInjectStyles();
+  ecApply(document);
+  ecRenderSwitcher();
+});
+
+// Diğer script'lerin kullanması için global erişim
+window.t = t;
+window.fmtPrice = fmtPrice;
+window.EC_LANG = EC_LANG;
+
+// ============================================================
+// ÇEVİRİ SÖZLÜĞÜ  (anahtar → { tr, en, ru, de, ar })
+// ============================================================
+const EC_T = {
+
+  // ---------- ORTAK ----------
+  'common.perDay':   { tr: '/gün', en: '/day', ru: '/день', de: '/Tag', ar: '/يوم' },
+  'common.days':     { tr: 'Gün', en: 'Days', ru: 'дн.', de: 'Tage', ar: 'يوم' },
+  'common.person':   { tr: 'Kişi', en: 'Persons', ru: 'чел.', de: 'Personen', ar: 'أشخاص' },
+  'common.ac':       { tr: 'Klima', en: 'A/C', ru: 'Кондиционер', de: 'Klima', ar: 'تكييف' },
+  'common.orSimilar':{ tr: 'veya benzeri', en: 'or similar', ru: 'или аналог', de: 'oder ähnlich', ar: 'أو ما شابه' },
+  'common.login':    { tr: 'Üye Ol / Giriş', en: 'Sign Up / Login', ru: 'Регистрация / Вход', de: 'Registrieren / Login', ar: 'تسجيل / دخول' },
+
+  // ---------- NAVBAR ----------
+  'nav.rental':    { tr: '🚗 Araç Kiralama', en: '🚗 Car Rental', ru: '🚗 Аренда авто', de: '🚗 Autovermietung', ar: '🚗 تأجير السيارات' },
+  'nav.transfer':  { tr: '🔄 Transfer', en: '🔄 Transfer', ru: '🔄 Трансфер', de: '🔄 Transfer', ar: '🔄 النقل' },
+  'nav.corporate': { tr: '🏢 Kurumsal', en: '🏢 Corporate', ru: '🏢 Бизнес', de: '🏢 Firmenkunden', ar: '🏢 الشركات' },
+  'nav.campaigns': { tr: '🎁 Kampanyalar', en: '🎁 Deals', ru: '🎁 Акции', de: '🎁 Angebote', ar: '🎁 العروض' },
+  'nav.help':      { tr: '❓ Yardım', en: '❓ Help', ru: '❓ Помощь', de: '❓ Hilfe', ar: '❓ المساعدة' },
+
+  // ---------- HERO ----------
+  'hero.title':    { tr: 'Kiralık Araç Fiyatlarını<br><span>Anında Karşılaştır</span>', en: 'Compare Car Rental Prices<br><span>Instantly</span>', ru: 'Сравните цены на аренду<br><span>Мгновенно</span>', de: 'Mietwagenpreise<br><span>Sofort Vergleichen</span>', ar: 'قارن أسعار تأجير السيارات<br><span>فوراً</span>' },
+  'hero.subtitle': { tr: 'Türkiye genelinde yüzlerce noktadan, en uygun fiyatlı araçları saniyeler içinde listeleyin.', en: 'List the best-priced cars from hundreds of locations across Türkiye in seconds.', ru: 'Найдите автомобили по лучшим ценам в сотнях точек по всей Турции за секунды.', de: 'Finden Sie in Sekunden die günstigsten Fahrzeuge an Hunderten Standorten in der Türkei.', ar: 'اعرض السيارات بأفضل الأسعار من مئات المواقع في تركيا خلال ثوانٍ.' },
+
+  'search.tabDomestic': { tr: '🇹🇷 Yurt İçi', en: '🇹🇷 Domestic', ru: '🇹🇷 По стране', de: '🇹🇷 Inland', ar: '🇹🇷 داخلي' },
+  'search.tabAbroad':   { tr: '🌍 Yurt Dışı', en: '🌍 Abroad', ru: '🌍 За рубежом', de: '🌍 Ausland', ar: '🌍 خارجي' },
+  'search.tabTransfer': { tr: '🚐 Transfer', en: '🚐 Transfer', ru: '🚐 Трансфер', de: '🚐 Transfer', ar: '🚐 نقل' },
+  'search.diffReturn':  { tr: 'Farklı bir noktaya bırak', en: 'Return to a different location', ru: 'Вернуть в другом месте', de: 'An anderem Ort zurückgeben', ar: 'الإعادة في موقع مختلف' },
+  'search.pickupPlace': { tr: '📍 Alış Yeri', en: '📍 Pick-up Location', ru: '📍 Место получения', de: '📍 Abholort', ar: '📍 مكان الاستلام' },
+  'search.returnPlace': { tr: '📍 İade Yeri', en: '📍 Return Location', ru: '📍 Место возврата', de: '📍 Rückgabeort', ar: '📍 مكان الإعادة' },
+  'search.placeholder': { tr: 'Şehir, havalimanı veya ofis', en: 'City, airport or office', ru: 'Город, аэропорт или офис', de: 'Stadt, Flughafen oder Büro', ar: 'مدينة، مطار أو مكتب' },
+  'search.pickupDate':  { tr: '📅 Alış Tarihi', en: '📅 Pick-up Date', ru: '📅 Дата получения', de: '📅 Abholdatum', ar: '📅 تاريخ الاستلام' },
+  'search.pickupTime':  { tr: '🕐 Alış Saati', en: '🕐 Pick-up Time', ru: '🕐 Время получения', de: '🕐 Abholzeit', ar: '🕐 وقت الاستلام' },
+  'search.returnDate':  { tr: '📅 İade Tarihi', en: '📅 Return Date', ru: '📅 Дата возврата', de: '📅 Rückgabedatum', ar: '📅 تاريخ الإعادة' },
+  'search.returnTime':  { tr: '🕐 İade Saati', en: '🕐 Return Time', ru: '🕐 Время возврата', de: '🕐 Rückgabezeit', ar: '🕐 وقت الإعادة' },
+  'search.datePh':      { tr: 'Tarih seçin', en: 'Select date', ru: 'Выберите дату', de: 'Datum wählen', ar: 'اختر التاريخ' },
+  'search.btn':         { tr: '🔍 Araç Ara', en: '🔍 Search Cars', ru: '🔍 Найти авто', de: '🔍 Auto suchen', ar: '🔍 ابحث عن سيارة' },
+
+  // ---------- STATS ----------
+  'stats.cars':         { tr: 'Kiralık Araç', en: 'Rental Cars', ru: 'Автомобилей', de: 'Mietwagen', ar: 'سيارة للإيجار' },
+  'stats.cities':       { tr: 'İl Geneli Hizmet', en: 'Provinces Served', ru: 'Провинций', de: 'Provinzen', ar: 'محافظة' },
+  'stats.partners':     { tr: 'Ortak Firma', en: 'Partner Companies', ru: 'Компаний-партнёров', de: 'Partnerfirmen', ar: 'شركة شريكة' },
+  'stats.support':      { tr: 'Müşteri Desteği', en: 'Customer Support', ru: 'Поддержка', de: 'Kundensupport', ar: 'دعم العملاء' },
+  'stats.satisfaction': { tr: 'Müşteri Memnuniyeti', en: 'Customer Satisfaction', ru: 'Довольных клиентов', de: 'Kundenzufriedenheit', ar: 'رضا العملاء' },
+
+  // ---------- KATEGORİLER (ana sayfa) ----------
+  'cat.tag':   { tr: 'Araç Tipleri', en: 'Car Types', ru: 'Типы авто', de: 'Fahrzeugtypen', ar: 'أنواع السيارات' },
+  'cat.title': { tr: 'İhtiyacınıza Uygun Kiralık Araç', en: 'The Right Rental Car for You', ru: 'Аренда авто под ваши нужды', de: 'Der passende Mietwagen für Sie', ar: 'سيارة الإيجار المناسبة لك' },
+  'cat.sub':   { tr: 'Ekonomikten lükse, kompakttan SUV\'a — her bütçeye uygun seçenekler', en: 'From economy to luxury, compact to SUV — options for every budget', ru: 'От эконома до люкса, от компакта до внедорожника — для любого бюджета', de: 'Von Economy bis Luxus, Kompakt bis SUV — für jedes Budget', ar: 'من الاقتصادية إلى الفاخرة، من المدمجة إلى الدفع الرباعي — خيارات لكل ميزانية' },
+  'cat.from':  { tr: 'başlayan fiyatlarla', en: 'starting from', ru: 'от', de: 'ab', ar: 'تبدأ من' },
+  'cat.rent':  { tr: 'Kirala →', en: 'Rent →', ru: 'Арендовать →', de: 'Mieten →', ar: '← استأجر' },
+
+  'badge.economy': { tr: 'Ekonomi', en: 'Economy', ru: 'Эконом', de: 'Economy', ar: 'اقتصادية' },
+  'badge.compact': { tr: 'Kompakt', en: 'Compact', ru: 'Компакт', de: 'Kompakt', ar: 'مدمجة' },
+  'badge.suv':     { tr: 'SUV', en: 'SUV', ru: 'Внедорожник', de: 'SUV', ar: 'دفع رباعي' },
+  'badge.van':     { tr: 'Van', en: 'Van', ru: 'Минивэн', de: 'Van', ar: 'فان' },
+  'badge.premium': { tr: 'Premium', en: 'Premium', ru: 'Премиум', de: 'Premium', ar: 'فاخرة' },
+
+  'spec.economy': { tr: 'Otomatik · Benzin · 5 Kişi', en: 'Automatic · Petrol · 5 Seats', ru: 'Автомат · Бензин · 5 мест', de: 'Automatik · Benzin · 5 Sitze', ar: 'أوتوماتيك · بنزين · 5 مقاعد' },
+  'spec.compact': { tr: 'Otomatik · Benzin · 5 Kişi', en: 'Automatic · Petrol · 5 Seats', ru: 'Автомат · Бензин · 5 мест', de: 'Automatik · Benzin · 5 Sitze', ar: 'أوتوماتيك · بنزين · 5 مقاعد' },
+  'spec.suv':     { tr: 'Otomatik · Dizel · 5 Kişi', en: 'Automatic · Diesel · 5 Seats', ru: 'Автомат · Дизель · 5 мест', de: 'Automatik · Diesel · 5 Sitze', ar: 'أوتوماتيك · ديزل · 5 مقاعد' },
+  'spec.van':     { tr: 'Otomatik · Dizel · 9 Kişi', en: 'Automatic · Diesel · 9 Seats', ru: 'Автомат · Дизель · 9 мест', de: 'Automatik · Diesel · 9 Sitze', ar: 'أوتوماتيك · ديزل · 9 مقاعد' },
+  'spec.premium': { tr: 'Otomatik · Benzin · 5 Kişi', en: 'Automatic · Petrol · 5 Seats', ru: 'Автомат · Бензин · 5 мест', de: 'Automatik · Benzin · 5 Sitze', ar: 'أوتوماتيك · بنزين · 5 مقاعد' },
+
+  // ---------- AVANTAJLAR ----------
+  'adv.tag':   { tr: 'Neden ExitCar?', en: 'Why ExitCar?', ru: 'Почему ExitCar?', de: 'Warum ExitCar?', ar: 'لماذا ExitCar؟' },
+  'adv.title': { tr: 'ExitCar ile Araç Kiralama Avantajları', en: 'The Advantages of Renting with ExitCar', ru: 'Преимущества аренды с ExitCar', de: 'Die Vorteile der Anmietung bei ExitCar', ar: 'مزايا التأجير مع ExitCar' },
+  'adv.support.title': { tr: '7/24 Destek', en: '24/7 Support', ru: 'Поддержка 24/7', de: '24/7 Support', ar: 'دعم 24/7' },
+  'adv.support.text':  { tr: 'Uzman ekibimiz her an yanınızda. Rezervasyondan teslime kadar kesintisiz destek.', en: 'Our expert team is always with you. Uninterrupted support from booking to handover.', ru: 'Наша команда всегда рядом. Непрерывная поддержка от брони до выдачи.', de: 'Unser Expertenteam ist immer für Sie da. Lückenloser Support von Buchung bis Übergabe.', ar: 'فريقنا المتخصص معك دائماً. دعم متواصل من الحجز حتى التسليم.' },
+  'adv.cheap.title': { tr: 'En Ucuz Fiyat', en: 'Lowest Price', ru: 'Лучшая цена', de: 'Bestpreis', ar: 'أرخص سعر' },
+  'adv.cheap.text':  { tr: 'Yüzlerce araç seçeneği arasından en uygun fiyatı bulun, anında rezervasyon yapın.', en: 'Find the best price among hundreds of cars and book instantly.', ru: 'Найдите лучшую цену среди сотен авто и забронируйте мгновенно.', de: 'Finden Sie den besten Preis unter Hunderten Fahrzeugen und buchen Sie sofort.', ar: 'اعثر على أفضل سعر بين مئات السيارات واحجز فوراً.' },
+  'adv.safe.title': { tr: 'Güvenli Kiralama', en: 'Safe Rental', ru: 'Безопасная аренда', de: 'Sichere Anmietung', ar: 'تأجير آمن' },
+  'adv.safe.text':  { tr: 'Tam kasko, trafik sigortası ve her şey dahil paket seçenekleriyle güvenle yola çıkın.', en: 'Hit the road safely with full insurance, traffic insurance and all-inclusive packages.', ru: 'Отправляйтесь в путь безопасно с полным КАСКО и пакетами «всё включено».', de: 'Fahren Sie sicher mit Vollkasko, Haftpflicht und All-inclusive-Paketen.', ar: 'انطلق بأمان مع تأمين شامل وباقات تشمل كل شيء.' },
+  'adv.turkey.title': { tr: 'Türkiye Geneli', en: 'Nationwide', ru: 'По всей Турции', de: 'Landesweit', ar: 'في كل تركيا' },
+  'adv.turkey.text':  { tr: '81 ilde, tüm büyük havalimanlarında ve şehir merkezlerinde hizmet noktaları.', en: 'Service points in 81 provinces, all major airports and city centers.', ru: 'Точки обслуживания в 81 провинции, всех крупных аэропортах и центрах городов.', de: 'Servicepunkte in 81 Provinzen, allen großen Flughäfen und Stadtzentren.', ar: 'نقاط خدمة في 81 محافظة وجميع المطارات الكبرى ومراكز المدن.' },
+
+  // ---------- PROMO ----------
+  'promo.tag':   { tr: '🎉 Özel Kampanya', en: '🎉 Special Offer', ru: '🎉 Спецпредложение', de: '🎉 Sonderangebot', ar: '🎉 عرض خاص' },
+  'promo.title': { tr: 'İlk Kiralamanıza %25 İndirim!', en: '25% Off Your First Rental!', ru: 'Скидка 25% на первую аренду!', de: '25% Rabatt auf Ihre erste Anmietung!', ar: 'خصم 25% على أول تأجير لك!' },
+  'promo.sub':   { tr: 'ExitCar\'a üye olun, ilk rezervasyonunuzda anında indirim kazanın.', en: 'Sign up for ExitCar and get an instant discount on your first booking.', ru: 'Зарегистрируйтесь в ExitCar и получите мгновенную скидку на первую бронь.', de: 'Registrieren Sie sich bei ExitCar und erhalten Sie sofort Rabatt auf Ihre erste Buchung.', ar: 'سجّل في ExitCar واحصل على خصم فوري على أول حجز.' },
+  'promo.btn':   { tr: 'Hemen Üye Ol →', en: 'Sign Up Now →', ru: 'Зарегистрироваться →', de: 'Jetzt registrieren →', ar: '← سجّل الآن' },
+
+  // ---------- LOKASYONLAR ----------
+  'loc.tag':        { tr: 'Popüler Destinasyonlar', en: 'Popular Destinations', ru: 'Популярные направления', de: 'Beliebte Reiseziele', ar: 'الوجهات الشائعة' },
+  'loc.title':      { tr: 'En Çok Tercih Edilen Lokasyonlar', en: 'Most Preferred Locations', ru: 'Самые популярные локации', de: 'Die beliebtesten Standorte', ar: 'المواقع الأكثر طلباً' },
+  'loc.fromSuffix': { tr: '’den başlayan fiyatlarla', en: ' and up', ru: ' и выше', de: ' und mehr', ar: ' فما فوق' },
+  'city.istanbul':  { tr: '🏙️ İstanbul', en: '🏙️ Istanbul', ru: '🏙️ Стамбул', de: '🏙️ Istanbul', ar: '🏙️ إسطنبول' },
+  'city.ankara':    { tr: '🏛️ Ankara', en: '🏛️ Ankara', ru: '🏛️ Анкара', de: '🏛️ Ankara', ar: '🏛️ أنقرة' },
+  'city.izmir':     { tr: '🌊 İzmir', en: '🌊 Izmir', ru: '🌊 Измир', de: '🌊 Izmir', ar: '🌊 إزمير' },
+  'city.antalya':   { tr: '🌴 Antalya', en: '🌴 Antalya', ru: '🌴 Анталья', de: '🌴 Antalya', ar: '🌴 أنطاليا' },
+  'city.bodrum':    { tr: '⛵ Bodrum', en: '⛵ Bodrum', ru: '⛵ Бодрум', de: '⛵ Bodrum', ar: '⛵ بودروم' },
+  'city.trabzon':   { tr: '🏔️ Trabzon', en: '🏔️ Trabzon', ru: '🏔️ Трабзон', de: '🏔️ Trabzon', ar: '🏔️ طرابزون' },
+
+  // ---------- MARKALAR ----------
+  'brands.tag':   { tr: 'Araç Markaları', en: 'Car Brands', ru: 'Марки авто', de: 'Automarken', ar: 'ماركات السيارات' },
+  'brands.title': { tr: 'En Popüler Kiralık Araç Markaları', en: 'Most Popular Rental Car Brands', ru: 'Самые популярные марки авто', de: 'Beliebteste Mietwagenmarken', ar: 'أشهر ماركات سيارات الإيجار' },
+
+  // ---------- SSS ----------
+  'faq.tag':   { tr: 'Sık Sorulan Sorular', en: 'Frequently Asked Questions', ru: 'Частые вопросы', de: 'Häufige Fragen', ar: 'الأسئلة الشائعة' },
+  'faq.title': { tr: 'Merak Ettikleriniz', en: 'What You Want to Know', ru: 'Что вас интересует', de: 'Was Sie wissen möchten', ar: 'ما تريد معرفته' },
+  'faq.q1': { tr: 'ExitCar\'da araç kiralama nasıl yapılır?', en: 'How do I rent a car on ExitCar?', ru: 'Как арендовать авто на ExitCar?', de: 'Wie miete ich ein Auto bei ExitCar?', ar: 'كيف أستأجر سيارة عبر ExitCar؟' },
+  'faq.a1': { tr: 'Web sitemiz üzerinden alış yeri, tarih ve saat bilgilerini girin. "Araç Ara" butonuna tıklayarak uygun araçları listeleyin, istediğiniz aracı seçin ve anında rezervasyon tamamlayın. 7/24 destek hattımızı da arayabilirsiniz.', en: 'Enter the pick-up location, date and time on our website. Click "Search Cars" to list available vehicles, choose your car and complete the booking instantly. You can also call our 24/7 support line.', ru: 'Укажите место получения, дату и время на нашем сайте. Нажмите «Найти авто», выберите автомобиль и завершите бронирование мгновенно. Также можно позвонить в поддержку 24/7.', de: 'Geben Sie Abholort, Datum und Uhrzeit auf unserer Website ein. Klicken Sie auf "Auto suchen", wählen Sie Ihr Fahrzeug und buchen Sie sofort. Sie können auch unsere 24/7-Hotline anrufen.', ar: 'أدخل مكان الاستلام والتاريخ والوقت على موقعنا. اضغط "ابحث عن سيارة" لعرض السيارات المتاحة، اختر سيارتك وأكمل الحجز فوراً. يمكنك أيضاً الاتصال بخط الدعم 24/7.' },
+  'faq.q2': { tr: 'Araç kiralamak için hangi belgeler gerekli?', en: 'What documents are required to rent a car?', ru: 'Какие документы нужны для аренды?', de: 'Welche Dokumente sind für die Anmietung nötig?', ar: 'ما المستندات المطلوبة لتأجير سيارة؟' },
+  'faq.a2': { tr: 'Geçerli sürücü belgesi, kimlik belgesi (TC kimlik veya pasaport) ve kredi kartı gereklidir. Bazı araç sınıflarında ek belgeler talep edilebilir.', en: 'A valid driver\'s license, an ID document (national ID or passport) and a credit card are required. Some car classes may require additional documents.', ru: 'Нужны действующие водительские права, документ, удостоверяющий личность (паспорт), и кредитная карта. Для некоторых классов авто могут потребоваться доп. документы.', de: 'Erforderlich sind ein gültiger Führerschein, ein Ausweisdokument (Personalausweis oder Reisepass) und eine Kreditkarte. Für einige Fahrzeugklassen können zusätzliche Dokumente nötig sein.', ar: 'يلزم رخصة قيادة سارية ووثيقة هوية (هوية وطنية أو جواز سفر) وبطاقة ائتمان. قد تتطلب بعض فئات السيارات مستندات إضافية.' },
+  'faq.q3': { tr: 'Minimum yaş sınırı nedir?', en: 'What is the minimum age limit?', ru: 'Какой минимальный возраст?', de: 'Wie hoch ist das Mindestalter?', ar: 'ما الحد الأدنى للعمر؟' },
+  'faq.a3': { tr: 'Çoğu araç için minimum yaş 21, minimum ehliyet süresi 1 yıldır. Bazı premium araçlarda bu şartlar farklılık gösterebilir. Genç sürücü paketi ile 19-21 yaş arasındaki sürücülere de hizmet sunulmaktadır.', en: 'For most cars the minimum age is 21 and the minimum license duration is 1 year. These conditions may differ for some premium cars. With the young driver package, drivers aged 19-21 are also served.', ru: 'Для большинства авто минимальный возраст — 21 год, стаж — 1 год. Для премиум-авто условия могут отличаться. С пакетом «молодой водитель» обслуживаются и водители 19-21 года.', de: 'Für die meisten Fahrzeuge gilt ein Mindestalter von 21 Jahren und mindestens 1 Jahr Führerscheinbesitz. Bei einigen Premium-Fahrzeugen können diese Bedingungen abweichen. Mit dem Jungfahrer-Paket werden auch Fahrer von 19-21 Jahren bedient.', ar: 'الحد الأدنى للعمر 21 عاماً ومدة الرخصة سنة واحدة لمعظم السيارات. قد تختلف هذه الشروط لبعض السيارات الفاخرة. مع باقة السائق الشاب، نخدم أيضاً السائقين من 19 إلى 21 عاماً.' },
+  'faq.q4': { tr: 'İptal veya değişiklik yapabilir miyim?', en: 'Can I cancel or make changes?', ru: 'Могу ли я отменить или изменить?', de: 'Kann ich stornieren oder ändern?', ar: 'هل يمكنني الإلغاء أو التعديل؟' },
+  'faq.a4': { tr: 'Evet! Rezervasyonunuzu kolayca iptal edebilir veya değiştirebilirsiniz. Esnek iptal politikamız sayesinde birçok rezervasyon ücretsiz iptal edilebilmektedir.', en: 'Yes! You can easily cancel or change your booking. Thanks to our flexible cancellation policy, many bookings can be cancelled free of charge.', ru: 'Да! Вы легко можете отменить или изменить бронь. Благодаря гибкой политике многие брони отменяются бесплатно.', de: 'Ja! Sie können Ihre Buchung leicht stornieren oder ändern. Dank unserer flexiblen Stornierungsrichtlinie sind viele Buchungen kostenlos stornierbar.', ar: 'نعم! يمكنك إلغاء حجزك أو تعديله بسهولة. بفضل سياسة الإلغاء المرنة، يمكن إلغاء العديد من الحجوزات مجاناً.' },
+  'faq.q5': { tr: 'Aylık araç kiralama mümkün mü?', en: 'Is monthly car rental possible?', ru: 'Возможна ли аренда на месяц?', de: 'Ist eine monatliche Anmietung möglich?', ar: 'هل التأجير الشهري ممكن؟' },
+  'faq.a5': { tr: 'Evet, aylık araç kiralama için alış ve iade tarihlerini 30 gün veya daha fazla seçmeniz yeterlidir. Uzun dönem kiralamalarda özel indirimli fiyatlar uygulanmaktadır.', en: 'Yes, for monthly rental simply select pick-up and return dates 30 days or more apart. Special discounted prices apply for long-term rentals.', ru: 'Да, для аренды на месяц выберите даты получения и возврата с разницей 30 дней и более. Для долгосрочной аренды действуют специальные цены.', de: 'Ja, für die Monatsmiete wählen Sie einfach Abhol- und Rückgabedatum mit 30 Tagen oder mehr Abstand. Für Langzeitmieten gelten spezielle Rabattpreise.', ar: 'نعم، للتأجير الشهري اختر تاريخي الاستلام والإعادة بفارق 30 يوماً أو أكثر. تُطبّق أسعار مخفّضة خاصة للتأجير طويل الأمد.' },
+
+  // ---------- FOOTER ----------
+  'footer.desc':      { tr: 'Türkiye\'nin güvenilir araç kiralama platformu. 81 ilde, yüzlerce araç seçeneği ile hizmetinizdeyiz.', en: 'Türkiye\'s trusted car rental platform. At your service in 81 provinces with hundreds of car options.', ru: 'Надёжная платформа аренды авто в Турции. К вашим услугам в 81 провинции с сотнями вариантов.', de: 'Die vertrauenswürdige Mietwagenplattform der Türkei. Für Sie da in 81 Provinzen mit Hunderten Fahrzeugen.', ar: 'منصة تأجير السيارات الموثوقة في تركيا. في خدمتك في 81 محافظة مع مئات الخيارات.' },
+  'footer.services':  { tr: 'Hizmetler', en: 'Services', ru: 'Услуги', de: 'Leistungen', ar: 'الخدمات' },
+  'footer.svc1': { tr: 'Araç Kiralama', en: 'Car Rental', ru: 'Аренда авто', de: 'Autovermietung', ar: 'تأجير السيارات' },
+  'footer.svc2': { tr: 'Havalimanı Araç Kiralama', en: 'Airport Car Rental', ru: 'Аренда в аэропорту', de: 'Flughafen-Autovermietung', ar: 'تأجير في المطار' },
+  'footer.svc3': { tr: 'Aylık Araç Kiralama', en: 'Monthly Car Rental', ru: 'Аренда на месяц', de: 'Monatsmiete', ar: 'تأجير شهري' },
+  'footer.svc4': { tr: 'Kurumsal Kiralama', en: 'Corporate Rental', ru: 'Корпоративная аренда', de: 'Firmenanmietung', ar: 'تأجير للشركات' },
+  'footer.svc5': { tr: 'Transfer Hizmetleri', en: 'Transfer Services', ru: 'Трансферы', de: 'Transferdienste', ar: 'خدمات النقل' },
+  'footer.svc6': { tr: 'Lüks Araç Kiralama', en: 'Luxury Car Rental', ru: 'Аренда люкс-авто', de: 'Luxus-Autovermietung', ar: 'تأجير سيارات فاخرة' },
+  'footer.locations': { tr: 'Popüler Lokasyonlar', en: 'Popular Locations', ru: 'Популярные локации', de: 'Beliebte Standorte', ar: 'المواقع الشائعة' },
+  'footer.loc1': { tr: 'İstanbul Araç Kiralama', en: 'Istanbul Car Rental', ru: 'Аренда авто в Стамбуле', de: 'Autovermietung Istanbul', ar: 'تأجير سيارات إسطنبول' },
+  'footer.loc2': { tr: 'Ankara Araç Kiralama', en: 'Ankara Car Rental', ru: 'Аренда авто в Анкаре', de: 'Autovermietung Ankara', ar: 'تأجير سيارات أنقرة' },
+  'footer.loc3': { tr: 'İzmir Araç Kiralama', en: 'Izmir Car Rental', ru: 'Аренда авто в Измире', de: 'Autovermietung Izmir', ar: 'تأجير سيارات إزمير' },
+  'footer.loc4': { tr: 'Antalya Araç Kiralama', en: 'Antalya Car Rental', ru: 'Аренда авто в Анталье', de: 'Autovermietung Antalya', ar: 'تأجير سيارات أنطاليا' },
+  'footer.loc5': { tr: 'Bodrum Araç Kiralama', en: 'Bodrum Car Rental', ru: 'Аренда авто в Бодруме', de: 'Autovermietung Bodrum', ar: 'تأجير سيارات بودروم' },
+  'footer.loc6': { tr: 'İstanbul Havalimanı', en: 'Istanbul Airport', ru: 'Аэропорт Стамбул', de: 'Flughafen Istanbul', ar: 'مطار إسطنبول' },
+  'footer.contact':   { tr: 'İletişim', en: 'Contact', ru: 'Контакты', de: 'Kontakt', ar: 'اتصل بنا' },
+  'footer.hours':     { tr: 'Pazartesi – Pazar: 7/24', en: 'Monday – Sunday: 24/7', ru: 'Пн – Вс: круглосуточно', de: 'Montag – Sonntag: 24/7', ar: 'الإثنين – الأحد: 24/7' },
+  'footer.rights':    { tr: '© 2026 ExitCar. Tüm hakları saklıdır.', en: '© 2026 ExitCar. All rights reserved.', ru: '© 2026 ExitCar. Все права защищены.', de: '© 2026 ExitCar. Alle Rechte vorbehalten.', ar: '© 2026 ExitCar. جميع الحقوق محفوظة.' },
+  'footer.privacy':   { tr: 'Gizlilik Politikası', en: 'Privacy Policy', ru: 'Политика конфиденциальности', de: 'Datenschutz', ar: 'سياسة الخصوصية' },
+  'footer.terms':     { tr: 'Kullanım Koşulları', en: 'Terms of Use', ru: 'Условия использования', de: 'Nutzungsbedingungen', ar: 'شروط الاستخدام' },
+  'footer.ssl':       { tr: '🔒 SSL Güvenli', en: '🔒 SSL Secure', ru: '🔒 SSL защита', de: '🔒 SSL-sicher', ar: '🔒 SSL آمن' },
+  'footer.securePay': { tr: '✅ Güvenli Ödeme', en: '✅ Secure Payment', ru: '✅ Безопасная оплата', de: '✅ Sichere Zahlung', ar: '✅ دفع آمن' },
+
+  // ---------- ARAMA SAYFASI ----------
+  'sr.editSearch':  { tr: '✏️ Aramayı Düzenle', en: '✏️ Edit Search', ru: '✏️ Изменить поиск', de: '✏️ Suche bearbeiten', ar: '✏️ تعديل البحث' },
+  'sr.campaign':    { tr: '%50\'ye varan indirim kaçmasın! 🎉 Şimdi kirala, iptal etmek istersen %100 iade garantisi var ✅', en: 'Don\'t miss up to 50% off! 🎉 Rent now, with a 100% refund guarantee if you cancel ✅', ru: 'Скидки до 50%! 🎉 Бронируйте сейчас, при отмене — 100% возврат ✅', de: 'Bis zu 50% Rabatt sichern! 🎉 Jetzt mieten, bei Stornierung 100% Rückerstattung ✅', ar: 'لا تفوّت خصماً حتى 50%! 🎉 احجز الآن، مع ضمان استرداد 100% عند الإلغاء ✅' },
+  'sr.applyCampaign': { tr: 'Kampanyayı Uygula!', en: 'Apply Deal!', ru: 'Применить акцию!', de: 'Angebot anwenden!', ar: 'طبّق العرض!' },
+  'sr.filter':      { tr: '🔧 Filtrele', en: '🔧 Filter', ru: '🔧 Фильтр', de: '🔧 Filtern', ar: '🔧 تصفية' },
+  'sr.clear':       { tr: 'Temizle', en: 'Clear', ru: 'Сбросить', de: 'Zurücksetzen', ar: 'مسح' },
+  'sr.freeCancel':  { tr: 'Ücretsiz İptal', en: 'Free Cancellation', ru: 'Бесплатная отмена', de: 'Kostenlose Stornierung', ar: 'إلغاء مجاني' },
+  'sr.freeCancelCars': { tr: 'Ücretsiz İptal Olan Araçlar', en: 'Cars with Free Cancellation', ru: 'Авто с бесплатной отменой', de: 'Fahrzeuge mit kostenloser Stornierung', ar: 'سيارات بإلغاء مجاني' },
+  'sr.company':     { tr: 'Kiralama Şirketi', en: 'Rental Company', ru: 'Компания проката', de: 'Vermietungsfirma', ar: 'شركة التأجير' },
+  'sr.transType':   { tr: 'Vites Tipi', en: 'Transmission', ru: 'Коробка передач', de: 'Getriebe', ar: 'ناقل الحركة' },
+  'sr.fuelType':    { tr: 'Yakıt Tipi', en: 'Fuel Type', ru: 'Тип топлива', de: 'Kraftstoff', ar: 'نوع الوقود' },
+  'sr.deliveryType':{ tr: 'Araç Teslim Şekli', en: 'Delivery Type', ru: 'Способ выдачи', de: 'Übergabeart', ar: 'طريقة التسليم' },
+  'sr.priceRange':  { tr: 'Fiyat Aralığı (3 Gün)', en: 'Price Range (3 Days)', ru: 'Диапазон цен (3 дня)', de: 'Preisspanne (3 Tage)', ar: 'نطاق السعر (3 أيام)' },
+  'sr.listed':      { tr: 'Araç Listeleniyor', en: 'Cars Listed', ru: 'Авто в списке', de: 'Fahrzeuge gelistet', ar: 'سيارة معروضة' },
+  'sr.sort':        { tr: '↕ Sırala:', en: '↕ Sort:', ru: '↕ Сортировка:', de: '↕ Sortieren:', ar: '↕ ترتيب:' },
+  'sr.sortRecommended': { tr: 'Önerilen', en: 'Recommended', ru: 'Рекомендуемые', de: 'Empfohlen', ar: 'موصى به' },
+  'sr.sortPriceAsc':    { tr: 'En Ucuz Önce', en: 'Cheapest First', ru: 'Сначала дешёвые', de: 'Günstigste zuerst', ar: 'الأرخص أولاً' },
+  'sr.sortPriceDesc':   { tr: 'En Pahalı Önce', en: 'Most Expensive First', ru: 'Сначала дорогие', de: 'Teuerste zuerst', ar: 'الأغلى أولاً' },
+  'sr.sortScore':       { tr: 'En Yüksek Puan', en: 'Highest Rated', ru: 'Высший рейтинг', de: 'Beste Bewertung', ar: 'الأعلى تقييماً' },
+  'sr.deliveryAirport': { tr: '✈️ Havalimanı İçi Ofis', en: '✈️ Office Inside Airport', ru: '✈️ Офис в аэропорту', de: '✈️ Büro im Flughafen', ar: '✈️ مكتب داخل المطار' },
+  'sr.deliveryOffice':  { tr: '🏢 Şehir Ofisi', en: '🏢 City Office', ru: '🏢 Городской офис', de: '🏢 Stadtbüro', ar: '🏢 مكتب في المدينة' },
+  'sr.kmLimit':     { tr: 'KM Sınırı', en: 'Mileage Limit', ru: 'Лимит пробега', de: 'KM-Limit', ar: 'حد المسافة' },
+  'sr.deposit':     { tr: 'Depozito', en: 'Deposit', ru: 'Залог', de: 'Kaution', ar: 'تأمين' },
+  'sr.reviews':     { tr: 'Yorum', en: 'Reviews', ru: 'отзывов', de: 'Bewertungen', ar: 'تقييم' },
+  'sr.dayLabel':    { tr: 'Günlük', en: 'day rental', ru: 'аренда', de: 'Miete', ar: 'تأجير' },
+  'sr.priceForDays':{ tr: 'Günlük Fiyat', en: 'Price for', ru: 'Цена за', de: 'Preis für', ar: 'سعر' },
+  'sr.daysWord':    { tr: 'Günlük', en: '-Day', ru: 'дн.', de: '-Tage', ar: 'يوم' },
+  'sr.daily':       { tr: 'Günlük', en: 'Daily', ru: 'В день', de: 'Täglich', ar: 'يومياً' },
+  'sr.bookNow':     { tr: 'Hemen Kirala ›', en: 'Book Now ›', ru: 'Забронировать ›', de: 'Jetzt buchen ›', ar: '‹ احجز الآن' },
+  'sr.showIncl':    { tr: '📋 Dahil Hizmetleri Göster', en: '📋 Show Included Services', ru: '📋 Показать включённые услуги', de: '📋 Inklusivleistungen anzeigen', ar: '📋 عرض الخدمات المشمولة' },
+  'sr.hideIncl':    { tr: '📋 Dahil Hizmetleri Gizle', en: '📋 Hide Included Services', ru: '📋 Скрыть включённые услуги', de: '📋 Inklusivleistungen ausblenden', ar: '📋 إخفاء الخدمات المشمولة' },
+  'sr.supplier':    { tr: 'Tedarikçi', en: 'Supplier', ru: 'Поставщик', de: 'Anbieter', ar: 'المورّد' },
+  'sr.transmission':{ tr: 'Vites', en: 'Transmission', ru: 'КПП', de: 'Getriebe', ar: 'ناقل الحركة' },
+  'sr.fuel':        { tr: 'Yakıt', en: 'Fuel', ru: 'Топливо', de: 'Kraftstoff', ar: 'الوقود' },
+  'sr.seats':       { tr: 'Koltuk', en: 'Seats', ru: 'Места', de: 'Sitze', ar: 'المقاعد' },
+  'sr.inclServices':{ tr: 'Dahil Hizmetler', en: 'Included Services', ru: 'Включённые услуги', de: 'Inklusivleistungen', ar: 'الخدمات المشمولة' },
+  'sr.trafficIns':  { tr: 'Zorunlu Trafik Sigortası', en: 'Mandatory Traffic Insurance', ru: 'Обязательное автострахование', de: 'Pflicht-Haftpflichtversicherung', ar: 'تأمين المرور الإلزامي' },
+  'sr.vatIncl':     { tr: 'KDV Dahil', en: 'VAT Included', ru: 'НДС включён', de: 'inkl. MwSt.', ar: 'شامل الضريبة' },
+  'sr.cascoOpt':    { tr: 'Kasko (Opsiyonel — rezervasyonda seçilebilir)', en: 'Comprehensive insurance (Optional — selectable at booking)', ru: 'КАСКО (опционально — выбирается при бронировании)', de: 'Vollkasko (optional — bei Buchung wählbar)', ar: 'تأمين شامل (اختياري — يُختار عند الحجز)' },
+  'sr.promoTitle':  { tr: '🎁 ExitCar Üyelerine Özel', en: '🎁 Exclusive for ExitCar Members', ru: '🎁 Только для участников ExitCar', de: '🎁 Exklusiv für ExitCar-Mitglieder', ar: '🎁 حصري لأعضاء ExitCar' },
+  'sr.promoSub':    { tr: 'İlk kiralamanızda %20 indirim — şimdi üye olun!', en: '20% off your first rental — sign up now!', ru: 'Скидка 20% на первую аренду — регистрируйтесь!', de: '20% Rabatt auf Ihre erste Anmietung — jetzt anmelden!', ar: 'خصم 20% على أول تأجير — سجّل الآن!' },
+  'sr.promoBtn':    { tr: 'Hemen Üye Ol →', en: 'Sign Up Now →', ru: 'Зарегистрироваться →', de: 'Jetzt anmelden →', ar: '← سجّل الآن' },
+  'sr.noResultsTitle': { tr: 'Kriterlere uygun araç bulunamadı', en: 'No cars match your criteria', ru: 'Нет авто по вашим критериям', de: 'Keine passenden Fahrzeuge gefunden', ar: 'لا توجد سيارات تطابق معاييرك' },
+  'sr.noResultsSub':   { tr: 'Filtrelerinizi genişletmeyi deneyin.', en: 'Try broadening your filters.', ru: 'Попробуйте расширить фильтры.', de: 'Versuchen Sie, Ihre Filter zu erweitern.', ar: 'حاول توسيع عوامل التصفية.' },
+  'sr.fromShort':   { tr: '’den', en: '+', ru: '+', de: '+', ar: '+' },
+  'sr.daysPrice':   { tr: '{d} Günlük Fiyat', en: '{d}-Day Price', ru: 'Цена за {d} дн.', de: 'Preis für {d} Tage', ar: 'سعر {d} يوم' },
+
+  // Kategoriler (arama tabları + kart rozetleri) — TR veri değeri → çeviri
+  'catName.Ekonomi': { tr: 'Ekonomi', en: 'Economy', ru: 'Эконом', de: 'Economy', ar: 'اقتصادية' },
+  'catName.Orta':    { tr: 'Orta', en: 'Mid-size', ru: 'Средний', de: 'Mittelklasse', ar: 'متوسطة' },
+  'catName.Ust':     { tr: 'Üst', en: 'Upper', ru: 'Высший', de: 'Oberklasse', ar: 'عليا' },
+  'catName.Luks':    { tr: 'Lüks', en: 'Luxury', ru: 'Люкс', de: 'Luxus', ar: 'فاخرة' },
+  'catName.SUV':     { tr: 'SUV', en: 'SUV', ru: 'Внедорожник', de: 'SUV', ar: 'دفع رباعي' },
+  'catName.Van':     { tr: 'Van', en: 'Van', ru: 'Минивэн', de: 'Van', ar: 'فان' },
+
+  // Vites / Yakıt değerleri
+  'val.Otomatik': { tr: 'Otomatik', en: 'Automatic', ru: 'Автомат', de: 'Automatik', ar: 'أوتوماتيك' },
+  'val.Manuel':   { tr: 'Manuel', en: 'Manual', ru: 'Механика', de: 'Schaltgetriebe', ar: 'يدوي' },
+  'val.Benzin':   { tr: 'Benzin', en: 'Petrol', ru: 'Бензин', de: 'Benzin', ar: 'بنزين' },
+  'val.Dizel':    { tr: 'Dizel', en: 'Diesel', ru: 'Дизель', de: 'Diesel', ar: 'ديزل' },
+  'val.Hibrit':   { tr: 'Hibrit', en: 'Hybrid', ru: 'Гибрид', de: 'Hybrid', ar: 'هجين' },
+  'val.Elektrik': { tr: 'Elektrik', en: 'Electric', ru: 'Электро', de: 'Elektro', ar: 'كهربائي' },
+
+  // Araç ekstraları (TR kaynak metin → çeviri)
+  'ex.GPS dahil':                  { tr: 'GPS dahil', en: 'GPS included', ru: 'GPS включён', de: 'GPS inklusive', ar: 'GPS مشمول' },
+  'ex.Bebek koltugu eklenebilir':  { tr: 'Bebek koltuğu eklenebilir', en: 'Baby seat can be added', ru: 'Можно добавить детское кресло', de: 'Kindersitz zubuchbar', ar: 'يمكن إضافة مقعد أطفال' },
+  'ex.Ucretsiz iptal':             { tr: 'Ücretsiz iptal', en: 'Free cancellation', ru: 'Бесплатная отмена', de: 'Kostenlose Stornierung', ar: 'إلغاء مجاني' },
+  'ex.Tam sigorta secenegi':       { tr: 'Tam sigorta seçeneği', en: 'Full insurance option', ru: 'Опция полного страхования', de: 'Vollversicherungsoption', ar: 'خيار تأمين شامل' },
+  'ex.Ucuz baslangic fiyati':      { tr: 'Ucuz başlangıç fiyatı', en: 'Low starting price', ru: 'Низкая стартовая цена', de: 'Günstiger Startpreis', ar: 'سعر بداية منخفض' },
+  'ex.Hibrit yakit tasarrufu':     { tr: 'Hibrit yakıt tasarrufu', en: 'Hybrid fuel savings', ru: 'Экономия топлива (гибрид)', de: 'Hybrid-Kraftstoffersparnis', ar: 'توفير وقود هجين' },
+  'ex.24/7 yol yardimi':           { tr: '24/7 yol yardımı', en: '24/7 roadside assistance', ru: 'Помощь на дороге 24/7', de: '24/7-Pannenhilfe', ar: 'مساعدة على الطريق 24/7' },
+  'ex.Kasko dahil':                { tr: 'Kasko dahil', en: 'Comprehensive insurance included', ru: 'КАСКО включено', de: 'Vollkasko inklusive', ar: 'تأمين شامل مضمّن' },
+  'ex.Business sinifi':            { tr: 'Business sınıfı', en: 'Business class', ru: 'Бизнес-класс', de: 'Business-Klasse', ar: 'درجة الأعمال' },
+  'ex.Navigasyon':                 { tr: 'Navigasyon', en: 'Navigation', ru: 'Навигация', de: 'Navigation', ar: 'ملاحة' },
+  'ex.Tam kasko':                  { tr: 'Tam kasko', en: 'Full comprehensive cover', ru: 'Полное КАСКО', de: 'Vollkasko', ar: 'تأمين شامل كامل' },
+  'ex.4x4 secenegi':               { tr: '4x4 seçeneği', en: '4x4 option', ru: 'Опция 4x4', de: '4x4-Option', ar: 'خيار دفع رباعي' },
+  'ex.Genis bagaj':                { tr: 'Geniş bagaj', en: 'Large trunk', ru: 'Большой багажник', de: 'Großer Kofferraum', ar: 'صندوق واسع' },
+  'ex.GPS':                        { tr: 'GPS', en: 'GPS', ru: 'GPS', de: 'GPS', ar: 'GPS' },
+  'ex.Genis ic mekan':            { tr: 'Geniş iç mekan', en: 'Spacious interior', ru: 'Просторный салон', de: 'Großzügiger Innenraum', ar: 'مقصورة واسعة' },
+  'ex.Apple CarPlay':              { tr: 'Apple CarPlay', en: 'Apple CarPlay', ru: 'Apple CarPlay', de: 'Apple CarPlay', ar: 'Apple CarPlay' },
+  'ex.9 kisilik':                  { tr: '9 kişilik', en: '9 seats', ru: 'на 9 мест', de: '9 Sitze', ar: '9 مقاعد' },
+  'ex.Genis bagaj bolmesi':        { tr: 'Geniş bagaj bölmesi', en: 'Large luggage compartment', ru: 'Большое багажное отделение', de: 'Großes Gepäckabteil', ar: 'حجرة أمتعة كبيرة' },
+  'ex.Premium sinif':              { tr: 'Premium sınıf', en: 'Premium class', ru: 'Премиум-класс', de: 'Premium-Klasse', ar: 'درجة فاخرة' },
+  'ex.Sahin gozu kamera':          { tr: 'Şahin gözü kamera', en: '360° camera', ru: 'Камера кругового обзора', de: '360°-Kamera', ar: 'كاميرا 360°' },
+  'ex.Kablosuz sarj':              { tr: 'Kablosuz şarj', en: 'Wireless charging', ru: 'Беспроводная зарядка', de: 'Kabelloses Laden', ar: 'شحن لاسلكي' },
+  'ex.AMG Line':                   { tr: 'AMG Line', en: 'AMG Line', ru: 'AMG Line', de: 'AMG Line', ar: 'AMG Line' },
+  'ex.Panoramik cam tavan':        { tr: 'Panoramik cam tavan', en: 'Panoramic glass roof', ru: 'Панорамная крыша', de: 'Panorama-Glasdach', ar: 'سقف زجاجي بانورامي' },
+  'ex.Hibrit':                     { tr: 'Hibrit', en: 'Hybrid', ru: 'Гибрид', de: 'Hybrid', ar: 'هجين' },
+  'ex.Dusuk yakit tuketimi':       { tr: 'Düşük yakıt tüketimi', en: 'Low fuel consumption', ru: 'Низкий расход топлива', de: 'Niedriger Verbrauch', ar: 'استهلاك وقود منخفض' },
+  'ex.Ekonomik fiyat':             { tr: 'Ekonomik fiyat', en: 'Economical price', ru: 'Экономичная цена', de: 'Günstiger Preis', ar: 'سعر اقتصادي' },
+  'ex.Genis SUV':                  { tr: 'Geniş SUV', en: 'Large SUV', ru: 'Большой внедорожник', de: 'Großer SUV', ar: 'دفع رباعي كبير' },
+  'ex.24/7 destek':                { tr: '24/7 destek', en: '24/7 support', ru: 'Поддержка 24/7', de: '24/7-Support', ar: 'دعم 24/7' },
+  'ex.Ticari arac':                { tr: 'Ticari araç', en: 'Commercial vehicle', ru: 'Коммерческий транспорт', de: 'Nutzfahrzeug', ar: 'مركبة تجارية' },
+
+  // ---------- REZERVASYON ADIMLARI ----------
+  'step1.label': { tr: 'Adım 1/3', en: 'Step 1/3', ru: 'Шаг 1/3', de: 'Schritt 1/3', ar: 'الخطوة 1/3' },
+  'step2.label': { tr: 'Adım 2/3', en: 'Step 2/3', ru: 'Шаг 2/3', de: 'Schritt 2/3', ar: 'الخطوة 2/3' },
+  'step3.label': { tr: 'Adım 3/3', en: 'Step 3/3', ru: 'Шаг 3/3', de: 'Schritt 3/3', ar: 'الخطوة 3/3' },
+  'step1.name':  { tr: 'Araç & Sigorta', en: 'Car & Insurance', ru: 'Авто и страховка', de: 'Auto & Versicherung', ar: 'السيارة والتأمين' },
+  'step2.name':  { tr: 'Sürücü Bilgileri', en: 'Driver Details', ru: 'Данные водителя', de: 'Fahrerdaten', ar: 'بيانات السائق' },
+  'step3.name':  { tr: 'Ödeme', en: 'Payment', ru: 'Оплата', de: 'Zahlung', ar: 'الدفع' },
+
+  // ---------- REZERVASYON (sigorta/ekstra) ----------
+  'res.rentalInfo':  { tr: 'Kiralama Bilgileri', en: 'Rental Details', ru: 'Детали аренды', de: 'Mietdetails', ar: 'تفاصيل التأجير' },
+  'res.pickup':      { tr: '📍 Alış Yeri', en: '📍 Pick-up Location', ru: '📍 Место получения', de: '📍 Abholort', ar: '📍 مكان الاستلام' },
+  'res.return':      { tr: '📍 İade Yeri', en: '📍 Return Location', ru: '📍 Место возврата', de: '📍 Rückgabeort', ar: '📍 مكان الإعادة' },
+  'res.selectIns':   { tr: 'Sigorta Paketi Seçin', en: 'Choose an Insurance Package', ru: 'Выберите пакет страхования', de: 'Versicherungspaket wählen', ar: 'اختر باقة التأمين' },
+  'res.insInfo':     { tr: 'Tüm araçlarda trafik sigortası ve zorunlu mali sorumluluk sigortası dahildir. Aşağıdaki paketlerle ek güvence sağlayabilirsiniz.', en: 'All cars include traffic and mandatory liability insurance. You can add extra coverage with the packages below.', ru: 'Все авто включают ОСАГО и обязательное страхование ответственности. Ниже можно добавить доп. покрытие.', de: 'Alle Fahrzeuge beinhalten Haftpflicht- und Pflichtversicherung. Mit den Paketen unten können Sie zusätzliche Absicherung hinzufügen.', ar: 'تشمل جميع السيارات تأمين المرور والمسؤولية الإلزامي. يمكنك إضافة تغطية إضافية بالباقات أدناه.' },
+  'res.basicName':   { tr: 'Temel Paket', en: 'Basic Package', ru: 'Базовый пакет', de: 'Basis-Paket', ar: 'الباقة الأساسية' },
+  'res.free':        { tr: 'Ücretsiz', en: 'Free', ru: 'Бесплатно', de: 'Kostenlos', ar: 'مجاني' },
+  'res.trafficIncl': { tr: 'Trafik Sigortası Dahil', en: 'Traffic Insurance Included', ru: 'ОСАГО включено', de: 'Haftpflicht inklusive', ar: 'تأمين المرور مشمول' },
+  'res.liability':   { tr: 'Zorunlu Mali Sorumluluk', en: 'Mandatory Liability Cover', ru: 'Обязательное страхование ответственности', de: 'Pflicht-Haftpflicht', ar: 'مسؤولية مالية إلزامية' },
+  'res.noCasco':     { tr: 'Kasko Yok', en: 'No Comprehensive Cover', ru: 'Без КАСКО', de: 'Keine Vollkasko', ar: 'بدون تأمين شامل' },
+  'res.noMini':      { tr: 'Mini Hasar Güvencesi Yok', en: 'No Minor Damage Cover', ru: 'Без покрытия мелких повреждений', de: 'Kein Mini-Schadenschutz', ar: 'بدون تغطية أضرار طفيفة' },
+  'res.mediumName':  { tr: 'Güvenli Paket', en: 'Safe Package', ru: 'Надёжный пакет', de: 'Sicher-Paket', ar: 'الباقة الآمنة' },
+  'res.popular':     { tr: 'En Popüler', en: 'Most Popular', ru: 'Популярный', de: 'Beliebt', ar: 'الأكثر شيوعاً' },
+  'res.cascoCover':  { tr: 'Kasko Güvencesi', en: 'Comprehensive Cover', ru: 'Покрытие КАСКО', de: 'Vollkasko-Schutz', ar: 'تغطية شاملة' },
+  'res.deductible':  { tr: '2.500 TL Muafiyet', en: 'Deductible: 2,500 TL', ru: 'Франшиза 2 500 TL', de: 'Selbstbeteiligung 2.500 TL', ar: 'تحمّل 2,500 ليرة' },
+  'res.fullName':    { tr: 'Her Şey Dahil', en: 'All-Inclusive', ru: 'Всё включено', de: 'All-Inclusive', ar: 'شامل كل شيء' },
+  'res.fullProtect': { tr: 'Tam Koruma', en: 'Full Protection', ru: 'Полная защита', de: 'Vollschutz', ar: 'حماية كاملة' },
+  'res.fullCasco':   { tr: 'Tam Kasko Güvencesi', en: 'Full Comprehensive Cover', ru: 'Полное покрытие КАСКО', de: 'Voller Vollkasko-Schutz', ar: 'تغطية شاملة كاملة' },
+  'res.noDeductible':{ tr: 'Muafiyetsiz (0 TL)', en: 'No Deductible (0 TL)', ru: 'Без франшизы (0 TL)', de: 'Ohne Selbstbeteiligung (0 TL)', ar: 'بدون تحمّل (0 ليرة)' },
+  'res.miniCover':   { tr: 'Mini Hasar Güvencesi', en: 'Minor Damage Cover', ru: 'Покрытие мелких повреждений', de: 'Mini-Schadenschutz', ar: 'تغطية الأضرار الطفيفة' },
+  'res.extras':      { tr: 'Ekstra Hizmetler', en: 'Extra Services', ru: 'Дополнительные услуги', de: 'Zusatzleistungen', ar: 'خدمات إضافية' },
+  'res.optional':    { tr: '(İsteğe Bağlı)', en: '(Optional)', ru: '(по желанию)', de: '(Optional)', ar: '(اختياري)' },
+  'res.gpsName':     { tr: 'GPS / Navigasyon', en: 'GPS / Navigation', ru: 'GPS / Навигация', de: 'GPS / Navigation', ar: 'GPS / ملاحة' },
+  'res.gpsDesc':     { tr: 'Araçta dahili navigasyon sistemi', en: 'Built-in navigation system', ru: 'Встроенная навигация', de: 'Integriertes Navigationssystem', ar: 'نظام ملاحة مدمج' },
+  'res.babyName':    { tr: 'Bebek Koltuğu', en: 'Baby Seat', ru: 'Детское кресло', de: 'Kindersitz', ar: 'مقعد أطفال' },
+  'res.babyDesc':    { tr: '9-18 kg arası çocuklar için', en: 'For children 9-18 kg', ru: 'Для детей 9-18 кг', de: 'Für Kinder 9-18 kg', ar: 'للأطفال 9-18 كغ' },
+  'res.driver2Name': { tr: '2. Sürücü', en: '2nd Driver', ru: 'Второй водитель', de: '2. Fahrer', ar: 'سائق ثانٍ' },
+  'res.driver2Desc': { tr: 'Ek bir kişi araç kullanabilir', en: 'An additional person can drive', ru: 'Авто может водить ещё один человек', de: 'Eine weitere Person darf fahren', ar: 'يمكن لشخص إضافي القيادة' },
+  'res.wifiName':    { tr: 'Mobil Wi-Fi', en: 'Mobile Wi-Fi', ru: 'Мобильный Wi-Fi', de: 'Mobiles WLAN', ar: 'واي فاي محمول' },
+  'res.wifiDesc':    { tr: 'Sınırsız internet erişimi', en: 'Unlimited internet access', ru: 'Безлимитный интернет', de: 'Unbegrenzter Internetzugang', ar: 'إنترنت غير محدود' },
+  'res.snowName':    { tr: 'Kış Lastiği Paketi', en: 'Winter Tire Package', ru: 'Пакет зимних шин', de: 'Winterreifen-Paket', ar: 'باقة إطارات شتوية' },
+  'res.snowDesc':    { tr: 'Kar ve buz koşullarına uygun', en: 'Suitable for snow and ice', ru: 'Для снега и льда', de: 'Für Schnee und Eis geeignet', ar: 'مناسبة للثلج والجليد' },
+  'res.roadsideName':{ tr: 'Yol Yardımı', en: 'Roadside Assistance', ru: 'Помощь на дороге', de: 'Pannenhilfe', ar: 'مساعدة على الطريق' },
+  'res.roadsideDesc':{ tr: '7/24 arıza destek hizmeti', en: '24/7 breakdown support', ru: 'Помощь при поломке 24/7', de: '24/7-Pannenservice', ar: 'دعم الأعطال 24/7' },
+  'res.continueDriver': { tr: 'Sürücü Bilgilerine Devam Et →', en: 'Continue to Driver Details →', ru: 'Перейти к данным водителя →', de: 'Weiter zu Fahrerdaten →', ar: '← متابعة إلى بيانات السائق' },
+  'res.backToList':  { tr: '← Araç Listesine Dön', en: '← Back to Car List', ru: '← Назад к списку авто', de: '← Zurück zur Fahrzeugliste', ar: 'العودة إلى قائمة السيارات →' },
+  'res.total':       { tr: 'TOPLAM', en: 'TOTAL', ru: 'ИТОГО', de: 'GESAMT', ar: 'الإجمالي' },
+  'res.extrasLine':  { tr: 'Ekstralar', en: 'Extras', ru: 'Доп. услуги', de: 'Extras', ar: 'إضافات' },
+  'res.carLine':     { tr: 'Araç', en: 'Car', ru: 'Авто', de: 'Auto', ar: 'السيارة' },
+  'res.freeCancelBox': { tr: 'Kiralama başlangıcından 48 saat önce ücretsiz iptal edebilirsiniz.', en: 'You can cancel free of charge up to 48 hours before pick-up.', ru: 'Бесплатная отмена за 48 часов до начала аренды.', de: 'Kostenlose Stornierung bis 48 Stunden vor Abholung.', ar: 'يمكنك الإلغاء مجاناً حتى 48 ساعة قبل الاستلام.' },
+  'res.licensed':    { tr: '🛡️ Lisanslı Firma', en: '🛡️ Licensed Company', ru: '🛡️ Лицензированная компания', de: '🛡️ Lizenziertes Unternehmen', ar: '🛡️ شركة مرخّصة' },
+
+  // ---------- SÜRÜCÜ BİLGİLERİ ----------
+  'di.title':       { tr: 'Sürücü Bilgileri', en: 'Driver Details', ru: 'Данные водителя', de: 'Fahrerdaten', ar: 'بيانات السائق' },
+  'di.info':        { tr: 'Lütfen teslimatta kullanılacak sürücünün bilgilerini girin. Girilen bilgiler kimlik belgesi ile aynı olmalıdır.', en: 'Please enter the details of the driver at handover. The information must match the ID document.', ru: 'Укажите данные водителя при получении. Данные должны совпадать с документом.', de: 'Bitte geben Sie die Daten des Fahrers bei Übergabe ein. Die Angaben müssen mit dem Ausweis übereinstimmen.', ar: 'يرجى إدخال بيانات السائق عند التسليم. يجب أن تطابق وثيقة الهوية.' },
+  'di.personal':    { tr: 'Kişisel Bilgiler', en: 'Personal Information', ru: 'Личные данные', de: 'Persönliche Daten', ar: 'المعلومات الشخصية' },
+  'di.firstName':   { tr: 'Ad', en: 'First Name', ru: 'Имя', de: 'Vorname', ar: 'الاسم' },
+  'di.firstNamePh': { tr: 'Adınız', en: 'Your first name', ru: 'Ваше имя', de: 'Ihr Vorname', ar: 'اسمك' },
+  'di.lastName':    { tr: 'Soyad', en: 'Last Name', ru: 'Фамилия', de: 'Nachname', ar: 'اللقب' },
+  'di.lastNamePh':  { tr: 'Soyadınız', en: 'Your last name', ru: 'Ваша фамилия', de: 'Ihr Nachname', ar: 'لقبك' },
+  'di.email':       { tr: 'E-posta', en: 'Email', ru: 'Эл. почта', de: 'E-Mail', ar: 'البريد الإلكتروني' },
+  'di.emailHint':   { tr: 'Rezervasyon onayı bu adrese gönderilecek', en: 'Booking confirmation will be sent here', ru: 'Подтверждение брони придёт сюда', de: 'Die Buchungsbestätigung wird hierher gesendet', ar: 'سيُرسل تأكيد الحجز إلى هذا العنوان' },
+  'di.phone':       { tr: 'Telefon', en: 'Phone', ru: 'Телефон', de: 'Telefon', ar: 'الهاتف' },
+  'di.birthDate':   { tr: 'Doğum Tarihi', en: 'Date of Birth', ru: 'Дата рождения', de: 'Geburtsdatum', ar: 'تاريخ الميلاد' },
+  'di.tcNo':        { tr: 'TC Kimlik No', en: 'ID / Passport No', ru: 'Номер паспорта', de: 'Ausweis-/Passnummer', ar: 'رقم الهوية / الجواز' },
+  'di.tcNoPh':      { tr: '11 haneli TC No', en: 'ID or passport number', ru: 'Номер документа', de: 'Ausweis- oder Passnummer', ar: 'رقم الهوية أو الجواز' },
+  'di.license':     { tr: 'Ehliyet Bilgileri', en: 'License Information', ru: 'Данные водительских прав', de: 'Führerscheindaten', ar: 'بيانات رخصة القيادة' },
+  'di.licenseNo':   { tr: 'Ehliyet Numarası', en: 'License Number', ru: 'Номер прав', de: 'Führerscheinnummer', ar: 'رقم الرخصة' },
+  'di.licenseNoPh': { tr: 'Ehliyet numaranız', en: 'Your license number', ru: 'Номер ваших прав', de: 'Ihre Führerscheinnummer', ar: 'رقم رخصتك' },
+  'di.licenseDate': { tr: 'Ehliyet Veriliş Tarihi', en: 'License Issue Date', ru: 'Дата выдачи прав', de: 'Ausstellungsdatum', ar: 'تاريخ إصدار الرخصة' },
+  'di.licenseClass':{ tr: 'Ehliyet Sınıfı', en: 'License Class', ru: 'Категория прав', de: 'Führerscheinklasse', ar: 'فئة الرخصة' },
+  'di.select':      { tr: 'Seçin', en: 'Select', ru: 'Выберите', de: 'Wählen', ar: 'اختر' },
+  'di.classB':      { tr: 'B — Otomobil', en: 'B — Car', ru: 'B — Легковой', de: 'B — Pkw', ar: 'B — سيارة' },
+  'di.classBE':     { tr: 'B+E — Otomobil + Römork', en: 'B+E — Car + Trailer', ru: 'B+E — Авто + прицеп', de: 'B+E — Pkw + Anhänger', ar: 'B+E — سيارة + مقطورة' },
+  'di.classA2':     { tr: 'A2 — Motosiklet', en: 'A2 — Motorcycle', ru: 'A2 — Мотоцикл', de: 'A2 — Motorrad', ar: 'A2 — دراجة نارية' },
+  'di.classC':      { tr: 'C — Kamyon', en: 'C — Truck', ru: 'C — Грузовик', de: 'C — Lkw', ar: 'C — شاحنة' },
+  'di.nationality': { tr: 'Vatandaşlık', en: 'Nationality', ru: 'Гражданство', de: 'Staatsangehörigkeit', ar: 'الجنسية' },
+  'di.natTR': { tr: '🇹🇷 Türkiye', en: '🇹🇷 Türkiye', ru: '🇹🇷 Турция', de: '🇹🇷 Türkei', ar: '🇹🇷 تركيا' },
+  'di.natDE': { tr: '🇩🇪 Almanya', en: '🇩🇪 Germany', ru: '🇩🇪 Германия', de: '🇩🇪 Deutschland', ar: '🇩🇪 ألمانيا' },
+  'di.natGB': { tr: '🇬🇧 Birleşik Krallık', en: '🇬🇧 United Kingdom', ru: '🇬🇧 Великобритания', de: '🇬🇧 Vereinigtes Königreich', ar: '🇬🇧 المملكة المتحدة' },
+  'di.natRU': { tr: '🇷🇺 Rusya', en: '🇷🇺 Russia', ru: '🇷🇺 Россия', de: '🇷🇺 Russland', ar: '🇷🇺 روسيا' },
+  'di.natFR': { tr: '🇫🇷 Fransa', en: '🇫🇷 France', ru: '🇫🇷 Франция', de: '🇫🇷 Frankreich', ar: '🇫🇷 فرنسا' },
+  'di.natNL': { tr: '🇳🇱 Hollanda', en: '🇳🇱 Netherlands', ru: '🇳🇱 Нидерланды', de: '🇳🇱 Niederlande', ar: '🇳🇱 هولندا' },
+  'di.natOther': { tr: 'Diğer', en: 'Other', ru: 'Другое', de: 'Andere', ar: 'أخرى' },
+  'di.flight':      { tr: 'Uçuş Bilgileri', en: 'Flight Information', ru: 'Информация о рейсе', de: 'Fluginformationen', ar: 'معلومات الرحلة' },
+  'di.flightOpt':   { tr: '(havalimanı teslimleri için — isteğe bağlı)', en: '(for airport deliveries — optional)', ru: '(для выдачи в аэропорту — по желанию)', de: '(für Flughafenübergaben — optional)', ar: '(لتسليم المطار — اختياري)' },
+  'di.flightNo':    { tr: 'Uçuş Numarası', en: 'Flight Number', ru: 'Номер рейса', de: 'Flugnummer', ar: 'رقم الرحلة' },
+  'di.flightHint':  { tr: 'Gecikmeler durumunda sizi bekliyoruz', en: 'We\'ll wait for you in case of delays', ru: 'При задержках мы вас дождёмся', de: 'Bei Verspätungen warten wir auf Sie', ar: 'سننتظرك في حال التأخير' },
+  'di.flightFrom':  { tr: 'Gelen Uçuş Kalkış Noktası', en: 'Departure Point of Arriving Flight', ru: 'Пункт вылета прибывающего рейса', de: 'Abflugort des ankommenden Flugs', ar: 'نقطة مغادرة الرحلة القادمة' },
+  'di.flightFromPh':{ tr: 'İzmir, Amsterdam...', en: 'Izmir, Amsterdam...', ru: 'Измир, Амстердам...', de: 'Izmir, Amsterdam...', ar: 'إزمير، أمستردام...' },
+  'di.special':     { tr: 'Özel İstekler', en: 'Special Requests', ru: 'Особые пожелания', de: 'Sonderwünsche', ar: 'طلبات خاصة' },
+  'di.note':        { tr: 'Not / İstek', en: 'Note / Request', ru: 'Примечание / запрос', de: 'Notiz / Wunsch', ar: 'ملاحظة / طلب' },
+  'di.notePh':      { tr: 'Özel isteğiniz varsa buraya yazabilirsiniz...', en: 'Write any special requests here...', ru: 'Напишите особые пожелания здесь...', de: 'Besondere Wünsche hier eintragen...', ar: 'اكتب أي طلبات خاصة هنا...' },
+  'di.kvkkLabel':   { tr: 'KVKK Aydınlatma Metni', en: 'Privacy Notice', ru: 'Уведомление о персональных данных', de: 'Datenschutzhinweis', ar: 'إشعار الخصوصية' },
+  'di.kvkkText':    { tr: '’ni okudum, kişisel verilerimin işlenmesini kabul ediyorum.', en: ' — I have read it and consent to the processing of my personal data.', ru: ' — я прочитал и согласен на обработку персональных данных.', de: ' — Ich habe es gelesen und stimme der Verarbeitung meiner Daten zu.', ar: ' — قرأته وأوافق على معالجة بياناتي الشخصية.' },
+  'di.readText':    { tr: 'Metni oku →', en: 'Read notice →', ru: 'Читать →', de: 'Hinweis lesen →', ar: '← اقرأ' },
+  'di.termsLabel':  { tr: 'Kiralama Sözleşmesi', en: 'Rental Agreement', ru: 'Договор аренды', de: 'Mietvertrag', ar: 'عقد التأجير' },
+  'di.termsAnd':    { tr: ' ve ', en: ' and ', ru: ' и ', de: ' und ', ar: ' و ' },
+  'di.termsGeneral':{ tr: 'Genel Kullanım Koşulları', en: 'General Terms of Use', ru: 'Общие условия', de: 'Allgemeine Nutzungsbedingungen', ar: 'الشروط العامة' },
+  'di.termsText':   { tr: '’nı okudum, kabul ediyorum.', en: ' — I have read and accept them.', ru: ' — я прочитал и принимаю.', de: ' — Ich habe sie gelesen und akzeptiere sie.', ar: ' — قرأتها وأوافق عليها.' },
+  'di.readTerms':   { tr: 'Koşulları oku →', en: 'Read terms →', ru: 'Читать условия →', de: 'Bedingungen lesen →', ar: '← اقرأ الشروط' },
+  'di.continuePay': { tr: 'Ödemeye Devam Et →', en: 'Continue to Payment →', ru: 'Перейти к оплате →', de: 'Weiter zur Zahlung →', ar: '← متابعة إلى الدفع' },
+  'di.back':        { tr: '← Geri Dön', en: '← Go Back', ru: '← Назад', de: '← Zurück', ar: 'رجوع →' },
+  'di.warnDocs':    { tr: 'Teslimatta sürücü belgesi, kimlik ve rezervasyon belgesi yanınızda olmalıdır.', en: 'At handover you must have your driver\'s license, ID and booking document with you.', ru: 'При получении при себе должны быть права, удостоверение личности и документ брони.', de: 'Bei Übergabe müssen Führerschein, Ausweis und Buchungsbeleg mitgeführt werden.', ar: 'عند التسليم يجب أن تحمل رخصة القيادة والهوية ووثيقة الحجز.' },
+  'di.kvkkCompliant': { tr: '🛡️ KVKK Uyumlu', en: '🛡️ GDPR Compliant', ru: '🛡️ Соответствие GDPR', de: '🛡️ DSGVO-konform', ar: '🛡️ متوافق مع حماية البيانات' },
+
+  // Doğrulama mesajları (driver-info.js)
+  'di.val.required': { tr: 'zorunludur.', en: 'is required.', ru: 'обязательно.', de: 'ist erforderlich.', ar: 'مطلوب.' },
+  'di.val.minLen':   { tr: 'en az {n} karakter olmalıdır.', en: 'must be at least {n} characters.', ru: 'должно содержать не менее {n} символов.', de: 'muss mindestens {n} Zeichen haben.', ar: 'يجب أن يكون {n} أحرف على الأقل.' },
+  'di.val.exactLen': { tr: '{n} haneli olmalıdır.', en: 'must be {n} digits.', ru: 'должно содержать {n} цифр.', de: 'muss {n} Ziffern haben.', ar: 'يجب أن يكون {n} أرقام.' },
+  'di.val.pattern':  { tr: 'Geçerli bir {label} girin.', en: 'Enter a valid {label}.', ru: 'Введите корректное значение: {label}.', de: 'Geben Sie ein gültiges {label} ein.', ar: 'أدخل {label} صحيحاً.' },
+  'di.val.minAge':   { tr: 'Araç kiralama için minimum yaş 21\'dir.', en: 'The minimum age for car rental is 21.', ru: 'Минимальный возраст для аренды — 21 год.', de: 'Das Mindestalter für die Anmietung beträgt 21 Jahre.', ar: 'الحد الأدنى لعمر التأجير هو 21 عاماً.' },
+  'di.val.badBirth': { tr: 'Geçersiz doğum tarihi.', en: 'Invalid date of birth.', ru: 'Неверная дата рождения.', de: 'Ungültiges Geburtsdatum.', ar: 'تاريخ ميلاد غير صالح.' },
+  'di.val.license1yr': { tr: 'En az 1 yıllık ehliyete sahip olmalısınız.', en: 'You must have held your license for at least 1 year.', ru: 'Стаж вождения должен быть не менее 1 года.', de: 'Sie müssen Ihren Führerschein seit mindestens 1 Jahr besitzen.', ar: 'يجب أن تمتلك رخصتك منذ سنة واحدة على الأقل.' },
+  'di.val.acceptKvkk': { tr: 'Lütfen KVKK Aydınlatma Metni\'ni kabul edin.', en: 'Please accept the Privacy Notice.', ru: 'Пожалуйста, примите уведомление о данных.', de: 'Bitte akzeptieren Sie den Datenschutzhinweis.', ar: 'يرجى قبول إشعار الخصوصية.' },
+  'di.val.acceptTerms': { tr: 'Lütfen Kiralama Koşulları\'nı kabul edin.', en: 'Please accept the Rental Terms.', ru: 'Пожалуйста, примите условия аренды.', de: 'Bitte akzeptieren Sie die Mietbedingungen.', ar: 'يرجى قبول شروط التأجير.' },
+  // Alan etiketleri (doğrulama mesajlarında kullanılır)
+  'lbl.firstName':   { tr: 'Ad', en: 'First name', ru: 'Имя', de: 'Vorname', ar: 'الاسم' },
+  'lbl.lastName':    { tr: 'Soyad', en: 'Last name', ru: 'Фамилия', de: 'Nachname', ar: 'اللقب' },
+  'lbl.email':       { tr: 'E-posta', en: 'Email', ru: 'Эл. почта', de: 'E-Mail', ar: 'البريد الإلكتروني' },
+  'lbl.phone':       { tr: 'Telefon', en: 'Phone', ru: 'Телефон', de: 'Telefon', ar: 'الهاتف' },
+  'lbl.birthDate':   { tr: 'Doğum Tarihi', en: 'Date of birth', ru: 'Дата рождения', de: 'Geburtsdatum', ar: 'تاريخ الميلاد' },
+  'lbl.tcNo':        { tr: 'Kimlik No', en: 'ID number', ru: 'Номер документа', de: 'Ausweisnummer', ar: 'رقم الهوية' },
+  'lbl.licenseNo':   { tr: 'Ehliyet Numarası', en: 'License number', ru: 'Номер прав', de: 'Führerscheinnummer', ar: 'رقم الرخصة' },
+  'lbl.licenseDate': { tr: 'Ehliyet Veriliş Tarihi', en: 'License issue date', ru: 'Дата выдачи прав', de: 'Ausstellungsdatum', ar: 'تاريخ إصدار الرخصة' },
+  'lbl.licenseClass':{ tr: 'Ehliyet Sınıfı', en: 'License class', ru: 'Категория прав', de: 'Führerscheinklasse', ar: 'فئة الرخصة' },
+
+  // ---------- ÖDEME ----------
+  'pay.orderSummary':{ tr: 'Sipariş Özeti', en: 'Order Summary', ru: 'Сводка заказа', de: 'Bestellübersicht', ar: 'ملخص الطلب' },
+  'pay.method':      { tr: 'Ödeme Yöntemi', en: 'Payment Method', ru: 'Способ оплаты', de: 'Zahlungsart', ar: 'طريقة الدفع' },
+  'pay.card':        { tr: 'Kredi / Banka Kartı', en: 'Credit / Debit Card', ru: 'Кредитная / дебетовая карта', de: 'Kredit-/Debitkarte', ar: 'بطاقة ائتمان / خصم' },
+  'pay.bkm':         { tr: 'BKM Express', en: 'BKM Express', ru: 'BKM Express', de: 'BKM Express', ar: 'BKM Express' },
+  'pay.transfer':    { tr: 'EFT / Havale', en: 'Bank Transfer', ru: 'Банковский перевод', de: 'Überweisung', ar: 'تحويل بنكي' },
+  'pay.cardNumber':  { tr: 'Kart Numarası', en: 'Card Number', ru: 'Номер карты', de: 'Kartennummer', ar: 'رقم البطاقة' },
+  'pay.cardName':    { tr: 'Kart Üzerindeki Ad Soyad', en: 'Name on Card', ru: 'Имя на карте', de: 'Name auf der Karte', ar: 'الاسم على البطاقة' },
+  'pay.cardExp':     { tr: 'Son Kullanma Tarihi', en: 'Expiry Date', ru: 'Срок действия', de: 'Ablaufdatum', ar: 'تاريخ الانتهاء' },
+  'pay.cardCvv':     { tr: 'CVV / CVC', en: 'CVV / CVC', ru: 'CVV / CVC', de: 'CVV / CVC', ar: 'CVV / CVC' },
+  'pay.cardHolder':  { tr: 'Kart Sahibi', en: 'Card Holder', ru: 'Владелец карты', de: 'Karteninhaber', ar: 'حامل البطاقة' },
+  'pay.expShort':    { tr: 'Son Kullanma', en: 'Expires', ru: 'До', de: 'Gültig bis', ar: 'تنتهي' },
+  'pay.namePh':      { tr: 'AD SOYAD', en: 'FULL NAME', ru: 'ИМЯ ФАМИЛИЯ', de: 'VOR- NACHNAME', ar: 'الاسم الكامل' },
+  'pay.saveCard':    { tr: 'Bu kartı kaydet (gelecek ödemelerde kullan)', en: 'Save this card (use for future payments)', ru: 'Сохранить карту (для будущих платежей)', de: 'Diese Karte speichern (für künftige Zahlungen)', ar: 'احفظ هذه البطاقة (للدفعات المستقبلية)' },
+  'pay.installment': { tr: 'Taksit Seçeneği', en: 'Installment Option', ru: 'Рассрочка', de: 'Ratenzahlung', ar: 'خيار التقسيط' },
+  'pay.singlePay':   { tr: 'Tek Çekim', en: 'Single Payment', ru: 'Один платёж', de: 'Einmalzahlung', ar: 'دفعة واحدة' },
+  'pay.installments':{ tr: 'Taksit', en: 'Installments', ru: 'платежей', de: 'Raten', ar: 'أقساط' },
+  'pay.interest':    { tr: 'faiz', en: 'interest', ru: 'проценты', de: 'Zinsen', ar: 'فائدة' },
+  'pay.bkmTitle':    { tr: 'BKM Express ile Öde', en: 'Pay with BKM Express', ru: 'Оплата через BKM Express', de: 'Mit BKM Express bezahlen', ar: 'الدفع عبر BKM Express' },
+  'pay.bkmDesc':     { tr: 'BKM Express hesabınız ile hızlı ve güvenli ödeme yapın.', en: 'Pay quickly and securely with your BKM Express account.', ru: 'Быстрая и безопасная оплата через BKM Express.', de: 'Schnell und sicher mit Ihrem BKM Express-Konto bezahlen.', ar: 'ادفع بسرعة وأمان عبر حساب BKM Express.' },
+  'pay.bkmBtn':      { tr: 'BKM Express\'e Git →', en: 'Go to BKM Express →', ru: 'Перейти в BKM Express →', de: 'Zu BKM Express →', ar: '← الذهاب إلى BKM Express' },
+  'pay.bankInfo':    { tr: 'Banka Hesabı Bilgileri', en: 'Bank Account Details', ru: 'Реквизиты счёта', de: 'Bankverbindung', ar: 'تفاصيل الحساب البنكي' },
+  'pay.accountHolder': { tr: 'Hesap Sahibi: ExitCar Araç Kiralama A.Ş.', en: 'Account Holder: ExitCar Car Rental Inc.', ru: 'Владелец счёта: ExitCar Araç Kiralama A.Ş.', de: 'Kontoinhaber: ExitCar Araç Kiralama A.Ş.', ar: 'صاحب الحساب: ExitCar Araç Kiralama A.Ş.' },
+  'pay.desc':        { tr: 'Açıklama:', en: 'Reference:', ru: 'Назначение:', de: 'Verwendungszweck:', ar: 'الوصف:' },
+  'pay.secure3d':    { tr: '3D Secure ile güvende', en: 'Protected by 3D Secure', ru: 'Защищено 3D Secure', de: 'Geschützt durch 3D Secure', ar: 'محمي بـ 3D Secure' },
+  'pay.secure3dText':{ tr: 'Ödemeniz bankanızın 3D Secure sistemi ile doğrulanacaktır. Onay sonrasında rezervasyonunuz anında oluşturulur.', en: 'Your payment will be verified by your bank\'s 3D Secure system. Your booking is created instantly after approval.', ru: 'Платёж будет подтверждён системой 3D Secure вашего банка. Бронь создаётся сразу после подтверждения.', de: 'Ihre Zahlung wird über das 3D-Secure-System Ihrer Bank verifiziert. Nach Bestätigung wird Ihre Buchung sofort erstellt.', ar: 'سيتم التحقق من دفعتك عبر نظام 3D Secure لبنكك. يُنشأ حجزك فوراً بعد الموافقة.' },
+  'pay.payBtn':      { tr: '🔒 Güvenli Ödeme Yap — ', en: '🔒 Pay Securely — ', ru: '🔒 Оплатить безопасно — ', de: '🔒 Sicher bezahlen — ', ar: '🔒 ادفع بأمان — ' },
+  'pay.amountDue':   { tr: 'Ödenecek Tutar', en: 'Amount Due', ru: 'К оплате', de: 'Zu zahlen', ar: 'المبلغ المستحق' },
+  'pay.vatIncl':     { tr: 'KDV Dahil · Tüm Vergiler Dahil', en: 'VAT Included · All Taxes Included', ru: 'НДС включён · Все налоги включены', de: 'inkl. MwSt. · Alle Steuern inklusive', ar: 'شامل الضريبة · جميع الرسوم مشمولة' },
+  'pay.carRental':   { tr: 'Araç Kirası', en: 'Car Rental', ru: 'Аренда авто', de: 'Mietgebühr', ar: 'إيجار السيارة' },
+  'pay.resDetail':   { tr: '📋 Rezervasyon Detayı', en: '📋 Booking Details', ru: '📋 Детали брони', de: '📋 Buchungsdetails', ar: '📋 تفاصيل الحجز' },
+  'pay.instantConf': { tr: 'Ödeme sonrası rezervasyon numaranız e-posta ile iletilir.', en: 'Your booking number will be emailed after payment.', ru: 'Номер брони придёт на почту после оплаты.', de: 'Ihre Buchungsnummer wird nach der Zahlung per E-Mail gesendet.', ar: 'سيُرسل رقم حجزك بالبريد بعد الدفع.' },
+  'pay.instantConfTitle': { tr: 'Anında Onay', en: 'Instant Confirmation', ru: 'Мгновенное подтверждение', de: 'Sofortige Bestätigung', ar: 'تأكيد فوري' },
+  'pay.processing':  { tr: '⏳ Ödeme İşleniyor...', en: '⏳ Processing payment...', ru: '⏳ Обработка платежа...', de: '⏳ Zahlung wird verarbeitet...', ar: '⏳ جارٍ معالجة الدفع...' },
+  'pay.approving':   { tr: '✅ Onaylanıyor...', en: '✅ Approving...', ru: '✅ Подтверждение...', de: '✅ Wird bestätigt...', ar: '✅ جارٍ التأكيد...' },
+  'pay.successTitle':{ tr: 'Rezervasyon Onaylandı!', en: 'Booking Confirmed!', ru: 'Бронь подтверждена!', de: 'Buchung bestätigt!', ar: 'تم تأكيد الحجز!' },
+  'pay.successSub':  { tr: 'Ödemeniz başarıyla alındı. Rezervasyon detayları e-posta adresinize gönderildi.', en: 'Your payment was received successfully. Booking details have been emailed to you.', ru: 'Платёж успешно получен. Детали брони отправлены на почту.', de: 'Ihre Zahlung wurde erfolgreich empfangen. Buchungsdetails wurden per E-Mail gesendet.', ar: 'تم استلام دفعتك بنجاح. أُرسلت تفاصيل الحجز إلى بريدك.' },
+  'pay.successNote': { tr: 'Rezervasyon numaranızı aracı teslim alırken yanınızda bulundurun.', en: 'Keep your booking number with you when picking up the car.', ru: 'Имейте номер брони при получении авто.', de: 'Halten Sie Ihre Buchungsnummer bei der Abholung bereit.', ar: 'احتفظ برقم حجزك عند استلام السيارة.' },
+  'pay.goHome':      { tr: '🏠 Ana Sayfaya Dön', en: '🏠 Back to Home', ru: '🏠 На главную', de: '🏠 Zur Startseite', ar: '🏠 العودة للرئيسية' },
+  'pay.print':       { tr: '🖨️ Rezervasyonu Yazdır', en: '🖨️ Print Booking', ru: '🖨️ Распечатать бронь', de: '🖨️ Buchung drucken', ar: '🖨️ طباعة الحجز' },
+  'pay.errCardNum':  { tr: 'Lütfen geçerli bir kart numarası girin.', en: 'Please enter a valid card number.', ru: 'Введите корректный номер карты.', de: 'Bitte gültige Kartennummer eingeben.', ar: 'يرجى إدخال رقم بطاقة صحيح.' },
+  'pay.errCardName': { tr: 'Lütfen kart üzerindeki adı girin.', en: 'Please enter the name on the card.', ru: 'Введите имя на карте.', de: 'Bitte Namen auf der Karte eingeben.', ar: 'يرجى إدخال الاسم على البطاقة.' },
+  'pay.errExpFmt':   { tr: 'Lütfen son kullanma tarihini AA/YY formatında girin.', en: 'Please enter the expiry date in MM/YY format.', ru: 'Введите срок действия в формате ММ/ГГ.', de: 'Bitte Ablaufdatum im Format MM/JJ eingeben.', ar: 'يرجى إدخال تاريخ الانتهاء بصيغة شش/سس.' },
+  'pay.errExpPast':  { tr: 'Kart son kullanma tarihi geçmiş veya geçersiz.', en: 'The card expiry date is past or invalid.', ru: 'Срок действия карты истёк или неверен.', de: 'Das Ablaufdatum der Karte ist abgelaufen oder ungültig.', ar: 'تاريخ انتهاء البطاقة منتهٍ أو غير صالح.' },
+  'pay.errCvv':      { tr: 'Lütfen CVV/CVC kodunu girin.', en: 'Please enter the CVV/CVC code.', ru: 'Введите код CVV/CVC.', de: 'Bitte CVV/CVC-Code eingeben.', ar: 'يرجى إدخال رمز CVV/CVC.' },
+
+  // ---------- SAYFA BAŞLIKLARI (title) ----------
+  'title.index':       { tr: 'ExitCar — Kiralık Araç Fiyatlarını Karşılaştır | Rent a Car', en: 'ExitCar — Compare Car Rental Prices | Rent a Car', ru: 'ExitCar — Сравните цены на аренду авто | Rent a Car', de: 'ExitCar — Mietwagenpreise vergleichen | Rent a Car', ar: 'ExitCar — قارن أسعار تأجير السيارات | Rent a Car' },
+  'title.search':      { tr: 'Araç Listesi | ExitCar', en: 'Car List | ExitCar', ru: 'Список авто | ExitCar', de: 'Fahrzeugliste | ExitCar', ar: 'قائمة السيارات | ExitCar' },
+  'title.reservation': { tr: 'Araç Seç & Sigorta | ExitCar Rezervasyon', en: 'Select Car & Insurance | ExitCar Booking', ru: 'Авто и страховка | Бронь ExitCar', de: 'Auto & Versicherung | ExitCar Buchung', ar: 'اختر السيارة والتأمين | حجز ExitCar' },
+  'title.driver':      { tr: 'Sürücü Bilgileri | ExitCar Rezervasyon', en: 'Driver Details | ExitCar Booking', ru: 'Данные водителя | Бронь ExitCar', de: 'Fahrerdaten | ExitCar Buchung', ar: 'بيانات السائق | حجز ExitCar' },
+  'title.payment':     { tr: 'Ödeme | ExitCar Rezervasyon', en: 'Payment | ExitCar Booking', ru: 'Оплата | Бронь ExitCar', de: 'Zahlung | ExitCar Buchung', ar: 'الدفع | حجز ExitCar' },
+};

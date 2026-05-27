@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Araç Seç & Sigorta | ExitCar Rezervasyon</title>
+<title data-i18n="title.reservation">Araç Seç & Sigorta | ExitCar Rezervasyon</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles/reservation.css">
 </head>
@@ -14,7 +14,10 @@
   <a href="index.html" class="topbar-logo">
     <div class="logo-icon">E</div> ExitCar
   </a>
-  <div class="topbar-phone">📞 0532 010 01 00</div>
+  <div style="display:flex;align-items:center;gap:12px">
+    <div class="topbar-phone">📞 0532 010 01 00</div>
+    <div id="ec-lang-mount"></div>
+  </div>
 </div>
 
 <!-- STEPS -->
@@ -23,24 +26,24 @@
     <div class="step active">
       <div class="step-num">1</div>
       <div class="step-info">
-        <div class="step-label">Adım 1/3</div>
-        <div class="step-name">Araç & Sigorta</div>
+        <div class="step-label" data-i18n="step1.label">Adım 1/3</div>
+        <div class="step-name" data-i18n="step1.name">Araç & Sigorta</div>
       </div>
     </div>
     <div class="step-line"></div>
     <div class="step">
       <div class="step-num">2</div>
       <div class="step-info">
-        <div class="step-label">Adım 2/3</div>
-        <div class="step-name">Sürücü Bilgileri</div>
+        <div class="step-label" data-i18n="step2.label">Adım 2/3</div>
+        <div class="step-name" data-i18n="step2.name">Sürücü Bilgileri</div>
       </div>
     </div>
     <div class="step-line"></div>
     <div class="step">
       <div class="step-num">3</div>
       <div class="step-info">
-        <div class="step-label">Adım 3/3</div>
-        <div class="step-name">Ödeme</div>
+        <div class="step-label" data-i18n="step3.label">Adım 3/3</div>
+        <div class="step-name" data-i18n="step3.name">Ödeme</div>
       </div>
     </div>
   </div>
@@ -56,23 +59,23 @@
     <div class="card">
       <div class="card-header">
         <div class="card-icon">📅</div>
-        <h3>Kiralama Bilgileri</h3>
+        <h3 data-i18n="res.rentalInfo">Kiralama Bilgileri</h3>
       </div>
       <div class="card-body">
         <div class="rental-info">
           <div class="rental-row">
             <div class="rental-point">
-              <div class="rental-point-label">📍 Alış Yeri</div>
+              <div class="rental-point-label" data-i18n="res.pickup">📍 Alış Yeri</div>
               <div class="rental-point-val" id="disp-pickup">İstanbul - Sabiha Gökçen Havalimanı</div>
               <div class="rental-point-date" id="disp-pdate">22 Mayıs 2026, 10:00</div>
             </div>
             <div class="rental-point">
-              <div class="rental-point-label">📍 İade Yeri</div>
+              <div class="rental-point-label" data-i18n="res.return">📍 İade Yeri</div>
               <div class="rental-point-val" id="disp-return">İstanbul - Sabiha Gökçen Havalimanı</div>
               <div class="rental-point-date" id="disp-rdate">29 Mayıs 2026, 10:00</div>
             </div>
           </div>
-          <div class="rental-days-badge" id="disp-days">🚗 7 Günlük Kiralama</div>
+          <div class="rental-days-badge" id="disp-days">🚗 <span id="disp-days-num">7</span> <span data-i18n="common.days">Gün</span></div>
         </div>
       </div>
     </div>
@@ -81,54 +84,54 @@
     <div class="card">
       <div class="card-header">
         <div class="card-icon">🛡️</div>
-        <h3>Sigorta Paketi Seçin</h3>
+        <h3 data-i18n="res.selectIns">Sigorta Paketi Seçin</h3>
       </div>
       <div class="card-body">
         <div class="info-box blue" style="margin-bottom:16px">
           <div class="info-box-icon">ℹ️</div>
-          <div>Tüm araçlarda trafik sigortası ve zorunlu mali sorumluluk sigortası dahildir. Aşağıdaki paketlerle ek güvence sağlayabilirsiniz.</div>
+          <div data-i18n="res.insInfo">Tüm araçlarda trafik sigortası ve zorunlu mali sorumluluk sigortası dahildir. Aşağıdaki paketlerle ek güvence sağlayabilirsiniz.</div>
         </div>
         <div class="insurance-grid">
           <div class="ins-card" id="ins-basic" onclick="selectInsurance('basic', 0)">
             <div class="ins-header">
-              <div class="ins-name">Temel Paket</div>
-              <div class="ins-price free">Ücretsiz</div>
+              <div class="ins-name" data-i18n="res.basicName">Temel Paket</div>
+              <div class="ins-price free" data-i18n="res.free">Ücretsiz</div>
             </div>
             <div class="ins-features">
-              <div class="ins-feat"><div class="dot"></div> Trafik Sigortası Dahil</div>
-              <div class="ins-feat"><div class="dot"></div> Zorunlu Mali Sorumluluk</div>
-              <div class="ins-feat"><div class="dot gray"></div> <span style="color:#9CA3AF">Kasko Yok</span></div>
-              <div class="ins-feat"><div class="dot gray"></div> <span style="color:#9CA3AF">Mini Hasar Güvencesi Yok</span></div>
+              <div class="ins-feat"><div class="dot"></div> <span data-i18n="res.trafficIncl">Trafik Sigortası Dahil</span></div>
+              <div class="ins-feat"><div class="dot"></div> <span data-i18n="res.liability">Zorunlu Mali Sorumluluk</span></div>
+              <div class="ins-feat"><div class="dot gray"></div> <span style="color:#9CA3AF" data-i18n="res.noCasco">Kasko Yok</span></div>
+              <div class="ins-feat"><div class="dot gray"></div> <span style="color:#9CA3AF" data-i18n="res.noMini">Mini Hasar Güvencesi Yok</span></div>
             </div>
           </div>
           <div class="ins-card selected" id="ins-medium" onclick="selectInsurance('medium', 350)">
             <div class="ins-header">
               <div style="display:flex;align-items:center;gap:8px">
-                <div class="ins-name">Güvenli Paket</div>
-                <span class="ins-badge badge-popular">En Popüler</span>
+                <div class="ins-name" data-i18n="res.mediumName">Güvenli Paket</div>
+                <span class="ins-badge badge-popular" data-i18n="res.popular">En Popüler</span>
               </div>
-              <div class="ins-price">+350 TL/gün</div>
+              <div class="ins-price" data-price-day="350">+350 TL/gün</div>
             </div>
             <div class="ins-features">
-              <div class="ins-feat"><div class="dot"></div> Trafik Sigortası Dahil</div>
-              <div class="ins-feat"><div class="dot"></div> Kasko Güvencesi</div>
-              <div class="ins-feat"><div class="dot"></div> 2.500 TL Muafiyet</div>
-              <div class="ins-feat"><div class="dot gray"></div> <span style="color:#9CA3AF">Mini Hasar Güvencesi Yok</span></div>
+              <div class="ins-feat"><div class="dot"></div> <span data-i18n="res.trafficIncl">Trafik Sigortası Dahil</span></div>
+              <div class="ins-feat"><div class="dot"></div> <span data-i18n="res.cascoCover">Kasko Güvencesi</span></div>
+              <div class="ins-feat"><div class="dot"></div> <span data-i18n="res.deductible">2.500 TL Muafiyet</span></div>
+              <div class="ins-feat"><div class="dot gray"></div> <span style="color:#9CA3AF" data-i18n="res.noMini">Mini Hasar Güvencesi Yok</span></div>
             </div>
           </div>
           <div class="ins-card" id="ins-full" onclick="selectInsurance('full', 680)">
             <div class="ins-header">
               <div style="display:flex;align-items:center;gap:8px">
-                <div class="ins-name">Her Şey Dahil</div>
-                <span class="ins-badge badge-best">Tam Koruma</span>
+                <div class="ins-name" data-i18n="res.fullName">Her Şey Dahil</div>
+                <span class="ins-badge badge-best" data-i18n="res.fullProtect">Tam Koruma</span>
               </div>
-              <div class="ins-price">+680 TL/gün</div>
+              <div class="ins-price" data-price-day="680">+680 TL/gün</div>
             </div>
             <div class="ins-features">
-              <div class="ins-feat"><div class="dot"></div> Trafik Sigortası Dahil</div>
-              <div class="ins-feat"><div class="dot"></div> Tam Kasko Güvencesi</div>
-              <div class="ins-feat"><div class="dot"></div> Muafiyetsiz (0 TL)</div>
-              <div class="ins-feat"><div class="dot"></div> Mini Hasar Güvencesi</div>
+              <div class="ins-feat"><div class="dot"></div> <span data-i18n="res.trafficIncl">Trafik Sigortası Dahil</span></div>
+              <div class="ins-feat"><div class="dot"></div> <span data-i18n="res.fullCasco">Tam Kasko Güvencesi</span></div>
+              <div class="ins-feat"><div class="dot"></div> <span data-i18n="res.noDeductible">Muafiyetsiz (0 TL)</span></div>
+              <div class="ins-feat"><div class="dot"></div> <span data-i18n="res.miniCover">Mini Hasar Güvencesi</span></div>
             </div>
           </div>
         </div>
@@ -139,61 +142,61 @@
     <div class="card">
       <div class="card-header">
         <div class="card-icon">➕</div>
-        <h3>Ekstra Hizmetler <span style="font-size:13px;font-weight:400;color:#9CA3AF">(İsteğe Bağlı)</span></h3>
+        <h3><span data-i18n="res.extras">Ekstra Hizmetler</span> <span style="font-size:13px;font-weight:400;color:#9CA3AF" data-i18n="res.optional">(İsteğe Bağlı)</span></h3>
       </div>
       <div class="card-body">
         <div class="extras-grid">
           <div class="extra-item" id="extra-gps" onclick="toggleExtra('gps', 150)">
             <div class="extra-icon">🗺️</div>
             <div class="extra-info">
-              <div class="extra-name">GPS / Navigasyon</div>
-              <div class="extra-desc">Araçta dahili navigasyon sistemi</div>
-              <div class="extra-price">+150 TL/gün</div>
+              <div class="extra-name" data-i18n="res.gpsName">GPS / Navigasyon</div>
+              <div class="extra-desc" data-i18n="res.gpsDesc">Araçta dahili navigasyon sistemi</div>
+              <div class="extra-price" data-price-day="150">+150 TL/gün</div>
             </div>
             <div class="extra-check"></div>
           </div>
           <div class="extra-item" id="extra-baby" onclick="toggleExtra('baby', 120)">
             <div class="extra-icon">👶</div>
             <div class="extra-info">
-              <div class="extra-name">Bebek Koltuğu</div>
-              <div class="extra-desc">9-18 kg arası çocuklar için</div>
-              <div class="extra-price">+120 TL/gün</div>
+              <div class="extra-name" data-i18n="res.babyName">Bebek Koltuğu</div>
+              <div class="extra-desc" data-i18n="res.babyDesc">9-18 kg arası çocuklar için</div>
+              <div class="extra-price" data-price-day="120">+120 TL/gün</div>
             </div>
             <div class="extra-check"></div>
           </div>
           <div class="extra-item" id="extra-driver2" onclick="toggleExtra('driver2', 200)">
             <div class="extra-icon">👥</div>
             <div class="extra-info">
-              <div class="extra-name">2. Sürücü</div>
-              <div class="extra-desc">Ek bir kişi araç kullanabilir</div>
-              <div class="extra-price">+200 TL/gün</div>
+              <div class="extra-name" data-i18n="res.driver2Name">2. Sürücü</div>
+              <div class="extra-desc" data-i18n="res.driver2Desc">Ek bir kişi araç kullanabilir</div>
+              <div class="extra-price" data-price-day="200">+200 TL/gün</div>
             </div>
             <div class="extra-check"></div>
           </div>
           <div class="extra-item" id="extra-wifi" onclick="toggleExtra('wifi', 180)">
             <div class="extra-icon">📶</div>
             <div class="extra-info">
-              <div class="extra-name">Mobil Wi-Fi</div>
-              <div class="extra-desc">Sınırsız internet erişimi</div>
-              <div class="extra-price">+180 TL/gün</div>
+              <div class="extra-name" data-i18n="res.wifiName">Mobil Wi-Fi</div>
+              <div class="extra-desc" data-i18n="res.wifiDesc">Sınırsız internet erişimi</div>
+              <div class="extra-price" data-price-day="180">+180 TL/gün</div>
             </div>
             <div class="extra-check"></div>
           </div>
           <div class="extra-item" id="extra-snow" onclick="toggleExtra('snow', 90)">
             <div class="extra-icon">❄️</div>
             <div class="extra-info">
-              <div class="extra-name">Kış Lastiği Paketi</div>
-              <div class="extra-desc">Kar ve buz koşullarına uygun</div>
-              <div class="extra-price">+90 TL/gün</div>
+              <div class="extra-name" data-i18n="res.snowName">Kış Lastiği Paketi</div>
+              <div class="extra-desc" data-i18n="res.snowDesc">Kar ve buz koşullarına uygun</div>
+              <div class="extra-price" data-price-day="90">+90 TL/gün</div>
             </div>
             <div class="extra-check"></div>
           </div>
           <div class="extra-item" id="extra-roadside" onclick="toggleExtra('roadside', 100)">
             <div class="extra-icon">🔧</div>
             <div class="extra-info">
-              <div class="extra-name">Yol Yardımı</div>
-              <div class="extra-desc">7/24 arıza destek hizmeti</div>
-              <div class="extra-price">+100 TL/gün</div>
+              <div class="extra-name" data-i18n="res.roadsideName">Yol Yardımı</div>
+              <div class="extra-desc" data-i18n="res.roadsideDesc">7/24 arıza destek hizmeti</div>
+              <div class="extra-price" data-price-day="100">+100 TL/gün</div>
             </div>
             <div class="extra-check"></div>
           </div>
@@ -202,11 +205,11 @@
     </div>
 
     <!-- Continue -->
-    <button class="btn-continue" onclick="goToDriverInfo()">
+    <button class="btn-continue" onclick="goToDriverInfo()" data-i18n="res.continueDriver">
       Sürücü Bilgilerine Devam Et →
     </button>
     <a href="search.html" style="display:block">
-      <button class="btn-back">← Araç Listesine Dön</button>
+      <button class="btn-back" data-i18n="res.backToList">← Araç Listesine Dön</button>
     </a>
   </div>
 
@@ -218,17 +221,17 @@
       </div>
       <div class="car-summary-info">
         <div class="car-model-name" id="summary-car-name">Toyota Corolla</div>
-        <div class="car-model-alt">veya benzeri</div>
+        <div class="car-model-alt" data-i18n="common.orSimilar">veya benzeri</div>
         <div class="car-features-row">
-          <div class="cfeat">⚙️ Otomatik</div>
-          <div class="cfeat">⛽ Benzin</div>
-          <div class="cfeat">👥 5 Kişi</div>
-          <div class="cfeat">❄️ Klima</div>
+          <div class="cfeat">⚙️ <span data-i18n="val.Otomatik">Otomatik</span></div>
+          <div class="cfeat">⛽ <span data-i18n="val.Benzin">Benzin</span></div>
+          <div class="cfeat">👥 5 <span data-i18n="common.person">Kişi</span></div>
+          <div class="cfeat">❄️ <span data-i18n="common.ac">Klima</span></div>
         </div>
         <div class="car-summary-divider"></div>
         <div class="price-breakdown">
           <div class="price-row">
-            <span>Araç (<span id="s-days">7</span> gün × <span id="s-base-price">2.700</span> TL)</span>
+            <span><span data-i18n="res.carLine">Araç</span> (<span id="s-days">7</span> <span data-i18n="common.days">gün</span> × <span id="s-base-price">2.700</span>)</span>
             <span id="s-base-total" class="price-val">18.900 TL</span>
           </div>
           <div class="price-row" id="s-ins-row" style="display:none">
@@ -236,11 +239,11 @@
             <span id="s-ins-total">0 TL</span>
           </div>
           <div class="price-row" id="s-extra-row" style="display:none">
-            <span>Ekstralar</span>
+            <span data-i18n="res.extrasLine">Ekstralar</span>
             <span id="s-extra-total">0 TL</span>
           </div>
           <div class="price-row total">
-            <span>TOPLAM</span>
+            <span data-i18n="res.total">TOPLAM</span>
             <span class="price-val" id="s-grand-total">18.900 TL</span>
           </div>
         </div>
@@ -248,17 +251,18 @@
     </div>
     <div class="info-box green">
       <div class="info-box-icon">✅</div>
-      <div><strong>Ücretsiz İptal</strong> — Kiralama başlangıcından 48 saat önce ücretsiz iptal edebilirsiniz.</div>
+      <div><strong data-i18n="sr.freeCancel">Ücretsiz İptal</strong> — <span data-i18n="res.freeCancelBox">Kiralama başlangıcından 48 saat önce ücretsiz iptal edebilirsiniz.</span></div>
     </div>
     <div class="trusted-row">
-      <div class="trusted-item">🔒 SSL Güvenli</div>
-      <div class="trusted-item">✅ Güvenli Ödeme</div>
-      <div class="trusted-item">🛡️ Lisanslı Firma</div>
+      <div class="trusted-item" data-i18n="footer.ssl">🔒 SSL Güvenli</div>
+      <div class="trusted-item" data-i18n="footer.securePay">✅ Güvenli Ödeme</div>
+      <div class="trusted-item" data-i18n="res.licensed">🛡️ Lisanslı Firma</div>
     </div>
   </div>
 
 </div>
 
+<script src="js/i18n.js"></script>
 <script src="js/reservation.js"></script>
 </body>
 </html>

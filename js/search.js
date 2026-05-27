@@ -58,6 +58,7 @@ window.addEventListener('DOMContentLoaded', () => {
 function readURLParams() {
   const p = new URLSearchParams(window.location.search);
   if (p.get('location')) document.getElementById('sb-location').textContent = p.get('location');
+  if (p.get('pickup'))   document.getElementById('sb-location').textContent = p.get('pickup');
   if (p.get('p_d')) document.getElementById('sb-pdate').textContent = p.get('p_d');
   if (p.get('d_d')) document.getElementById('sb-ddate').textContent = p.get('d_d');
   if (p.get('p_t')) document.getElementById('sb-ptime').textContent = p.get('p_t');
@@ -65,6 +66,8 @@ function readURLParams() {
   if (p.get('days')) {
     const d = parseInt(p.get('days'));
     CARS.forEach(c => c.days = d);
+    const dEl = document.getElementById('sb-days');
+    if (dEl) dEl.textContent = d;
   }
   if (p.get('category')) {
     activeCat = p.get('category');
@@ -78,9 +81,9 @@ function renderCategoryTabs() {
   const wrap = document.getElementById('categoryTabs');
   wrap.innerHTML = cats.map(cat => `
     <div class="category-tab ${activeCat === cat ? 'active' : ''}" onclick="filterByCategory('${cat}')">
-      <img class="cat-img" src="${CAT_IMGS[cat]}" alt="${cat}">
-      <div class="cat-name ${activeCat === cat ? 'active' : ''}">${cat}</div>
-      <div class="cat-price">${CAT_PRICES[cat] ? CAT_PRICES[cat].toLocaleString('tr-TR') + ' TL\'den' : ''}</div>
+      <img class="cat-img" src="${CAT_IMGS[cat]}" alt="${t('catName.' + cat)}">
+      <div class="cat-name ${activeCat === cat ? 'active' : ''}">${t('catName.' + cat)}</div>
+      <div class="cat-price">${CAT_PRICES[cat] ? fmtPrice(CAT_PRICES[cat]) + t('sr.fromShort') : ''}</div>
     </div>
   `).join('');
 }
@@ -103,7 +106,7 @@ function toggleSection(el) {
 
 function onPriceChange(val) {
   activeFilters.maxPrice = parseInt(val);
-  document.getElementById('price-max-label').textContent = parseInt(val).toLocaleString('tr-TR');
+  document.getElementById('price-max-label').textContent = fmtPrice(parseInt(val));
   applyAndRender();
 }
 
@@ -124,7 +127,7 @@ function clearAllFilters() {
   activeCat = null;
   document.querySelectorAll('.filter-opt input[type="checkbox"]').forEach(cb => cb.checked = false);
   document.getElementById('priceRange').value = 30000;
-  document.getElementById('price-max-label').textContent = '30.000';
+  document.getElementById('price-max-label').textContent = fmtPrice(30000);
   renderCategoryTabs();
   applyAndRender();
 }
@@ -169,7 +172,7 @@ function renderResults(cars) {
   document.getElementById('resultCount').textContent = cars.length;
 
   if (!cars.length) {
-    list.innerHTML = `<div class="no-results"><div class="no-results-icon">🔍</div><div class="no-results-title">Kriterlere uygun araç bulunamadı</div><div class="no-results-sub">Filtrelerinizi genişletmeyi deneyin.</div></div>`;
+    list.innerHTML = `<div class="no-results"><div class="no-results-icon">🔍</div><div class="no-results-title">${t('sr.noResultsTitle')}</div><div class="no-results-sub">${t('sr.noResultsSub')}</div></div>`;
     return;
   }
 
@@ -181,9 +184,11 @@ function renderResults(cars) {
 function renderCard(car) {
   const sup = getSupplier(car);
   const dailyPrice = Math.round(car.price / car.days);
-  const deliveryLabel = car.delivery === 'airport' ? '✈️ Havalimanı İçi Ofis' : '🏢 Şehir Ofisi';
+  const deliveryLabel = car.delivery === 'airport' ? t('sr.deliveryAirport') : t('sr.deliveryOffice');
   const catClass = 'badge-' + car.badge;
   const stars = '⭐'.repeat(Math.round(sup.score > 5 ? sup.score/2 : sup.score)) + '☆'.repeat(5 - Math.round(sup.score > 5 ? sup.score/2 : sup.score));
+  const exT = e => { const k = 'ex.' + e; const v = t(k); return v === k ? e : v; };
+  const daysPrice = t('sr.daysPrice').replace('{d}', car.days);
 
   return `
   <div class="car-card" id="card-${car.id}">
@@ -199,22 +204,22 @@ function renderCard(car) {
           <div class="car-top-row">
             <div class="car-name-group">
               <div class="car-name">${car.model}</div>
-              <div class="car-alt">${car.alt}</div>
+              <div class="car-alt">${t('common.orSimilar')}</div>
             </div>
-            <span class="car-category-badge ${catClass}">${car.cat}</span>
+            <span class="car-category-badge ${catClass}">${t('catName.' + car.cat)}</span>
           </div>
 
           <div class="car-specs">
-            <div class="car-spec"><span class="car-spec-icon">⚙️</span> ${car.trans}</div>
-            <div class="car-spec"><span class="car-spec-icon">⛽</span> ${car.fuel}</div>
-            <div class="car-spec"><span class="car-spec-icon">👥</span> ${car.seats} Kişi</div>
-            <div class="car-spec"><span class="car-spec-icon">❄️</span> Klima</div>
+            <div class="car-spec"><span class="car-spec-icon">⚙️</span> ${t('val.' + car.trans)}</div>
+            <div class="car-spec"><span class="car-spec-icon">⛽</span> ${t('val.' + car.fuel)}</div>
+            <div class="car-spec"><span class="car-spec-icon">👥</span> ${car.seats} ${t('common.person')}</div>
+            <div class="car-spec"><span class="car-spec-icon">❄️</span> ${t('common.ac')}</div>
           </div>
 
           <div class="car-meta">
             <div class="car-meta-item">${deliveryLabel}</div>
-            <div class="car-meta-item">• KM Sınırı: <span class="car-meta-val">${car.km.toLocaleString('tr-TR')} km</span></div>
-            <div class="car-meta-item">• Depozito: <span class="car-meta-val">${car.deposit.toLocaleString('tr-TR')} TL</span></div>
+            <div class="car-meta-item">• ${t('sr.kmLimit')}: <span class="car-meta-val">${car.km.toLocaleString('tr-TR')} km</span></div>
+            <div class="car-meta-item">• ${t('sr.deposit')}: <span class="car-meta-val">${fmtPrice(car.deposit)}</span></div>
           </div>
         </div>
 
@@ -226,13 +231,13 @@ function renderCard(car) {
               <div class="company-score">
                 <span class="score-badge">${sup.score}</span>
                 <span class="score-stars">${stars}</span>
-                <span class="score-reviews">${sup.reviews} Yorum</span>
+                <span class="score-reviews">${sup.reviews} ${t('sr.reviews')}</span>
               </div>
             </div>
           </div>
           <div class="card-tags">
-            ${car.freeCancel ? '<span class="tag tag-green">✅ Ücretsiz İptal</span>' : ''}
-            <span class="tag tag-gray">🛡️ ${car.days} Günlük</span>
+            ${car.freeCancel ? `<span class="tag tag-green">✅ ${t('sr.freeCancel')}</span>` : ''}
+            <span class="tag tag-gray">🛡️ ${car.days} ${t('common.days')}</span>
           </div>
         </div>
       </div>
@@ -240,37 +245,37 @@ function renderCard(car) {
       <!-- Pricing -->
       <div class="car-price-col">
         <div>
-          <div class="price-total-label">${car.days} Günlük Fiyat</div>
-          <div class="price-total">${car.price.toLocaleString('tr-TR')} <span class="price-total-currency">TL</span></div>
-          <div class="price-daily">Günlük ${dailyPrice.toLocaleString('tr-TR')} TL</div>
+          <div class="price-total-label">${daysPrice}</div>
+          <div class="price-total">${fmtPrice(car.price)}</div>
+          <div class="price-daily">${t('sr.daily')} ${fmtPrice(dailyPrice)}</div>
         </div>
         <div style="width:100%">
-          <button class="btn-book-now" onclick="bookCar(${car.id})">Hemen Kirala ›</button>
-          ${car.freeCancel ? '<div class="free-cancel">✅ Ücretsiz İptal</div>' : '<div style="height:20px"></div>'}
+          <button class="btn-book-now" onclick="bookCar(${car.id})">${t('sr.bookNow')}</button>
+          ${car.freeCancel ? `<div class="free-cancel">✅ ${t('sr.freeCancel')}</div>` : '<div style="height:20px"></div>'}
         </div>
       </div>
     </div>
 
     <!-- Detail toggle -->
     <div class="car-detail-toggle" onclick="toggleDetail(${car.id})">
-      <span>📋 Dahil Hizmetleri Göster</span>
+      <span>${t('sr.showIncl')}</span>
       <span id="toggle-icon-${car.id}">▼</span>
     </div>
     <div class="car-detail-body" id="detail-${car.id}">
       <div class="detail-grid">
-        <div class="detail-item"><div class="detail-item-label">Tedarikçi</div><div class="detail-item-val">${sup.name}</div></div>
-        <div class="detail-item"><div class="detail-item-label">Vites</div><div class="detail-item-val">${car.trans}</div></div>
-        <div class="detail-item"><div class="detail-item-label">Yakıt</div><div class="detail-item-val">${car.fuel}</div></div>
-        <div class="detail-item"><div class="detail-item-label">Koltuk</div><div class="detail-item-val">${car.seats} Kişi</div></div>
-        <div class="detail-item"><div class="detail-item-label">KM Sınırı</div><div class="detail-item-val">${car.km.toLocaleString('tr-TR')} km/${car.days} gün</div></div>
-        <div class="detail-item"><div class="detail-item-label">Depozito</div><div class="detail-item-val">${car.deposit.toLocaleString('tr-TR')} TL</div></div>
+        <div class="detail-item"><div class="detail-item-label">${t('sr.supplier')}</div><div class="detail-item-val">${sup.name}</div></div>
+        <div class="detail-item"><div class="detail-item-label">${t('sr.transmission')}</div><div class="detail-item-val">${t('val.' + car.trans)}</div></div>
+        <div class="detail-item"><div class="detail-item-label">${t('sr.fuel')}</div><div class="detail-item-val">${t('val.' + car.fuel)}</div></div>
+        <div class="detail-item"><div class="detail-item-label">${t('sr.seats')}</div><div class="detail-item-val">${car.seats} ${t('common.person')}</div></div>
+        <div class="detail-item"><div class="detail-item-label">${t('sr.kmLimit')}</div><div class="detail-item-val">${car.km.toLocaleString('tr-TR')} km/${car.days} ${t('common.days')}</div></div>
+        <div class="detail-item"><div class="detail-item-label">${t('sr.deposit')}</div><div class="detail-item-val">${fmtPrice(car.deposit)}</div></div>
       </div>
       <div class="incl-list" style="margin-top:14px">
-        <div style="font-size:12px;font-weight:700;text-transform:uppercase;color:#9CA3AF;margin-bottom:6px">Dahil Hizmetler</div>
-        ${car.extras.map(e => `<div class="incl-item"><span class="dot-green">✓</span> ${e}</div>`).join('')}
-        <div class="incl-item"><span class="dot-green">✓</span> Zorunlu Trafik Sigortası</div>
-        <div class="incl-item"><span class="dot-green">✓</span> KDV Dahil</div>
-        <div class="incl-item"><span class="dot-red">✗</span> Kasko (Opsiyonel — rezervasyonda seçilebilir)</div>
+        <div style="font-size:12px;font-weight:700;text-transform:uppercase;color:#9CA3AF;margin-bottom:6px">${t('sr.inclServices')}</div>
+        ${car.extras.map(e => `<div class="incl-item"><span class="dot-green">✓</span> ${exT(e)}</div>`).join('')}
+        <div class="incl-item"><span class="dot-green">✓</span> ${t('sr.trafficIns')}</div>
+        <div class="incl-item"><span class="dot-green">✓</span> ${t('sr.vatIncl')}</div>
+        <div class="incl-item"><span class="dot-red">✗</span> ${t('sr.cascoOpt')}</div>
       </div>
     </div>
   </div>`;
@@ -279,10 +284,10 @@ function renderCard(car) {
 function renderPromo() {
   return `<div class="promo-card">
     <div class="promo-card-text">
-      <div class="promo-card-title">🎁 ExitCar Üyelerine Özel</div>
-      <div class="promo-card-sub">İlk kiralamanızda %20 indirim — şimdi üye olun!</div>
+      <div class="promo-card-title">${t('sr.promoTitle')}</div>
+      <div class="promo-card-sub">${t('sr.promoSub')}</div>
     </div>
-    <button class="btn-promo-card" onclick="window.location.href='index.html'">Hemen Üye Ol →</button>
+    <button class="btn-promo-card" onclick="window.location.href='index.html'">${t('sr.promoBtn')}</button>
   </div>`;
 }
 
@@ -293,7 +298,7 @@ function toggleDetail(id) {
   body.classList.toggle('open');
   icon.textContent = body.classList.contains('open') ? '▲' : '▼';
   document.getElementById('card-'+id).querySelector('.car-detail-toggle span:first-child').textContent =
-    body.classList.contains('open') ? '📋 Dahil Hizmetleri Gizle' : '📋 Dahil Hizmetleri Göster';
+    body.classList.contains('open') ? t('sr.hideIncl') : t('sr.showIncl');
 }
 
 // ===== BOOK =====

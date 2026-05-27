@@ -42,6 +42,26 @@ function selectPayMethod(type) {
   document.getElementById('cardVisual').style.display = type === 'card' ? 'block' : 'none';
 }
 
+// ===== TAKSİT SEÇENEKLERİ =====
+function buildInstallments(total) {
+  const sel = document.getElementById('installment');
+  if (!sel) return;
+  const plans = [
+    { n: 1,  rate: 0,    pct: '0%'  },
+    { n: 3,  rate: 0,    pct: '0%'  },
+    { n: 6,  rate: 0.03, pct: '+3%' },
+    { n: 9,  rate: 0.06, pct: '+6%' },
+    { n: 12, rate: 0.09, pct: '+9%' },
+  ];
+  sel.innerHTML = plans.map(p => {
+    if (p.n === 1) {
+      return `<option value="1">${t('pay.singlePay')} — ${fmtPrice(total)}</option>`;
+    }
+    const per = Math.round(total * (1 + p.rate) / p.n);
+    return `<option value="${p.n}">${p.n} ${t('pay.installments')} — ${p.n} × ${fmtPrice(per)} (${p.pct} ${t('pay.interest')})</option>`;
+  }).join('');
+}
+
 // ===== LOAD SESSION DATA =====
 window.addEventListener('DOMContentLoaded', () => {
   try {
@@ -49,24 +69,29 @@ window.addEventListener('DOMContentLoaded', () => {
     const driver = JSON.parse(sessionStorage.getItem('driverInfo') || '{}');
     const car = JSON.parse(sessionStorage.getItem('selectedCar') || '{}');
 
-    if (resData.grand) {
-      const fmt = n => n.toLocaleString('tr-TR') + ' TL';
-      document.getElementById('sidebar-total').textContent = fmt(resData.grand);
-      document.getElementById('oi-total').textContent = fmt(resData.grand);
-      document.getElementById('oi-base').textContent = fmt(resData.baseTotal || 0);
-      document.getElementById('pay-btn-amount').textContent = fmt(resData.grand);
+    const grand     = resData.grand     || 21350;
+    const baseTotal = resData.baseTotal || 18900;
+    const insTotal  = resData.insTotal  || 2450;
+    const extTotal  = resData.extTotal  || 0;
+    const insurance = resData.insurance || 'medium';
+    const labels = { basic: t('res.basicName'), medium: t('res.mediumName'), full: t('res.fullName') };
+    const insLabel = labels[insurance] || t('step1.name');
 
-      if (resData.insTotal > 0) {
-        const labels = { basic:'Temel Paket', medium:'Güvenli Paket', full:'Her Şey Dahil' };
-        document.getElementById('oi-ins-label').textContent = labels[resData.insurance] || 'Sigorta';
-        document.getElementById('oi-ins').textContent = fmt(resData.insTotal);
-        document.getElementById('pay-ins-badge').textContent = '🛡️ ' + (labels[resData.insurance] || 'Sigorta');
-      }
-      if (resData.extTotal > 0) {
-        document.getElementById('oi-ext-row').style.display = 'flex';
-        document.getElementById('oi-ext').textContent = fmt(resData.extTotal);
-      }
+    document.getElementById('sidebar-total').textContent = fmtPrice(grand);
+    document.getElementById('oi-total').textContent = fmtPrice(grand);
+    document.getElementById('oi-base').textContent = fmtPrice(baseTotal);
+    document.getElementById('pay-btn-amount').textContent = fmtPrice(grand);
+
+    document.getElementById('oi-ins-label').textContent = insLabel;
+    document.getElementById('oi-ins').textContent = fmtPrice(insTotal);
+    document.getElementById('pay-ins-badge').innerHTML = '🛡️ ' + insLabel;
+    if (extTotal > 0) {
+      document.getElementById('oi-ext-row').style.display = 'flex';
+      document.getElementById('oi-ext').textContent = fmtPrice(extTotal);
     }
+
+    buildInstallments(grand);
+
     if (driver.firstName) {
       document.getElementById('pay-driver').textContent = driver.firstName + ' ' + driver.lastName;
       document.getElementById('pay-email').textContent = driver.email;
@@ -87,13 +112,13 @@ function validateCard() {
   const exp = document.getElementById('cardExp').value;
   const cvv = document.getElementById('cardCvv').value;
 
-  if (num.length < 16) { alert('Lütfen geçerli bir kart numarası girin.'); return false; }
-  if (name.length < 3) { alert('Lütfen kart üzerindeki adı girin.'); return false; }
-  if (!/^\d{2}\/\d{2}$/.test(exp)) { alert('Lütfen son kullanma tarihini AA/YY formatında girin.'); return false; }
+  if (num.length < 16) { alert(t('pay.errCardNum')); return false; }
+  if (name.length < 3) { alert(t('pay.errCardName')); return false; }
+  if (!/^\d{2}\/\d{2}$/.test(exp)) { alert(t('pay.errExpFmt')); return false; }
   const [mm, yy] = exp.split('/').map(Number);
   const now = new Date(); const expDate = new Date(2000+yy, mm-1, 1);
-  if (mm < 1 || mm > 12 || expDate < now) { alert('Kart son kullanma tarihi geçmiş veya geçersiz.'); return false; }
-  if (cvv.length < 3) { alert('Lütfen CVV/CVC kodunu girin.'); return false; }
+  if (mm < 1 || mm > 12 || expDate < now) { alert(t('pay.errExpPast')); return false; }
+  if (cvv.length < 3) { alert(t('pay.errCvv')); return false; }
   return true;
 }
 
@@ -105,11 +130,11 @@ function completePayment() {
 
   const btn = document.getElementById('btnPay');
   btn.disabled = true;
-  btn.innerHTML = '⏳ Ödeme İşleniyor...';
+  btn.innerHTML = t('pay.processing');
 
   // Simulate 3D Secure / processing
   setTimeout(() => {
-    btn.innerHTML = '✅ Onaylanıyor...';
+    btn.innerHTML = t('pay.approving');
     setTimeout(() => {
       showSuccess();
     }, 1200);

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Araç Listesi | ExitCar - Kiralık Araç Karşılaştır</title>
+<title data-i18n="title.search">Araç Listesi | ExitCar - Kiralık Araç Karşılaştır</title>
 <meta name="description" content="Türkiye'nin en büyük araç kiralama platformu. Garenta, Sixt, Avis, Hertz ve 50+ kiralama şirketini karşılaştır.">
 <link rel="stylesheet" href="styles/search.css">
 </head>
@@ -16,7 +16,8 @@
   </a>
   <div style="display:flex;align-items:center;gap:12px;font-size:13px;color:#6B7280">
     <span>📞 0532 010 01 00</span>
-    <a href="index.html" style="padding:7px 14px;background:#F30006;color:white;border-radius:8px;font-weight:700;font-size:12px">Üye Ol / Giriş</a>
+    <div id="ec-lang-mount"></div>
+    <a href="index.html" style="padding:7px 14px;background:#F30006;color:white;border-radius:8px;font-weight:700;font-size:12px" data-i18n="common.login">Üye Ol / Giriş</a>
   </div>
 </div>
 
@@ -31,15 +32,15 @@
     <span id="sb-ddate">25 May 2026</span> <span id="sb-dtime">10:00</span>
   </span>
   <span class="search-bar-sep">•</span>
-  <span style="font-size:13px;color:#4B5563;font-weight:600">3 Gün</span>
-  <button class="btn-edit-search" onclick="window.location.href='index.html'">✏️ Aramayı Düzenle</button>
+  <span style="font-size:13px;color:#4B5563;font-weight:600"><span id="sb-days">3</span> <span data-i18n="common.days">Gün</span></span>
+  <button class="btn-edit-search" onclick="window.location.href='index.html'" data-i18n="sr.editSearch">✏️ Aramayı Düzenle</button>
 </div>
 
 <!-- CAMPAIGN BANNER -->
 <div class="campaign-banner" id="campaignBanner">
   <strong>%50</strong>
-  <span>%50'ye varan indirim kaçmasın! 🎉 Şimdi kirala, iptal etmek istersen %100 iade garantisi var ✅</span>
-  <button class="btn-campaign">Kampanyayı Uygula!</button>
+  <span data-i18n="sr.campaign">%50'ye varan indirim kaçmasın! 🎉 Şimdi kirala, iptal etmek istersen %100 iade garantisi var ✅</span>
+  <button class="btn-campaign" data-i18n="sr.applyCampaign">Kampanyayı Uygula!</button>
   <span class="close-campaign" onclick="closeCampaign()">✕</span>
 </div>
 
@@ -56,20 +57,20 @@
   <!-- FILTER SIDEBAR -->
   <div class="filter-sidebar">
     <div class="filter-top">
-      <div class="filter-title">🔧 Filtrele</div>
-      <button class="btn-clear-all" onclick="clearAllFilters()">Temizle</button>
+      <div class="filter-title" data-i18n="sr.filter">🔧 Filtrele</div>
+      <button class="btn-clear-all" onclick="clearAllFilters()" data-i18n="sr.clear">Temizle</button>
     </div>
 
     <!-- Free Cancel -->
     <div class="filter-section open">
       <div class="filter-section-header" onclick="toggleSection(this)">
-        <div class="filter-section-title">Ücretsiz İptal</div>
+        <div class="filter-section-title" data-i18n="sr.freeCancel">Ücretsiz İptal</div>
         <span class="filter-chevron">▾</span>
       </div>
       <div class="filter-section-body">
         <label class="filter-opt">
           <div class="filter-opt-left">
-            <input type="checkbox" onchange="onFreeCancelFilter(this.checked)"> Ücretsiz İptal Olan Araçlar
+            <input type="checkbox" onchange="onFreeCancelFilter(this.checked)"> <span data-i18n="sr.freeCancelCars">Ücretsiz İptal Olan Araçlar</span>
           </div>
         </label>
       </div>
@@ -78,7 +79,7 @@
     <!-- Kiralama Şirketi -->
     <div class="filter-section open">
       <div class="filter-section-header" onclick="toggleSection(this)">
-        <div class="filter-section-title">Kiralama Şirketi</div>
+        <div class="filter-section-title" data-i18n="sr.company">Kiralama Şirketi</div>
         <span class="filter-chevron">▾</span>
       </div>
       <div class="filter-section-body">
@@ -98,52 +99,52 @@
     <!-- Vites Tipi -->
     <div class="filter-section open">
       <div class="filter-section-header" onclick="toggleSection(this)">
-        <div class="filter-section-title">Vites Tipi</div>
+        <div class="filter-section-title" data-i18n="sr.transType">Vites Tipi</div>
         <span class="filter-chevron">▾</span>
       </div>
       <div class="filter-section-body">
-        <label class="filter-opt"><div class="filter-opt-left"><input type="checkbox" onchange="onCheckFilter('trans','Otomatik',this.checked)"> Otomatik</div><span class="filter-count-badge">12</span></label>
-        <label class="filter-opt"><div class="filter-opt-left"><input type="checkbox" onchange="onCheckFilter('trans','Manuel',this.checked)"> Manuel</div><span class="filter-count-badge">3</span></label>
+        <label class="filter-opt"><div class="filter-opt-left"><input type="checkbox" onchange="onCheckFilter('trans','Otomatik',this.checked)"> <span data-i18n="val.Otomatik">Otomatik</span></div><span class="filter-count-badge">12</span></label>
+        <label class="filter-opt"><div class="filter-opt-left"><input type="checkbox" onchange="onCheckFilter('trans','Manuel',this.checked)"> <span data-i18n="val.Manuel">Manuel</span></div><span class="filter-count-badge">3</span></label>
       </div>
     </div>
 
     <!-- Yakıt Tipi -->
     <div class="filter-section open">
       <div class="filter-section-header" onclick="toggleSection(this)">
-        <div class="filter-section-title">Yakıt Tipi</div>
+        <div class="filter-section-title" data-i18n="sr.fuelType">Yakıt Tipi</div>
         <span class="filter-chevron">▾</span>
       </div>
       <div class="filter-section-body">
-        <label class="filter-opt"><div class="filter-opt-left"><input type="checkbox" onchange="onCheckFilter('fuel','Benzin',this.checked)"> Benzin</div><span class="filter-count-badge">7</span></label>
-        <label class="filter-opt"><div class="filter-opt-left"><input type="checkbox" onchange="onCheckFilter('fuel','Dizel',this.checked)"> Dizel</div><span class="filter-count-badge">5</span></label>
-        <label class="filter-opt"><div class="filter-opt-left"><input type="checkbox" onchange="onCheckFilter('fuel','Hibrit',this.checked)"> Hibrit</div><span class="filter-count-badge">2</span></label>
-        <label class="filter-opt"><div class="filter-opt-left"><input type="checkbox" onchange="onCheckFilter('fuel','Elektrik',this.checked)"> Elektrik</div><span class="filter-count-badge">1</span></label>
+        <label class="filter-opt"><div class="filter-opt-left"><input type="checkbox" onchange="onCheckFilter('fuel','Benzin',this.checked)"> <span data-i18n="val.Benzin">Benzin</span></div><span class="filter-count-badge">7</span></label>
+        <label class="filter-opt"><div class="filter-opt-left"><input type="checkbox" onchange="onCheckFilter('fuel','Dizel',this.checked)"> <span data-i18n="val.Dizel">Dizel</span></div><span class="filter-count-badge">5</span></label>
+        <label class="filter-opt"><div class="filter-opt-left"><input type="checkbox" onchange="onCheckFilter('fuel','Hibrit',this.checked)"> <span data-i18n="val.Hibrit">Hibrit</span></div><span class="filter-count-badge">2</span></label>
+        <label class="filter-opt"><div class="filter-opt-left"><input type="checkbox" onchange="onCheckFilter('fuel','Elektrik',this.checked)"> <span data-i18n="val.Elektrik">Elektrik</span></div><span class="filter-count-badge">1</span></label>
       </div>
     </div>
 
     <!-- Araç Teslim Şekli -->
     <div class="filter-section open">
       <div class="filter-section-header" onclick="toggleSection(this)">
-        <div class="filter-section-title">Araç Teslim Şekli</div>
+        <div class="filter-section-title" data-i18n="sr.deliveryType">Araç Teslim Şekli</div>
         <span class="filter-chevron">▾</span>
       </div>
       <div class="filter-section-body">
-        <label class="filter-opt"><div class="filter-opt-left"><input type="checkbox" onchange="onCheckFilter('delivery','airport',this.checked)"> ✈️ Havalimanı İçi Ofis</div></label>
-        <label class="filter-opt"><div class="filter-opt-left"><input type="checkbox" onchange="onCheckFilter('delivery','office',this.checked)"> 🏢 Şehir Ofisi</div></label>
+        <label class="filter-opt"><div class="filter-opt-left"><input type="checkbox" onchange="onCheckFilter('delivery','airport',this.checked)"> <span data-i18n="sr.deliveryAirport">✈️ Havalimanı İçi Ofis</span></div></label>
+        <label class="filter-opt"><div class="filter-opt-left"><input type="checkbox" onchange="onCheckFilter('delivery','office',this.checked)"> <span data-i18n="sr.deliveryOffice">🏢 Şehir Ofisi</span></div></label>
       </div>
     </div>
 
     <!-- Fiyat Aralığı -->
     <div class="filter-section open">
       <div class="filter-section-header" onclick="toggleSection(this)">
-        <div class="filter-section-title">Fiyat Aralığı (3 Gün)</div>
+        <div class="filter-section-title" data-i18n="sr.priceRange">Fiyat Aralığı (3 Gün)</div>
         <span class="filter-chevron">▾</span>
       </div>
       <div class="filter-section-body">
         <div class="price-range-box">
           <div class="price-range-labels">
-            <span>0 TL</span>
-            <span><span id="price-max-label">30.000</span> TL</span>
+            <span data-price="0">0 TL</span>
+            <span id="price-max-label" data-price="30000">30.000 TL</span>
           </div>
           <input type="range" id="priceRange" min="3000" max="30000" step="500" value="30000"
             oninput="onPriceChange(this.value)">
@@ -158,14 +159,14 @@
 
     <!-- Results header -->
     <div class="results-header">
-      <div class="results-count"><span id="resultCount">15</span> Araç Listeleniyor</div>
+      <div class="results-count"><span id="resultCount">15</span> <span data-i18n="sr.listed">Araç Listeleniyor</span></div>
       <div class="sort-wrap">
-        <span class="sort-label">↕ Sırala:</span>
+        <span class="sort-label" data-i18n="sr.sort">↕ Sırala:</span>
         <select class="sort-select" onchange="onSort(this.value)">
-          <option value="recommended">Önerilen</option>
-          <option value="price_asc">En Ucuz Önce</option>
-          <option value="price_desc">En Pahalı Önce</option>
-          <option value="score">En Yüksek Puan</option>
+          <option value="recommended" data-i18n="sr.sortRecommended">Önerilen</option>
+          <option value="price_asc" data-i18n="sr.sortPriceAsc">En Ucuz Önce</option>
+          <option value="price_desc" data-i18n="sr.sortPriceDesc">En Pahalı Önce</option>
+          <option value="score" data-i18n="sr.sortScore">En Yüksek Puan</option>
         </select>
       </div>
     </div>
@@ -186,6 +187,7 @@
 
 </div>
 
+<script src="js/i18n.js"></script>
 <script src="js/search.js"></script>
 </body>
 </html>
