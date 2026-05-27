@@ -1,0 +1,289 @@
+<!DOCTYPE html><html lang="en" dir="ltr"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,follow">
+<title data-i18n="title.reservation">Select Car &amp; Insurance | ExitCar Booking</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../styles/reservation.css">
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <a href="index.html" class="topbar-logo">
+    <div class="logo-icon">E</div> ExitCar
+  </a>
+  <div style="display:flex;align-items:center;gap:12px">
+    <div class="topbar-phone">📞 0532 010 01 00</div>
+    <div id="ec-lang-mount">
+    <div class="ec-lang-switcher" id="ec-lang-sw">
+      <button type="button" class="ec-lang-btn" onclick="document.getElementById('ec-lang-sw').classList.toggle('open')">
+        <span class="ec-lang-flag">🇬🇧</span><span>EN</span><span style="font-size:9px">▾</span>
+      </button>
+      <div class="ec-lang-menu">
+        
+          <button type="button" class="ec-lang-opt " onclick="EC_setLang('tr')">
+            <span class="ec-lang-flag">🇹🇷</span><span>Türkçe</span>
+          </button>
+          <button type="button" class="ec-lang-opt active" onclick="EC_setLang('en')">
+            <span class="ec-lang-flag">🇬🇧</span><span>English</span>
+          </button>
+          <button type="button" class="ec-lang-opt " onclick="EC_setLang('ru')">
+            <span class="ec-lang-flag">🇷🇺</span><span>Русский</span>
+          </button>
+          <button type="button" class="ec-lang-opt " onclick="EC_setLang('de')">
+            <span class="ec-lang-flag">🇩🇪</span><span>Deutsch</span>
+          </button>
+          <button type="button" class="ec-lang-opt " onclick="EC_setLang('ar')">
+            <span class="ec-lang-flag">🇸🇦</span><span>العربية</span>
+          </button>
+      </div>
+    </div></div>
+  </div>
+</div>
+
+<!-- STEPS -->
+<div class="steps-bar">
+  <div class="steps-inner">
+    <div class="step active">
+      <div class="step-num">1</div>
+      <div class="step-info">
+        <div class="step-label" data-i18n="step1.label">Step 1/3</div>
+        <div class="step-name" data-i18n="step1.name">Car &amp; Insurance</div>
+      </div>
+    </div>
+    <div class="step-line"></div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-info">
+        <div class="step-label" data-i18n="step2.label">Step 2/3</div>
+        <div class="step-name" data-i18n="step2.name">Driver Details</div>
+      </div>
+    </div>
+    <div class="step-line"></div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-info">
+        <div class="step-label" data-i18n="step3.label">Step 3/3</div>
+        <div class="step-name" data-i18n="step3.name">Payment</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- LAYOUT -->
+<div class="res-layout">
+
+  <!-- MAIN -->
+  <div class="res-main">
+
+    <!-- Rental Info -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon">📅</div>
+        <h3 data-i18n="res.rentalInfo">Rental Details</h3>
+      </div>
+      <div class="card-body">
+        <div class="rental-info">
+          <div class="rental-row">
+            <div class="rental-point">
+              <div class="rental-point-label" data-i18n="res.pickup">📍 Pick-up Location</div>
+              <div class="rental-point-val" id="disp-pickup">İstanbul - Sabiha Gökçen Havalimanı</div>
+              <div class="rental-point-date" id="disp-pdate">22 Mayıs 2026, 10:00</div>
+            </div>
+            <div class="rental-point">
+              <div class="rental-point-label" data-i18n="res.return">📍 Return Location</div>
+              <div class="rental-point-val" id="disp-return">İstanbul - Sabiha Gökçen Havalimanı</div>
+              <div class="rental-point-date" id="disp-rdate">29 Mayıs 2026, 10:00</div>
+            </div>
+          </div>
+          <div class="rental-days-badge" id="disp-days">🚗 <span id="disp-days-num">7</span> <span data-i18n="common.days">Days</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Insurance Packages -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon">🛡️</div>
+        <h3 data-i18n="res.selectIns">Choose an Insurance Package</h3>
+      </div>
+      <div class="card-body">
+        <div class="info-box blue" style="margin-bottom:16px">
+          <div class="info-box-icon">ℹ️</div>
+          <div data-i18n="res.insInfo">All cars include traffic and mandatory liability insurance. You can add extra coverage with the packages below.</div>
+        </div>
+        <div class="insurance-grid">
+          <div class="ins-card" id="ins-basic" onclick="selectInsurance('basic', 0)">
+            <div class="ins-header">
+              <div class="ins-name" data-i18n="res.basicName">Basic Package</div>
+              <div class="ins-price free" data-i18n="res.free">Free</div>
+            </div>
+            <div class="ins-features">
+              <div class="ins-feat"><div class="dot"></div> <span data-i18n="res.trafficIncl">Traffic Insurance Included</span></div>
+              <div class="ins-feat"><div class="dot"></div> <span data-i18n="res.liability">Mandatory Liability Cover</span></div>
+              <div class="ins-feat"><div class="dot gray"></div> <span style="color:#9CA3AF" data-i18n="res.noCasco">No Comprehensive Cover</span></div>
+              <div class="ins-feat"><div class="dot gray"></div> <span style="color:#9CA3AF" data-i18n="res.noMini">No Minor Damage Cover</span></div>
+            </div>
+          </div>
+          <div class="ins-card selected" id="ins-medium" onclick="selectInsurance('medium', 350)">
+            <div class="ins-header">
+              <div style="display:flex;align-items:center;gap:8px">
+                <div class="ins-name" data-i18n="res.mediumName">Safe Package</div>
+                <span class="ins-badge badge-popular" data-i18n="res.popular">Most Popular</span>
+              </div>
+              <div class="ins-price" data-price-day="350">+€7/day</div>
+            </div>
+            <div class="ins-features">
+              <div class="ins-feat"><div class="dot"></div> <span data-i18n="res.trafficIncl">Traffic Insurance Included</span></div>
+              <div class="ins-feat"><div class="dot"></div> <span data-i18n="res.cascoCover">Comprehensive Cover</span></div>
+              <div class="ins-feat"><div class="dot"></div> <span data-i18n="res.deductible">Deductible: 2,500 TL</span></div>
+              <div class="ins-feat"><div class="dot gray"></div> <span style="color:#9CA3AF" data-i18n="res.noMini">No Minor Damage Cover</span></div>
+            </div>
+          </div>
+          <div class="ins-card" id="ins-full" onclick="selectInsurance('full', 680)">
+            <div class="ins-header">
+              <div style="display:flex;align-items:center;gap:8px">
+                <div class="ins-name" data-i18n="res.fullName">All-Inclusive</div>
+                <span class="ins-badge badge-best" data-i18n="res.fullProtect">Full Protection</span>
+              </div>
+              <div class="ins-price" data-price-day="680">+€14/day</div>
+            </div>
+            <div class="ins-features">
+              <div class="ins-feat"><div class="dot"></div> <span data-i18n="res.trafficIncl">Traffic Insurance Included</span></div>
+              <div class="ins-feat"><div class="dot"></div> <span data-i18n="res.fullCasco">Full Comprehensive Cover</span></div>
+              <div class="ins-feat"><div class="dot"></div> <span data-i18n="res.noDeductible">No Deductible (0 TL)</span></div>
+              <div class="ins-feat"><div class="dot"></div> <span data-i18n="res.miniCover">Minor Damage Cover</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Extras -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon">➕</div>
+        <h3><span data-i18n="res.extras">Extra Services</span> <span style="font-size:13px;font-weight:400;color:#9CA3AF" data-i18n="res.optional">(Optional)</span></h3>
+      </div>
+      <div class="card-body">
+        <div class="extras-grid">
+          <div class="extra-item" id="extra-gps" onclick="toggleExtra('gps', 150)">
+            <div class="extra-icon">🗺️</div>
+            <div class="extra-info">
+              <div class="extra-name" data-i18n="res.gpsName">GPS / Navigation</div>
+              <div class="extra-desc" data-i18n="res.gpsDesc">Built-in navigation system</div>
+              <div class="extra-price" data-price-day="150">+€3/day</div>
+            </div>
+            <div class="extra-check"></div>
+          </div>
+          <div class="extra-item" id="extra-baby" onclick="toggleExtra('baby', 120)">
+            <div class="extra-icon">👶</div>
+            <div class="extra-info">
+              <div class="extra-name" data-i18n="res.babyName">Baby Seat</div>
+              <div class="extra-desc" data-i18n="res.babyDesc">For children 9-18 kg</div>
+              <div class="extra-price" data-price-day="120">+€3/day</div>
+            </div>
+            <div class="extra-check"></div>
+          </div>
+          <div class="extra-item" id="extra-driver2" onclick="toggleExtra('driver2', 200)">
+            <div class="extra-icon">👥</div>
+            <div class="extra-info">
+              <div class="extra-name" data-i18n="res.driver2Name">2nd Driver</div>
+              <div class="extra-desc" data-i18n="res.driver2Desc">An additional person can drive</div>
+              <div class="extra-price" data-price-day="200">+€4/day</div>
+            </div>
+            <div class="extra-check"></div>
+          </div>
+          <div class="extra-item" id="extra-wifi" onclick="toggleExtra('wifi', 180)">
+            <div class="extra-icon">📶</div>
+            <div class="extra-info">
+              <div class="extra-name" data-i18n="res.wifiName">Mobile Wi-Fi</div>
+              <div class="extra-desc" data-i18n="res.wifiDesc">Unlimited internet access</div>
+              <div class="extra-price" data-price-day="180">+€4/day</div>
+            </div>
+            <div class="extra-check"></div>
+          </div>
+          <div class="extra-item" id="extra-snow" onclick="toggleExtra('snow', 90)">
+            <div class="extra-icon">❄️</div>
+            <div class="extra-info">
+              <div class="extra-name" data-i18n="res.snowName">Winter Tire Package</div>
+              <div class="extra-desc" data-i18n="res.snowDesc">Suitable for snow and ice</div>
+              <div class="extra-price" data-price-day="90">+€2/day</div>
+            </div>
+            <div class="extra-check"></div>
+          </div>
+          <div class="extra-item" id="extra-roadside" onclick="toggleExtra('roadside', 100)">
+            <div class="extra-icon">🔧</div>
+            <div class="extra-info">
+              <div class="extra-name" data-i18n="res.roadsideName">Roadside Assistance</div>
+              <div class="extra-desc" data-i18n="res.roadsideDesc">24/7 breakdown support</div>
+              <div class="extra-price" data-price-day="100">+€2/day</div>
+            </div>
+            <div class="extra-check"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Continue -->
+    <button class="btn-continue" onclick="goToDriverInfo()" data-i18n="res.continueDriver">Continue to Driver Details →</button>
+    <a href="search.html" style="display:block">
+      <button class="btn-back" data-i18n="res.backToList">← Back to Car List</button>
+    </a>
+  </div>
+
+  <!-- SIDEBAR -->
+  <div class="car-summary">
+    <div class="car-summary-card">
+      <div class="car-summary-img">
+        <img src="../assets/cars/toyota-corolla.png" alt="Araç" id="summary-car-img">
+      </div>
+      <div class="car-summary-info">
+        <div class="car-model-name" id="summary-car-name">Toyota Corolla</div>
+        <div class="car-model-alt" data-i18n="common.orSimilar">or similar</div>
+        <div class="car-features-row">
+          <div class="cfeat">⚙️ <span data-i18n="val.Otomatik">Automatic</span></div>
+          <div class="cfeat">⛽ <span data-i18n="val.Benzin">Petrol</span></div>
+          <div class="cfeat">👥 5 <span data-i18n="common.person">Persons</span></div>
+          <div class="cfeat">❄️ <span data-i18n="common.ac">A/C</span></div>
+        </div>
+        <div class="car-summary-divider"></div>
+        <div class="price-breakdown">
+          <div class="price-row">
+            <span><span data-i18n="res.carLine">Car</span> (<span id="s-days">7</span> <span data-i18n="common.days">Days</span> × <span id="s-base-price">2.700</span>)</span>
+            <span id="s-base-total" class="price-val">18.900 TL</span>
+          </div>
+          <div class="price-row" id="s-ins-row" style="display:none">
+            <span id="s-ins-label">Güvenli Paket</span>
+            <span id="s-ins-total">0 TL</span>
+          </div>
+          <div class="price-row" id="s-extra-row" style="display:none">
+            <span data-i18n="res.extrasLine">Extras</span>
+            <span id="s-extra-total">0 TL</span>
+          </div>
+          <div class="price-row total">
+            <span data-i18n="res.total">TOTAL</span>
+            <span class="price-val" id="s-grand-total">18.900 TL</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="info-box green">
+      <div class="info-box-icon">✅</div>
+      <div><strong data-i18n="sr.freeCancel">Free Cancellation</strong> — <span data-i18n="res.freeCancelBox">You can cancel free of charge up to 48 hours before pick-up.</span></div>
+    </div>
+    <div class="trusted-row">
+      <div class="trusted-item" data-i18n="footer.ssl">🔒 SSL Secure</div>
+      <div class="trusted-item" data-i18n="footer.securePay">✅ Secure Payment</div>
+      <div class="trusted-item" data-i18n="res.licensed">🛡️ Licensed Company</div>
+    </div>
+  </div>
+
+</div>
+
+<script src="../js/i18n.js"></script>
+<script src="../js/reservation.js"></script>
+
+
+</body></html>

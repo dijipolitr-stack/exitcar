@@ -1,0 +1,13 @@
+{
+  "name": "exitcar",
+  "version": "1.0.0",
+  "private": true,
+  "description": "ExitCar araç kiralama statik sitesi — çok dilli (TR/EN/RU/DE/AR)",
+  "scripts": {
+    "build:i18n": "node scripts/prerender.mjs",
+    "serve": "python -m http.server 7360"
+  },
+  "devDependencies": {
+    "jsdom": "^24.1.0"
+  }
+}

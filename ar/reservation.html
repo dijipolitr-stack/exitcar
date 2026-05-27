@@ -1,0 +1,289 @@
+<!DOCTYPE html><html lang="ar" dir="rtl"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,follow">
+<title data-i18n="title.reservation">اختر السيارة والتأمين | حجز ExitCar</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../styles/reservation.css">
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <a href="index.html" class="topbar-logo">
+    <div class="logo-icon">E</div> ExitCar
+  </a>
+  <div style="display:flex;align-items:center;gap:12px">
+    <div class="topbar-phone">📞 0532 010 01 00</div>
+    <div id="ec-lang-mount">
+    <div class="ec-lang-switcher" id="ec-lang-sw">
+      <button type="button" class="ec-lang-btn" onclick="document.getElementById('ec-lang-sw').classList.toggle('open')">
+        <span class="ec-lang-flag">🇸🇦</span><span>AR</span><span style="font-size:9px">▾</span>
+      </button>
+      <div class="ec-lang-menu">
+        
+          <button type="button" class="ec-lang-opt " onclick="EC_setLang('tr')">
+            <span class="ec-lang-flag">🇹🇷</span><span>Türkçe</span>
+          </button>
+          <button type="button" class="ec-lang-opt " onclick="EC_setLang('en')">
+            <span class="ec-lang-flag">🇬🇧</span><span>English</span>
+          </button>
+          <button type="button" class="ec-lang-opt " onclick="EC_setLang('ru')">
+            <span class="ec-lang-flag">🇷🇺</span><span>Русский</span>
+          </button>
+          <button type="button" class="ec-lang-opt " onclick="EC_setLang('de')">
+            <span class="ec-lang-flag">🇩🇪</span><span>Deutsch</span>
+          </button>
+          <button type="button" class="ec-lang-opt active" onclick="EC_setLang('ar')">
+            <span class="ec-lang-flag">🇸🇦</span><span>العربية</span>
+          </button>
+      </div>
+    </div></div>
+  </div>
+</div>
+
+<!-- STEPS -->
+<div class="steps-bar">
+  <div class="steps-inner">
+    <div class="step active">
+      <div class="step-num">1</div>
+      <div class="step-info">
+        <div class="step-label" data-i18n="step1.label">الخطوة 1/3</div>
+        <div class="step-name" data-i18n="step1.name">السيارة والتأمين</div>
+      </div>
+    </div>
+    <div class="step-line"></div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-info">
+        <div class="step-label" data-i18n="step2.label">الخطوة 2/3</div>
+        <div class="step-name" data-i18n="step2.name">بيانات السائق</div>
+      </div>
+    </div>
+    <div class="step-line"></div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-info">
+        <div class="step-label" data-i18n="step3.label">الخطوة 3/3</div>
+        <div class="step-name" data-i18n="step3.name">الدفع</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- LAYOUT -->
+<div class="res-layout">
+
+  <!-- MAIN -->
+  <div class="res-main">
+
+    <!-- Rental Info -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon">📅</div>
+        <h3 data-i18n="res.rentalInfo">تفاصيل التأجير</h3>
+      </div>
+      <div class="card-body">
+        <div class="rental-info">
+          <div class="rental-row">
+            <div class="rental-point">
+              <div class="rental-point-label" data-i18n="res.pickup">📍 مكان الاستلام</div>
+              <div class="rental-point-val" id="disp-pickup">İstanbul - Sabiha Gökçen Havalimanı</div>
+              <div class="rental-point-date" id="disp-pdate">22 Mayıs 2026, 10:00</div>
+            </div>
+            <div class="rental-point">
+              <div class="rental-point-label" data-i18n="res.return">📍 مكان الإعادة</div>
+              <div class="rental-point-val" id="disp-return">İstanbul - Sabiha Gökçen Havalimanı</div>
+              <div class="rental-point-date" id="disp-rdate">29 Mayıs 2026, 10:00</div>
+            </div>
+          </div>
+          <div class="rental-days-badge" id="disp-days">🚗 <span id="disp-days-num">7</span> <span data-i18n="common.days">يوم</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Insurance Packages -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon">🛡️</div>
+        <h3 data-i18n="res.selectIns">اختر باقة التأمين</h3>
+      </div>
+      <div class="card-body">
+        <div class="info-box blue" style="margin-bottom:16px">
+          <div class="info-box-icon">ℹ️</div>
+          <div data-i18n="res.insInfo">تشمل جميع السيارات تأمين المرور والمسؤولية الإلزامي. يمكنك إضافة تغطية إضافية بالباقات أدناه.</div>
+        </div>
+        <div class="insurance-grid">
+          <div class="ins-card" id="ins-basic" onclick="selectInsurance('basic', 0)">
+            <div class="ins-header">
+              <div class="ins-name" data-i18n="res.basicName">الباقة الأساسية</div>
+              <div class="ins-price free" data-i18n="res.free">مجاني</div>
+            </div>
+            <div class="ins-features">
+              <div class="ins-feat"><div class="dot"></div> <span data-i18n="res.trafficIncl">تأمين المرور مشمول</span></div>
+              <div class="ins-feat"><div class="dot"></div> <span data-i18n="res.liability">مسؤولية مالية إلزامية</span></div>
+              <div class="ins-feat"><div class="dot gray"></div> <span style="color:#9CA3AF" data-i18n="res.noCasco">بدون تأمين شامل</span></div>
+              <div class="ins-feat"><div class="dot gray"></div> <span style="color:#9CA3AF" data-i18n="res.noMini">بدون تغطية أضرار طفيفة</span></div>
+            </div>
+          </div>
+          <div class="ins-card selected" id="ins-medium" onclick="selectInsurance('medium', 350)">
+            <div class="ins-header">
+              <div style="display:flex;align-items:center;gap:8px">
+                <div class="ins-name" data-i18n="res.mediumName">الباقة الآمنة</div>
+                <span class="ins-badge badge-popular" data-i18n="res.popular">الأكثر شيوعاً</span>
+              </div>
+              <div class="ins-price" data-price-day="350">+$8/يوم</div>
+            </div>
+            <div class="ins-features">
+              <div class="ins-feat"><div class="dot"></div> <span data-i18n="res.trafficIncl">تأمين المرور مشمول</span></div>
+              <div class="ins-feat"><div class="dot"></div> <span data-i18n="res.cascoCover">تغطية شاملة</span></div>
+              <div class="ins-feat"><div class="dot"></div> <span data-i18n="res.deductible">تحمّل 2,500 ليرة</span></div>
+              <div class="ins-feat"><div class="dot gray"></div> <span style="color:#9CA3AF" data-i18n="res.noMini">بدون تغطية أضرار طفيفة</span></div>
+            </div>
+          </div>
+          <div class="ins-card" id="ins-full" onclick="selectInsurance('full', 680)">
+            <div class="ins-header">
+              <div style="display:flex;align-items:center;gap:8px">
+                <div class="ins-name" data-i18n="res.fullName">شامل كل شيء</div>
+                <span class="ins-badge badge-best" data-i18n="res.fullProtect">حماية كاملة</span>
+              </div>
+              <div class="ins-price" data-price-day="680">+$16/يوم</div>
+            </div>
+            <div class="ins-features">
+              <div class="ins-feat"><div class="dot"></div> <span data-i18n="res.trafficIncl">تأمين المرور مشمول</span></div>
+              <div class="ins-feat"><div class="dot"></div> <span data-i18n="res.fullCasco">تغطية شاملة كاملة</span></div>
+              <div class="ins-feat"><div class="dot"></div> <span data-i18n="res.noDeductible">بدون تحمّل (0 ليرة)</span></div>
+              <div class="ins-feat"><div class="dot"></div> <span data-i18n="res.miniCover">تغطية الأضرار الطفيفة</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Extras -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon">➕</div>
+        <h3><span data-i18n="res.extras">خدمات إضافية</span> <span style="font-size:13px;font-weight:400;color:#9CA3AF" data-i18n="res.optional">(اختياري)</span></h3>
+      </div>
+      <div class="card-body">
+        <div class="extras-grid">
+          <div class="extra-item" id="extra-gps" onclick="toggleExtra('gps', 150)">
+            <div class="extra-icon">🗺️</div>
+            <div class="extra-info">
+              <div class="extra-name" data-i18n="res.gpsName">GPS / ملاحة</div>
+              <div class="extra-desc" data-i18n="res.gpsDesc">نظام ملاحة مدمج</div>
+              <div class="extra-price" data-price-day="150">+$4/يوم</div>
+            </div>
+            <div class="extra-check"></div>
+          </div>
+          <div class="extra-item" id="extra-baby" onclick="toggleExtra('baby', 120)">
+            <div class="extra-icon">👶</div>
+            <div class="extra-info">
+              <div class="extra-name" data-i18n="res.babyName">مقعد أطفال</div>
+              <div class="extra-desc" data-i18n="res.babyDesc">للأطفال 9-18 كغ</div>
+              <div class="extra-price" data-price-day="120">+$3/يوم</div>
+            </div>
+            <div class="extra-check"></div>
+          </div>
+          <div class="extra-item" id="extra-driver2" onclick="toggleExtra('driver2', 200)">
+            <div class="extra-icon">👥</div>
+            <div class="extra-info">
+              <div class="extra-name" data-i18n="res.driver2Name">سائق ثانٍ</div>
+              <div class="extra-desc" data-i18n="res.driver2Desc">يمكن لشخص إضافي القيادة</div>
+              <div class="extra-price" data-price-day="200">+$5/يوم</div>
+            </div>
+            <div class="extra-check"></div>
+          </div>
+          <div class="extra-item" id="extra-wifi" onclick="toggleExtra('wifi', 180)">
+            <div class="extra-icon">📶</div>
+            <div class="extra-info">
+              <div class="extra-name" data-i18n="res.wifiName">واي فاي محمول</div>
+              <div class="extra-desc" data-i18n="res.wifiDesc">إنترنت غير محدود</div>
+              <div class="extra-price" data-price-day="180">+$4/يوم</div>
+            </div>
+            <div class="extra-check"></div>
+          </div>
+          <div class="extra-item" id="extra-snow" onclick="toggleExtra('snow', 90)">
+            <div class="extra-icon">❄️</div>
+            <div class="extra-info">
+              <div class="extra-name" data-i18n="res.snowName">باقة إطارات شتوية</div>
+              <div class="extra-desc" data-i18n="res.snowDesc">مناسبة للثلج والجليد</div>
+              <div class="extra-price" data-price-day="90">+$2/يوم</div>
+            </div>
+            <div class="extra-check"></div>
+          </div>
+          <div class="extra-item" id="extra-roadside" onclick="toggleExtra('roadside', 100)">
+            <div class="extra-icon">🔧</div>
+            <div class="extra-info">
+              <div class="extra-name" data-i18n="res.roadsideName">مساعدة على الطريق</div>
+              <div class="extra-desc" data-i18n="res.roadsideDesc">دعم الأعطال 24/7</div>
+              <div class="extra-price" data-price-day="100">+$2/يوم</div>
+            </div>
+            <div class="extra-check"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Continue -->
+    <button class="btn-continue" onclick="goToDriverInfo()" data-i18n="res.continueDriver">← متابعة إلى بيانات السائق</button>
+    <a href="search.html" style="display:block">
+      <button class="btn-back" data-i18n="res.backToList">العودة إلى قائمة السيارات →</button>
+    </a>
+  </div>
+
+  <!-- SIDEBAR -->
+  <div class="car-summary">
+    <div class="car-summary-card">
+      <div class="car-summary-img">
+        <img src="../assets/cars/toyota-corolla.png" alt="Araç" id="summary-car-img">
+      </div>
+      <div class="car-summary-info">
+        <div class="car-model-name" id="summary-car-name">Toyota Corolla</div>
+        <div class="car-model-alt" data-i18n="common.orSimilar">أو ما شابه</div>
+        <div class="car-features-row">
+          <div class="cfeat">⚙️ <span data-i18n="val.Otomatik">أوتوماتيك</span></div>
+          <div class="cfeat">⛽ <span data-i18n="val.Benzin">بنزين</span></div>
+          <div class="cfeat">👥 5 <span data-i18n="common.person">أشخاص</span></div>
+          <div class="cfeat">❄️ <span data-i18n="common.ac">تكييف</span></div>
+        </div>
+        <div class="car-summary-divider"></div>
+        <div class="price-breakdown">
+          <div class="price-row">
+            <span><span data-i18n="res.carLine">السيارة</span> (<span id="s-days">7</span> <span data-i18n="common.days">يوم</span> × <span id="s-base-price">2.700</span>)</span>
+            <span id="s-base-total" class="price-val">18.900 TL</span>
+          </div>
+          <div class="price-row" id="s-ins-row" style="display:none">
+            <span id="s-ins-label">Güvenli Paket</span>
+            <span id="s-ins-total">0 TL</span>
+          </div>
+          <div class="price-row" id="s-extra-row" style="display:none">
+            <span data-i18n="res.extrasLine">إضافات</span>
+            <span id="s-extra-total">0 TL</span>
+          </div>
+          <div class="price-row total">
+            <span data-i18n="res.total">الإجمالي</span>
+            <span class="price-val" id="s-grand-total">18.900 TL</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="info-box green">
+      <div class="info-box-icon">✅</div>
+      <div><strong data-i18n="sr.freeCancel">إلغاء مجاني</strong> — <span data-i18n="res.freeCancelBox">يمكنك الإلغاء مجاناً حتى 48 ساعة قبل الاستلام.</span></div>
+    </div>
+    <div class="trusted-row">
+      <div class="trusted-item" data-i18n="footer.ssl">🔒 SSL آمن</div>
+      <div class="trusted-item" data-i18n="footer.securePay">✅ دفع آمن</div>
+      <div class="trusted-item" data-i18n="res.licensed">🛡️ شركة مرخّصة</div>
+    </div>
+  </div>
+
+</div>
+
+<script src="../js/i18n.js"></script>
+<script src="../js/reservation.js"></script>
+
+
+</body></html>

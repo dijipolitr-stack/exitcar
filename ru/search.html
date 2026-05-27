@@ -1,0 +1,215 @@
+<!DOCTYPE html><html lang="ru" dir="ltr"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,follow">
+<title data-i18n="title.search">Список авто | ExitCar</title>
+<meta name="description" data-i18n-content="desc.search" content="Сравните цены Garenta, Avis, Sixt, Hertz и 50+ компаний проката на одном экране с ExitCar и выберите лучшее предложение.">
+<link rel="stylesheet" href="../styles/search.css">
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <a href="index.html" class="topbar-logo">
+    <div class="logo-icon">E</div> ExitCar
+  </a>
+  <div style="display:flex;align-items:center;gap:12px;font-size:13px;color:#6B7280">
+    <span>📞 0532 010 01 00</span>
+    <div id="ec-lang-mount">
+    <div class="ec-lang-switcher" id="ec-lang-sw">
+      <button type="button" class="ec-lang-btn" onclick="document.getElementById('ec-lang-sw').classList.toggle('open')">
+        <span class="ec-lang-flag">🇷🇺</span><span>RU</span><span style="font-size:9px">▾</span>
+      </button>
+      <div class="ec-lang-menu">
+        
+          <button type="button" class="ec-lang-opt " onclick="EC_setLang('tr')">
+            <span class="ec-lang-flag">🇹🇷</span><span>Türkçe</span>
+          </button>
+          <button type="button" class="ec-lang-opt " onclick="EC_setLang('en')">
+            <span class="ec-lang-flag">🇬🇧</span><span>English</span>
+          </button>
+          <button type="button" class="ec-lang-opt active" onclick="EC_setLang('ru')">
+            <span class="ec-lang-flag">🇷🇺</span><span>Русский</span>
+          </button>
+          <button type="button" class="ec-lang-opt " onclick="EC_setLang('de')">
+            <span class="ec-lang-flag">🇩🇪</span><span>Deutsch</span>
+          </button>
+          <button type="button" class="ec-lang-opt " onclick="EC_setLang('ar')">
+            <span class="ec-lang-flag">🇸🇦</span><span>العربية</span>
+          </button>
+      </div>
+    </div></div>
+    <a href="index.html" style="padding:7px 14px;background:#F30006;color:white;border-radius:8px;font-weight:700;font-size:12px" data-i18n="common.login">Регистрация / Вход</a>
+  </div>
+</div>
+
+<!-- SEARCH SUMMARY BAR -->
+<div class="search-bar">
+  <span style="font-size:16px">📍</span>
+  <span class="search-bar-location" id="sb-location">İstanbul - Sabiha Gökçen Havalimanı (SAW)</span>
+  <span class="search-bar-sep">•</span>
+  <span class="search-bar-dates">
+    <span id="sb-pdate">22 May 2026</span> <span id="sb-ptime">10:00</span>
+    <span style="margin:0 6px">→</span>
+    <span id="sb-ddate">25 May 2026</span> <span id="sb-dtime">10:00</span>
+  </span>
+  <span class="search-bar-sep">•</span>
+  <span style="font-size:13px;color:#4B5563;font-weight:600"><span id="sb-days">3</span> <span data-i18n="common.days">дн.</span></span>
+  <button class="btn-edit-search" onclick="window.location.href='index.html'" data-i18n="sr.editSearch">✏️ Изменить поиск</button>
+</div>
+
+<!-- CAMPAIGN BANNER -->
+<div class="campaign-banner" id="campaignBanner">
+  <strong>%50</strong>
+  <span data-i18n="sr.campaign">Скидки до 50%! 🎉 Бронируйте сейчас, при отмене — 100% возврат ✅</span>
+  <button class="btn-campaign" data-i18n="sr.applyCampaign">Применить акцию!</button>
+  <span class="close-campaign" onclick="closeCampaign()">✕</span>
+</div>
+
+<!-- CATEGORY TABS -->
+<div class="category-tabs-wrap">
+  <div style="display:flex;align-items:center;overflow-x:auto;gap:0" id="categoryTabs">
+    <!-- Rendered by JS -->
+  </div>
+</div>
+
+<!-- MAIN LAYOUT -->
+<div class="main-layout">
+
+  <!-- FILTER SIDEBAR -->
+  <div class="filter-sidebar">
+    <div class="filter-top">
+      <div class="filter-title" data-i18n="sr.filter">🔧 Фильтр</div>
+      <button class="btn-clear-all" onclick="clearAllFilters()" data-i18n="sr.clear">Сбросить</button>
+    </div>
+
+    <!-- Free Cancel -->
+    <div class="filter-section open">
+      <div class="filter-section-header" onclick="toggleSection(this)">
+        <div class="filter-section-title" data-i18n="sr.freeCancel">Бесплатная отмена</div>
+        <span class="filter-chevron">▾</span>
+      </div>
+      <div class="filter-section-body">
+        <label class="filter-opt">
+          <div class="filter-opt-left">
+            <input type="checkbox" onchange="onFreeCancelFilter(this.checked)"> <span data-i18n="sr.freeCancelCars">Авто с бесплатной отменой</span>
+          </div>
+        </label>
+      </div>
+    </div>
+
+    <!-- Kiralama Şirketi -->
+    <div class="filter-section open">
+      <div class="filter-section-header" onclick="toggleSection(this)">
+        <div class="filter-section-title" data-i18n="sr.company">Компания проката</div>
+        <span class="filter-chevron">▾</span>
+      </div>
+      <div class="filter-section-body">
+        <label class="filter-opt"><div class="filter-opt-left"><input type="checkbox" onchange="onCheckFilter('suppliers','garenta',this.checked)"> Garenta</div><span class="filter-count-badge">1</span></label>
+        <label class="filter-opt"><div class="filter-opt-left"><input type="checkbox" onchange="onCheckFilter('suppliers','rentgo',this.checked)"> Rent Go</div><span class="filter-count-badge">2</span></label>
+        <label class="filter-opt"><div class="filter-opt-left"><input type="checkbox" onchange="onCheckFilter('suppliers','avis',this.checked)"> Avis</div><span class="filter-count-badge">2</span></label>
+        <label class="filter-opt"><div class="filter-opt-left"><input type="checkbox" onchange="onCheckFilter('suppliers','sixt',this.checked)"> Sixt</div><span class="filter-count-badge">2</span></label>
+        <label class="filter-opt"><div class="filter-opt-left"><input type="checkbox" onchange="onCheckFilter('suppliers','hertz',this.checked)"> Hertz</div><span class="filter-count-badge">2</span></label>
+        <label class="filter-opt"><div class="filter-opt-left"><input type="checkbox" onchange="onCheckFilter('suppliers','budget',this.checked)"> Budget</div><span class="filter-count-badge">2</span></label>
+        <label class="filter-opt"><div class="filter-opt-left"><input type="checkbox" onchange="onCheckFilter('suppliers','europcar',this.checked)"> Europcar</div><span class="filter-count-badge">1</span></label>
+        <label class="filter-opt"><div class="filter-opt-left"><input type="checkbox" onchange="onCheckFilter('suppliers','thrifty',this.checked)"> Thrifty</div><span class="filter-count-badge">1</span></label>
+        <label class="filter-opt"><div class="filter-opt-left"><input type="checkbox" onchange="onCheckFilter('suppliers','oncars',this.checked)"> On Cars</div><span class="filter-count-badge">1</span></label>
+        <label class="filter-opt"><div class="filter-opt-left"><input type="checkbox" onchange="onCheckFilter('suppliers','decar',this.checked)"> Decar</div><span class="filter-count-badge">1</span></label>
+      </div>
+    </div>
+
+    <!-- Vites Tipi -->
+    <div class="filter-section open">
+      <div class="filter-section-header" onclick="toggleSection(this)">
+        <div class="filter-section-title" data-i18n="sr.transType">Коробка передач</div>
+        <span class="filter-chevron">▾</span>
+      </div>
+      <div class="filter-section-body">
+        <label class="filter-opt"><div class="filter-opt-left"><input type="checkbox" onchange="onCheckFilter('trans','Otomatik',this.checked)"> <span data-i18n="val.Otomatik">Автомат</span></div><span class="filter-count-badge">12</span></label>
+        <label class="filter-opt"><div class="filter-opt-left"><input type="checkbox" onchange="onCheckFilter('trans','Manuel',this.checked)"> <span data-i18n="val.Manuel">Механика</span></div><span class="filter-count-badge">3</span></label>
+      </div>
+    </div>
+
+    <!-- Yakıt Tipi -->
+    <div class="filter-section open">
+      <div class="filter-section-header" onclick="toggleSection(this)">
+        <div class="filter-section-title" data-i18n="sr.fuelType">Тип топлива</div>
+        <span class="filter-chevron">▾</span>
+      </div>
+      <div class="filter-section-body">
+        <label class="filter-opt"><div class="filter-opt-left"><input type="checkbox" onchange="onCheckFilter('fuel','Benzin',this.checked)"> <span data-i18n="val.Benzin">Бензин</span></div><span class="filter-count-badge">7</span></label>
+        <label class="filter-opt"><div class="filter-opt-left"><input type="checkbox" onchange="onCheckFilter('fuel','Dizel',this.checked)"> <span data-i18n="val.Dizel">Дизель</span></div><span class="filter-count-badge">5</span></label>
+        <label class="filter-opt"><div class="filter-opt-left"><input type="checkbox" onchange="onCheckFilter('fuel','Hibrit',this.checked)"> <span data-i18n="val.Hibrit">Гибрид</span></div><span class="filter-count-badge">2</span></label>
+        <label class="filter-opt"><div class="filter-opt-left"><input type="checkbox" onchange="onCheckFilter('fuel','Elektrik',this.checked)"> <span data-i18n="val.Elektrik">Электро</span></div><span class="filter-count-badge">1</span></label>
+      </div>
+    </div>
+
+    <!-- Araç Teslim Şekli -->
+    <div class="filter-section open">
+      <div class="filter-section-header" onclick="toggleSection(this)">
+        <div class="filter-section-title" data-i18n="sr.deliveryType">Способ выдачи</div>
+        <span class="filter-chevron">▾</span>
+      </div>
+      <div class="filter-section-body">
+        <label class="filter-opt"><div class="filter-opt-left"><input type="checkbox" onchange="onCheckFilter('delivery','airport',this.checked)"> <span data-i18n="sr.deliveryAirport">✈️ Офис в аэропорту</span></div></label>
+        <label class="filter-opt"><div class="filter-opt-left"><input type="checkbox" onchange="onCheckFilter('delivery','office',this.checked)"> <span data-i18n="sr.deliveryOffice">🏢 Городской офис</span></div></label>
+      </div>
+    </div>
+
+    <!-- Fiyat Aralığı -->
+    <div class="filter-section open">
+      <div class="filter-section-header" onclick="toggleSection(this)">
+        <div class="filter-section-title" data-i18n="sr.priceRange">Диапазон цен (3 дня)</div>
+        <span class="filter-chevron">▾</span>
+      </div>
+      <div class="filter-section-body">
+        <div class="price-range-box">
+          <div class="price-range-labels">
+            <span data-price="0">0 ₽</span>
+            <span id="price-max-label" data-price="30000">60&nbsp;000 ₽</span>
+          </div>
+          <input type="range" id="priceRange" min="3000" max="30000" step="500" value="30000" oninput="onPriceChange(this.value)">
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- RESULTS PANEL -->
+  <div class="results-panel">
+
+    <!-- Results header -->
+    <div class="results-header">
+      <div class="results-count"><span id="resultCount">15</span> <span data-i18n="sr.listed">Авто в списке</span></div>
+      <div class="sort-wrap">
+        <span class="sort-label" data-i18n="sr.sort">↕ Сортировка:</span>
+        <select class="sort-select" onchange="onSort(this.value)">
+          <option value="recommended" data-i18n="sr.sortRecommended">Рекомендуемые</option>
+          <option value="price_asc" data-i18n="sr.sortPriceAsc">Сначала дешёвые</option>
+          <option value="price_desc" data-i18n="sr.sortPriceDesc">Сначала дорогие</option>
+          <option value="score" data-i18n="sr.sortScore">Высший рейтинг</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Car list -->
+    <div id="carList">
+      <!-- Rendered by JS -->
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination">
+      <button class="page-btn active">1</button>
+      <button class="page-btn">2</button>
+      <button class="page-btn">3</button>
+      <button class="page-btn">›</button>
+    </div>
+  </div>
+
+</div>
+
+<script src="../js/i18n.js"></script>
+<script src="../js/search.js"></script>
+
+
+</body></html>

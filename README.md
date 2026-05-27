@@ -22,8 +22,32 @@ dinamik içerik (araç kartları, doğrulama mesajları) JS içinde `t()` ve `fm
 
 - **Çeviri eklemek/düzeltmek:** `js/i18n.js` → `EC_T` sözlüğünde ilgili anahtarı düzenle.
 - **Döviz kurlarını güncellemek:** `js/i18n.js` → `EC_CUR` (her birim yabancı paranın kaç TL ettiği).
-- **Dil değişimi:** Navbar'daki dil seçici `localStorage`'a yazar ve sayfayı yeniler.
-  İlk girişte kayıt yoksa tarayıcı diline göre otomatik seçilir.
+- **Dil değişimi:** Navbar'daki dil seçici ilgili dilin URL'ine gider
+  (tr → kök, diğerleri → `/en/`, `/ru/`, `/de/`, `/ar/`).
+- **İlk giriş:** Kökte (`/`) bir insan ziyaretçi, tarayıcı diline veya kayıtlı
+  tercihine göre otomatik `/en/` gibi bir URL'e yönlenir. Botlar daima Türkçe
+  kökü görür (SEO temizliği için).
+
+## 🔎 SEO Altyapısı
+
+Site SEO için **dil başına statik sayfalar** üretir — Google JS'e bağımlı kalmadan
+her dili ayrı, taranabilir URL olarak görür.
+
+- **Ön-render:** `npm run build:i18n` komutu, Türkçe kaynak sayfaları okuyup
+  `js/i18n.js` çevirilerini uygular ve `/en`, `/ru`, `/de`, `/ar` altına statik
+  HTML üretir (her biri doğru `lang/dir`, `hreflang`, `canonical`, `og:locale` ile).
+  > ⚠️ **Önemli:** Herhangi bir sayfada veya `js/i18n.js`'te metin değiştirdiğinde
+  > `npm run build:i18n` komutunu **yeniden çalıştır**, yoksa dil sayfaları eski kalır.
+- **`robots.txt` + `sitemap.xml`** — kökte; sitemap dil alternatiflerini `hreflang`
+  ile listeler. Huni sayfaları (arama/rezervasyon/ödeme) `noindex`'tir.
+- **Yapısal veri (JSON-LD):** Organization, WebSite, CarRental (Antalya ofisi) ve
+  FAQPage. FAQ rich snippet'i ön-render sırasında her dile çevrilir.
+- **Open Graph + Twitter Card** — sosyal paylaşım önizlemeleri için.
+
+### ⚠️ Alan adı yer tutucusu
+`exitcar.com` şu an yer tutucudur. Yayına geçince şu dosyalarda gerçek alan adıyla
+değiştir: `index.html` (canonical/og/hreflang/JSON-LD), `sitemap.xml`, `robots.txt`,
+`scripts/prerender.mjs` (`BASE`). Sonra `npm run build:i18n` çalıştır.
 
 ## 📁 Dosya Yapısı
 

@@ -21,14 +21,47 @@ const EC_CUR = {
 };
 
 // ===== AKTİF DİL (script yüklenirken senkron belirlenir) =====
+// Öncelik: URL yolu (/en/, /ru/, /de/, /ar/) > localStorage > tarayıcı dili > tr
+// SEO için her dilin ayrı statik URL'i vardır (ön-render). URL yolu her zaman kazanır;
+// böylece /en/ sayfası Google için daima İngilizce, kullanıcı tercihinden bağımsızdır.
+function ecPathLang() {
+  const m = (location.pathname || '').match(/^\/(en|ru|de|ar)(\/|$)/);
+  return m ? m[1] : null;
+}
+function ecSaved() { try { return localStorage.getItem('ec_lang'); } catch (e) { return null; } }
+const EC_SAVED_BEFORE = ecSaved();           // bu yüklemeden ÖNCEki tercih (yönlendirme için)
 function ecDetectLang() {
-  const saved = localStorage.getItem('ec_lang');
+  const path = ecPathLang();
+  if (path) return path;                     // /en/ vb. her zaman kazanır (SEO)
+  const saved = ecSaved();
   if (saved && EC_LANGS.includes(saved)) return saved;
-  const nav = (navigator.language || 'tr').slice(0, 2).toLowerCase();
-  if (EC_LANGS.includes(nav)) return nav;
-  return 'tr';
+  return 'tr';                               // kök varsayılanı Türkçe (botlar tutarlı indeksler)
 }
 let EC_LANG = ecDetectLang();
+// Aktif dili sakla — kök (Türkçe) huni sayfaları bu tercihi okuyup aynı dilde kalır.
+try { localStorage.setItem('ec_lang', EC_LANG); } catch (e) {}
+
+// Kök yolun temizi (dil ön-eki olmadan), örn. "/en/search.html" -> "/search.html"
+function ecBasePath() {
+  let p = (location.pathname || '/').replace(/^\/(en|ru|de|ar)(?=\/|$)/, '');
+  return p === '' ? '/' : p;
+}
+
+// İlk girişte otomatik dil yönlendirmesi (yalnızca İNSANLAR; botlar Türkçe kökte kalır → SEO temiz)
+(function ecRootRedirect() {
+  if (ecPathLang()) return;                  // zaten bir dil URL'indeyiz
+  const ua = navigator.userAgent || '';
+  if (/bot|crawl|spider|slurp|bingpreview|facebookexternalhit|google|yandex|baidu|duckduck|pinterest|slackbot/i.test(ua)) return;
+  let target = EC_SAVED_BEFORE;              // önce açıkça kaydedilmiş tercih
+  if (!target || !EC_LANGS.includes(target)) {
+    const nav = (navigator.language || '').slice(0, 2).toLowerCase();
+    target = EC_LANGS.includes(nav) ? nav : 'tr';
+  }
+  if (target && target !== 'tr') {
+    const base = ecBasePath();
+    location.replace('/' + target + (base === '/' ? '/' : base) + (location.search || ''));
+  }
+})();
 
 // ===== ÇEVİRİ FONKSİYONU =====
 function t(key) {
@@ -44,11 +77,14 @@ function fmtPrice(tryAmount) {
   return c.pre + n.toLocaleString(c.loc) + c.suf;
 }
 
-// ===== DİL DEĞİŞTİR (kaydet + yenile) =====
+// ===== DİL DEĞİŞTİR (kaydet + ilgili dilin URL'ine git) =====
+// Her dilin ayrı URL'i var: tr -> kök, diğerleri -> /<lang>/... (ön-render edilmiş).
 function EC_setLang(lang) {
   if (!EC_LANGS.includes(lang)) return;
-  localStorage.setItem('ec_lang', lang);
-  location.reload();
+  try { localStorage.setItem('ec_lang', lang); } catch (e) {}
+  const base = ecBasePath();
+  const target = (lang === 'tr') ? base : ('/' + lang + (base === '/' ? '/' : base));
+  location.href = target + (location.search || '');
 }
 
 // ===== FLATPICKR LOCALE EŞLEMESİ =====
@@ -561,4 +597,8 @@ const EC_T = {
   'title.reservation': { tr: 'Araç Seç & Sigorta | ExitCar Rezervasyon', en: 'Select Car & Insurance | ExitCar Booking', ru: 'Авто и страховка | Бронь ExitCar', de: 'Auto & Versicherung | ExitCar Buchung', ar: 'اختر السيارة والتأمين | حجز ExitCar' },
   'title.driver':      { tr: 'Sürücü Bilgileri | ExitCar Rezervasyon', en: 'Driver Details | ExitCar Booking', ru: 'Данные водителя | Бронь ExitCar', de: 'Fahrerdaten | ExitCar Buchung', ar: 'بيانات السائق | حجز ExitCar' },
   'title.payment':     { tr: 'Ödeme | ExitCar Rezervasyon', en: 'Payment | ExitCar Booking', ru: 'Оплата | Бронь ExitCar', de: 'Zahlung | ExitCar Buchung', ar: 'الدفع | حجز ExitCar' },
+
+  // ---------- META AÇIKLAMALARI (SEO) ----------
+  'desc.index':  { tr: 'ExitCar ile Antalya ve Türkiye genelinde en uygun kiralık araç fiyatlarını karşılaştırın. Havalimanı teslim, 7/24 destek, ücretsiz iptal. Hemen rezervasyon yapın.', en: 'Compare the cheapest car rental prices in Antalya and across Türkiye with ExitCar. Airport pick-up, 24/7 support, free cancellation. Book your rent a car now.', ru: 'Сравните самые дешёвые цены на аренду авто в Анталье и по всей Турции с ExitCar. Выдача в аэропорту, поддержка 24/7, бесплатная отмена. Бронируйте сейчас.', de: 'Vergleichen Sie mit ExitCar die günstigsten Mietwagenpreise in Antalya und der ganzen Türkei. Flughafenabholung, 24/7-Support, kostenlose Stornierung. Jetzt buchen.', ar: 'قارن أرخص أسعار تأجير السيارات في أنطاليا وجميع أنحاء تركيا مع ExitCar. استلام من المطار، دعم 24/7، إلغاء مجاني. احجز الآن.' },
+  'desc.search': { tr: 'Garenta, Avis, Sixt, Hertz ve 50+ kiralama şirketinin araç fiyatlarını ExitCar ile tek ekranda karşılaştırın ve en uygununu seçin.', en: 'Compare car prices from Garenta, Avis, Sixt, Hertz and 50+ rental companies on one screen with ExitCar and pick the best deal.', ru: 'Сравните цены Garenta, Avis, Sixt, Hertz и 50+ компаний проката на одном экране с ExitCar и выберите лучшее предложение.', de: 'Vergleichen Sie mit ExitCar die Preise von Garenta, Avis, Sixt, Hertz und 50+ Vermietern auf einen Blick und wählen Sie das beste Angebot.', ar: 'قارن أسعار Garenta وAvis وSixt وHertz و50+ شركة تأجير على شاشة واحدة مع ExitCar واختر أفضل عرض.' },
 };

@@ -1,0 +1,7 @@
+# ExitCar robots.txt
+# Not: Huni sayfaları (search/reservation/driver-info/payment) <meta robots noindex>
+# ile işaretli — taranabilir ama indekslenmez. Bu yüzden burada engellemiyoruz.
+User-agent: *
+Allow: /
+
+Sitemap: https://exitcar.com/sitemap.xml

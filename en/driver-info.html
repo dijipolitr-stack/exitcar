@@ -1,0 +1,254 @@
+<!DOCTYPE html><html lang="en" dir="ltr"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,follow">
+<title data-i18n="title.driver">Driver Details | ExitCar Booking</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../styles/reservation.css">
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <a href="index.html" class="topbar-logo">
+    <div class="logo-icon">E</div> ExitCar
+  </a>
+  <div style="display:flex;align-items:center;gap:12px">
+    <div class="topbar-phone">📞 0532 010 01 00</div>
+    <div id="ec-lang-mount">
+    <div class="ec-lang-switcher" id="ec-lang-sw">
+      <button type="button" class="ec-lang-btn" onclick="document.getElementById('ec-lang-sw').classList.toggle('open')">
+        <span class="ec-lang-flag">🇬🇧</span><span>EN</span><span style="font-size:9px">▾</span>
+      </button>
+      <div class="ec-lang-menu">
+        
+          <button type="button" class="ec-lang-opt " onclick="EC_setLang('tr')">
+            <span class="ec-lang-flag">🇹🇷</span><span>Türkçe</span>
+          </button>
+          <button type="button" class="ec-lang-opt active" onclick="EC_setLang('en')">
+            <span class="ec-lang-flag">🇬🇧</span><span>English</span>
+          </button>
+          <button type="button" class="ec-lang-opt " onclick="EC_setLang('ru')">
+            <span class="ec-lang-flag">🇷🇺</span><span>Русский</span>
+          </button>
+          <button type="button" class="ec-lang-opt " onclick="EC_setLang('de')">
+            <span class="ec-lang-flag">🇩🇪</span><span>Deutsch</span>
+          </button>
+          <button type="button" class="ec-lang-opt " onclick="EC_setLang('ar')">
+            <span class="ec-lang-flag">🇸🇦</span><span>العربية</span>
+          </button>
+      </div>
+    </div></div>
+  </div>
+</div>
+
+<!-- STEPS -->
+<div class="steps-bar">
+  <div class="steps-inner">
+    <div class="step done">
+      <div class="step-num">✓</div>
+      <div class="step-info">
+        <div class="step-label" data-i18n="step1.label">Step 1/3</div>
+        <div class="step-name" data-i18n="step1.name">Car &amp; Insurance</div>
+      </div>
+    </div>
+    <div class="step-line done"></div>
+    <div class="step active">
+      <div class="step-num">2</div>
+      <div class="step-info">
+        <div class="step-label" data-i18n="step2.label">Step 2/3</div>
+        <div class="step-name" data-i18n="step2.name">Driver Details</div>
+      </div>
+    </div>
+    <div class="step-line"></div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-info">
+        <div class="step-label" data-i18n="step3.label">Step 3/3</div>
+        <div class="step-name" data-i18n="step3.name">Payment</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- LAYOUT -->
+<div class="res-layout">
+  <div class="res-main">
+
+    <!-- Driver Info Form -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon">👤</div>
+        <h3 data-i18n="di.title">Driver Details</h3>
+      </div>
+      <div class="card-body">
+        <div class="info-box blue" style="margin-bottom:20px">
+          <div class="info-box-icon">ℹ️</div>
+          <div data-i18n="di.info">Please enter the details of the driver at handover. The information must match the ID document.</div>
+        </div>
+
+        <div class="form-section-title" data-i18n="di.personal">Personal Information</div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label"><span data-i18n="di.firstName">First Name</span> <span class="req">*</span></label>
+            <input type="text" class="form-input" id="firstName" data-i18n-ph="di.firstNamePh" placeholder="Your first name" oninput="validateField('firstName')">
+            <div class="form-error" id="firstName-err"></div>
+          </div>
+          <div class="form-group">
+            <label class="form-label"><span data-i18n="di.lastName">Last Name</span> <span class="req">*</span></label>
+            <input type="text" class="form-input" id="lastName" data-i18n-ph="di.lastNamePh" placeholder="Your last name" oninput="validateField('lastName')">
+            <div class="form-error" id="lastName-err"></div>
+          </div>
+          <div class="form-group">
+            <label class="form-label"><span data-i18n="di.email">Email</span> <span class="req">*</span></label>
+            <input type="email" class="form-input" id="email" placeholder="ornek@email.com" oninput="validateField('email')">
+            <div class="form-error" id="email-err"></div>
+            <div class="form-hint" data-i18n="di.emailHint">Booking confirmation will be sent here</div>
+          </div>
+          <div class="form-group">
+            <label class="form-label"><span data-i18n="di.phone">Phone</span> <span class="req">*</span></label>
+            <input type="tel" class="form-input" id="phone" placeholder="05XX XXX XX XX" oninput="formatPhone(this); validateField('phone')">
+            <div class="form-error" id="phone-err"></div>
+          </div>
+          <div class="form-group">
+            <label class="form-label"><span data-i18n="di.birthDate">Date of Birth</span> <span class="req">*</span></label>
+            <input type="date" class="form-input" id="birthDate" oninput="validateField('birthDate')">
+            <div class="form-error" id="birthDate-err"></div>
+          </div>
+          <div class="form-group">
+            <label class="form-label"><span data-i18n="di.tcNo">ID / Passport No</span> <span class="req">*</span></label>
+            <input type="text" class="form-input" id="tcNo" data-i18n-ph="di.tcNoPh" placeholder="ID or passport number" maxlength="11" oninput="this.value=this.value.replace(/\D/g,''); validateField('tcNo')">
+            <div class="form-error" id="tcNo-err"></div>
+          </div>
+        </div>
+
+        <div class="form-section-title" style="margin-top:28px" data-i18n="di.license">License Information</div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label"><span data-i18n="di.licenseNo">License Number</span> <span class="req">*</span></label>
+            <input type="text" class="form-input" id="licenseNo" data-i18n-ph="di.licenseNoPh" placeholder="Your license number" oninput="validateField('licenseNo')">
+            <div class="form-error" id="licenseNo-err"></div>
+          </div>
+          <div class="form-group">
+            <label class="form-label"><span data-i18n="di.licenseDate">License Issue Date</span> <span class="req">*</span></label>
+            <input type="date" class="form-input" id="licenseDate" oninput="validateField('licenseDate')">
+            <div class="form-error" id="licenseDate-err"></div>
+          </div>
+          <div class="form-group">
+            <label class="form-label"><span data-i18n="di.licenseClass">License Class</span> <span class="req">*</span></label>
+            <select class="form-input form-select" id="licenseClass" onchange="validateField('licenseClass')">
+              <option value="" data-i18n="di.select">Select</option>
+              <option value="B" data-i18n="di.classB">B — Car</option>
+              <option value="B+E" data-i18n="di.classBE">B+E — Car + Trailer</option>
+              <option value="A2" data-i18n="di.classA2">A2 — Motorcycle</option>
+              <option value="C" data-i18n="di.classC">C — Truck</option>
+            </select>
+            <div class="form-error" id="licenseClass-err"></div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" data-i18n="di.nationality">Nationality</label>
+            <select class="form-input form-select" id="nationality">
+              <option value="TR" selected="" data-i18n="di.natTR">🇹🇷 Türkiye</option>
+              <option value="DE" data-i18n="di.natDE">🇩🇪 Germany</option>
+              <option value="GB" data-i18n="di.natGB">🇬🇧 United Kingdom</option>
+              <option value="RU" data-i18n="di.natRU">🇷🇺 Russia</option>
+              <option value="FR" data-i18n="di.natFR">🇫🇷 France</option>
+              <option value="NL" data-i18n="di.natNL">🇳🇱 Netherlands</option>
+              <option value="OTHER" data-i18n="di.natOther">Other</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-section-title" style="margin-top:28px"><span data-i18n="di.flight">Flight Information</span> <span style="font-size:11px;color:#9CA3AF;text-transform:none;font-weight:400;letter-spacing:0" data-i18n="di.flightOpt">(for airport deliveries — optional)</span></div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label" data-i18n="di.flightNo">Flight Number</label>
+            <input type="text" class="form-input" id="flightNo" placeholder="TK1234">
+            <div class="form-hint" data-i18n="di.flightHint">We'll wait for you in case of delays</div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" data-i18n="di.flightFrom">Departure Point of Arriving Flight</label>
+            <input type="text" class="form-input" id="flightFrom" data-i18n-ph="di.flightFromPh" placeholder="Izmir, Amsterdam...">
+          </div>
+        </div>
+
+        <div class="form-section-title" style="margin-top:28px" data-i18n="di.special">Special Requests</div>
+        <div class="form-group full">
+          <label class="form-label" data-i18n="di.note">Note / Request</label>
+          <textarea class="form-input" id="notes" rows="3" data-i18n-ph="di.notePh" placeholder="Write any special requests here..." style="resize:vertical"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- KVKK -->
+    <div class="card">
+      <div class="card-body" style="display:flex;flex-direction:column;gap:12px">
+        <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;font-size:13px;color:#4B5563">
+          <input type="checkbox" id="kvkk" style="margin-top:2px;accent-color:#F30006">
+          <span><strong data-i18n="di.kvkkLabel">Privacy Notice</strong><span data-i18n="di.kvkkText"> — I have read it and consent to the processing of my personal data.</span> <a href="#" style="color:#F30006" data-i18n="di.readText">Read notice →</a></span>
+        </label>
+        <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;font-size:13px;color:#4B5563">
+          <input type="checkbox" id="terms" style="margin-top:2px;accent-color:#F30006">
+          <span><strong data-i18n="di.termsLabel">Rental Agreement</strong><span data-i18n="di.termsAnd"> and </span><strong data-i18n="di.termsGeneral">General Terms of Use</strong><span data-i18n="di.termsText"> — I have read and accept them.</span> <a href="#" style="color:#F30006" data-i18n="di.readTerms">Read terms →</a></span>
+        </label>
+      </div>
+    </div>
+
+    <button class="btn-continue" id="btnContinue" onclick="goToPayment()" data-i18n="di.continuePay">Continue to Payment →</button>
+    <a href="reservation.html" style="display:block">
+      <button class="btn-back" data-i18n="di.back">← Go Back</button>
+    </a>
+  </div>
+
+  <!-- SIDEBAR -->
+  <div class="car-summary">
+    <div class="car-summary-card">
+      <div class="car-summary-img">
+        <img src="../assets/cars/toyota-corolla.png" alt="Araç" id="summary-img">
+      </div>
+      <div class="car-summary-info">
+        <div class="car-model-name" id="s2-car">Toyota Corolla</div>
+        <div class="car-model-alt" data-i18n="common.orSimilar">or similar</div>
+        <div class="car-features-row">
+          <div class="cfeat">⚙️ <span data-i18n="val.Otomatik">Automatic</span></div>
+          <div class="cfeat">⛽ <span data-i18n="val.Benzin">Petrol</span></div>
+          <div class="cfeat">👥 5 <span data-i18n="common.person">Persons</span></div>
+        </div>
+        <div class="car-summary-divider"></div>
+        <div class="price-breakdown">
+          <div class="price-row">
+            <span><span data-i18n="res.carLine">Car</span> (7 <span data-i18n="common.days">Days</span>)</span>
+            <span id="s2-base">18.900 TL</span>
+          </div>
+          <div class="price-row" id="s2-ins-row">
+            <span id="s2-ins-label">Güvenli Paket</span>
+            <span id="s2-ins-val">2.450 TL</span>
+          </div>
+          <div class="price-row" id="s2-ext-row" style="display:none">
+            <span data-i18n="res.extrasLine">Extras</span>
+            <span id="s2-ext-val">0 TL</span>
+          </div>
+          <div class="price-row total">
+            <span data-i18n="res.total">TOTAL</span>
+            <span class="price-val" id="s2-total">21.350 TL</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="info-box yellow">
+      <div class="info-box-icon">⚠️</div>
+      <div data-i18n="di.warnDocs">At handover you must have your driver's license, ID and booking document with you.</div>
+    </div>
+    <div class="trusted-row">
+      <div class="trusted-item" data-i18n="footer.ssl">🔒 SSL Secure</div>
+      <div class="trusted-item" data-i18n="footer.securePay">✅ Secure Payment</div>
+      <div class="trusted-item" data-i18n="di.kvkkCompliant">🛡️ GDPR Compliant</div>
+    </div>
+  </div>
+</div>
+
+<script src="../js/i18n.js"></script>
+<script src="../js/driver-info.js"></script>
+
+
+</body></html>

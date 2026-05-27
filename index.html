@@ -4,7 +4,94 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title data-i18n="title.index">ExitCar — Kiralık Araç Fiyatlarını Karşılaştır | Rent a Car</title>
-<meta name="description" content="ExitCar ile en uygun kiralık araç fiyatlarını karşılaştırın. Günlük ve aylık araç kiralama. Türkiye geneli 7/24 hizmet.">
+<meta name="description" data-i18n-content="desc.index" content="ExitCar ile Antalya ve Türkiye genelinde en uygun kiralık araç fiyatlarını karşılaştırın. Havalimanı teslim, 7/24 destek, ücretsiz iptal.">
+
+<!-- SEO: canonical + hreflang (alan adı belli olunca exitcar.com güncellenir; ön-render dil başına ayarlar) -->
+<link rel="canonical" href="https://exitcar.com/">
+<link rel="alternate" hreflang="tr" href="https://exitcar.com/">
+<link rel="alternate" hreflang="en" href="https://exitcar.com/en/">
+<link rel="alternate" hreflang="ru" href="https://exitcar.com/ru/">
+<link rel="alternate" hreflang="de" href="https://exitcar.com/de/">
+<link rel="alternate" hreflang="ar" href="https://exitcar.com/ar/">
+<link rel="alternate" hreflang="x-default" href="https://exitcar.com/">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ExitCar">
+<meta property="og:title" data-i18n-content="title.index" content="ExitCar — Kiralık Araç Fiyatlarını Karşılaştır">
+<meta property="og:description" data-i18n-content="desc.index" content="Antalya ve Türkiye genelinde en uygun kiralık araç fiyatlarını karşılaştırın.">
+<meta property="og:url" content="https://exitcar.com/">
+<meta property="og:image" content="https://exitcar.com/assets/hero_bg.png">
+<meta property="og:locale" content="tr_TR">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" data-i18n-content="title.index" content="ExitCar — Kiralık Araç Kiralama">
+<meta name="twitter:description" data-i18n-content="desc.index" content="Antalya ve Türkiye genelinde en uygun kiralık araç fiyatları.">
+<meta name="twitter:image" content="https://exitcar.com/assets/hero_bg.png">
+
+<!-- Yapısal veri: Organizasyon + Site + Yerel İşletme -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://exitcar.com/#organization",
+      "name": "ExitCar",
+      "url": "https://exitcar.com/",
+      "logo": "https://exitcar.com/assets/hero_bg.png",
+      "sameAs": [
+        "https://www.facebook.com/profile.php?id=61560045585776",
+        "https://www.instagram.com/exitcar.com.tr/"
+      ]
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://exitcar.com/#website",
+      "url": "https://exitcar.com/",
+      "name": "ExitCar",
+      "publisher": { "@id": "https://exitcar.com/#organization" },
+      "inLanguage": ["tr", "en", "ru", "de", "ar"]
+    },
+    {
+      "@type": "CarRental",
+      "@id": "https://exitcar.com/#localbusiness",
+      "name": "ExitCar Araç Kiralama",
+      "image": "https://exitcar.com/assets/hero_bg.png",
+      "url": "https://exitcar.com/",
+      "telephone": "+90 532 010 01 00",
+      "email": "info@exitcar.com",
+      "priceRange": "₺₺",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Cihadiye Mah. 23079. Sok. No: 29, Havalimanı Karşısı",
+        "addressLocality": "Aksu",
+        "addressRegion": "Antalya",
+        "addressCountry": "TR"
+      },
+      "openingHoursSpecification": {
+        "@type": "OpeningHoursSpecification",
+        "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],
+        "opens": "00:00",
+        "closes": "23:59"
+      },
+      "areaServed": { "@type": "City", "name": "Antalya" }
+    }
+  ]
+}
+</script>
+<script type="application/ld+json" id="faq-jsonld">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    { "@type": "Question", "name": "ExitCar'da araç kiralama nasıl yapılır?", "acceptedAnswer": { "@type": "Answer", "text": "Web sitemiz üzerinden alış yeri, tarih ve saat bilgilerini girin. Araç Ara butonuna tıklayarak uygun araçları listeleyin, istediğiniz aracı seçin ve anında rezervasyon tamamlayın." } },
+    { "@type": "Question", "name": "Araç kiralamak için hangi belgeler gerekli?", "acceptedAnswer": { "@type": "Answer", "text": "Geçerli sürücü belgesi, kimlik belgesi (TC kimlik veya pasaport) ve kredi kartı gereklidir. Bazı araç sınıflarında ek belgeler talep edilebilir." } },
+    { "@type": "Question", "name": "Minimum yaş sınırı nedir?", "acceptedAnswer": { "@type": "Answer", "text": "Çoğu araç için minimum yaş 21, minimum ehliyet süresi 1 yıldır. Genç sürücü paketi ile 19-21 yaş arasındaki sürücülere de hizmet sunulmaktadır." } },
+    { "@type": "Question", "name": "İptal veya değişiklik yapabilir miyim?", "acceptedAnswer": { "@type": "Answer", "text": "Evet, rezervasyonunuzu kolayca iptal edebilir veya değiştirebilirsiniz. Esnek iptal politikamız sayesinde birçok rezervasyon ücretsiz iptal edilebilmektedir." } },
+    { "@type": "Question", "name": "Aylık araç kiralama mümkün mü?", "acceptedAnswer": { "@type": "Answer", "text": "Evet, aylık araç kiralama için alış ve iade tarihlerini 30 gün veya daha fazla seçmeniz yeterlidir. Uzun dönem kiralamalarda özel indirimli fiyatlar uygulanmaktadır." } }
+  ]
+}
+</script>
 <link rel="stylesheet" href="styles/main.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
