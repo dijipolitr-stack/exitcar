@@ -17,7 +17,8 @@ const ROOT = path.resolve(__dirname, '..');
 
 const BASE = 'https://exitcar.com';            // alan adı belli olunca burayı güncelle
 const LANGS = ['en', 'ru', 'de', 'ar'];        // tr = kök, ön-render gerekmez
-const PAGES = ['index.html', 'search.html', 'reservation.html', 'driver-info.html', 'payment.html'];
+const PAGES = ['index.html', 'search.html', 'reservation.html', 'driver-info.html', 'payment.html', 'antalya-havalimani-arac-kiralama.html'];
+const HOME_LABEL = { en: 'Home', ru: 'Главная', de: 'Startseite', ar: 'الرئيسية' };
 const OG_LOCALE = { en: 'en_US', ru: 'ru_RU', de: 'de_DE', ar: 'ar_AR' };
 
 const i18nSrc = fs.readFileSync(path.join(ROOT, 'js', 'i18n.js'), 'utf8');
@@ -63,7 +64,7 @@ for (const lang of LANGS) {
     document.querySelectorAll('meta[property="og:url"]').forEach(m => m.setAttribute('content', selfUrl));
     document.querySelectorAll('meta[property="og:locale"]').forEach(m => m.setAttribute('content', OG_LOCALE[lang]));
 
-    // FAQ JSON-LD'yi dile çevir (yalnızca index)
+    // FAQ JSON-LD'yi dile çevir (anasayfa)
     const faq = document.getElementById('faq-jsonld');
     if (faq && typeof window.t === 'function') {
       const data = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: [] };
@@ -75,6 +76,33 @@ for (const lang of LANGS) {
         });
       }
       faq.textContent = '\n' + JSON.stringify(data, null, 2) + '\n';
+    }
+
+    // AYT lokasyon sayfası: FAQ + Breadcrumb JSON-LD'yi dile çevir
+    const aytFaq = document.getElementById('faq-ayt-jsonld');
+    if (aytFaq && typeof window.t === 'function') {
+      const data = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: [] };
+      for (let i = 1; i <= 4; i++) {
+        data.mainEntity.push({
+          '@type': 'Question',
+          name: window.t('ayt.faqQ' + i),
+          acceptedAnswer: { '@type': 'Answer', text: window.t('ayt.faqA' + i) },
+        });
+      }
+      aytFaq.textContent = '\n' + JSON.stringify(data, null, 2) + '\n';
+    }
+    const bc = document.getElementById('breadcrumb-jsonld');
+    if (bc && typeof window.t === 'function' && page === 'antalya-havalimani-arac-kiralama.html') {
+      const homeUrl = (lang === 'tr') ? `${BASE}/` : `${BASE}/${lang}/`;
+      const data = {
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: HOME_LABEL[lang] || 'Anasayfa', item: homeUrl },
+          { '@type': 'ListItem', position: 2, name: window.t('ayt.h1'), item: selfUrl },
+        ],
+      };
+      bc.textContent = '\n' + JSON.stringify(data, null, 2) + '\n';
     }
 
     const outDir = path.join(ROOT, lang);
