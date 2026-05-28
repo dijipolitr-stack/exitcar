@@ -17,7 +17,8 @@ const ROOT = path.resolve(__dirname, '..');
 
 const BASE = 'https://exitcar.com';            // alan adı belli olunca burayı güncelle
 const LANGS = ['en', 'ru', 'de', 'ar'];        // tr = kök, ön-render gerekmez
-const PAGES = ['index.html', 'search.html', 'reservation.html', 'driver-info.html', 'payment.html', 'antalya-havalimani-arac-kiralama.html', 'blog/index.html'];
+const PAGES = ['index.html', 'search.html', 'reservation.html', 'driver-info.html', 'payment.html', 'antalya-havalimani-arac-kiralama.html', 'blog/index.html', 'hakkimizda.html', 'iletisim.html'];
+// KVKK, gizlilik, kullanım koşulları — yalnızca Türkçe yayımlanır (Türk hukuku), prerender'a dahil değil.
 const HOME_LABEL = { en: 'Home', ru: 'Главная', de: 'Startseite', ar: 'الرئيسية' };
 const BLOG_LABEL = { en: 'Blog', ru: 'Блог', de: 'Blog', ar: 'المدونة' };
 

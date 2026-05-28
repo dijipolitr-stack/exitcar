@@ -115,4 +115,43 @@
   <url><loc>https://exitcar.com/de/blog/mietwagen-tuerkei-fuer-auslaender.html</loc><changefreq>monthly</changefreq><priority>0.85</priority></url>
   <url><loc>https://exitcar.com/ar/blog/car-rental-turkey-foreign-tourist-guide.html</loc><changefreq>monthly</changefreq><priority>0.85</priority></url>
 
+  <!-- Hakkımızda (5 dil) -->
+  <url>
+    <loc>https://exitcar.com/hakkimizda.html</loc>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://exitcar.com/hakkimizda.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://exitcar.com/en/hakkimizda.html"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://exitcar.com/ru/hakkimizda.html"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://exitcar.com/de/hakkimizda.html"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://exitcar.com/ar/hakkimizda.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://exitcar.com/hakkimizda.html"/>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url><loc>https://exitcar.com/en/hakkimizda.html</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://exitcar.com/ru/hakkimizda.html</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://exitcar.com/de/hakkimizda.html</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://exitcar.com/ar/hakkimizda.html</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+
+  <!-- İletişim (5 dil) -->
+  <url>
+    <loc>https://exitcar.com/iletisim.html</loc>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://exitcar.com/iletisim.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://exitcar.com/en/iletisim.html"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://exitcar.com/ru/iletisim.html"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://exitcar.com/de/iletisim.html"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://exitcar.com/ar/iletisim.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://exitcar.com/iletisim.html"/>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url><loc>https://exitcar.com/en/iletisim.html</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://exitcar.com/ru/iletisim.html</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://exitcar.com/de/iletisim.html</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://exitcar.com/ar/iletisim.html</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+
+  <!-- Yasal sayfalar (yalnızca TR — Türk hukuku) -->
+  <url><loc>https://exitcar.com/kvkk.html</loc><changefreq>yearly</changefreq><priority>0.4</priority></url>
+  <url><loc>https://exitcar.com/gizlilik.html</loc><changefreq>yearly</changefreq><priority>0.4</priority></url>
+  <url><loc>https://exitcar.com/kullanim-kosullari.html</loc><changefreq>yearly</changefreq><priority>0.4</priority></url>
+
 </urlset>
