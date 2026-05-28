@@ -17,8 +17,21 @@ const ROOT = path.resolve(__dirname, '..');
 
 const BASE = 'https://exitcar.com';            // alan adı belli olunca burayı güncelle
 const LANGS = ['en', 'ru', 'de', 'ar'];        // tr = kök, ön-render gerekmez
-const PAGES = ['index.html', 'search.html', 'reservation.html', 'driver-info.html', 'payment.html', 'antalya-havalimani-arac-kiralama.html', 'blog/index.html', 'hakkimizda.html', 'iletisim.html'];
+const PAGES = ['index.html', 'search.html', 'reservation.html', 'driver-info.html', 'payment.html', 'antalya-havalimani-arac-kiralama.html', 'antalya-arac-kiralama.html', 'blog/index.html', 'hakkimizda.html', 'iletisim.html'];
 // KVKK, gizlilik, kullanım koşulları — yalnızca Türkçe yayımlanır (Türk hukuku), prerender'a dahil değil.
+
+// Lokasyon sayfaları için breadcrumb son madde adının kaynağı (page → i18n key)
+const BREADCRUMB_PAGE_TITLE = {
+  'antalya-havalimani-arac-kiralama.html': 'ayt.h1',
+  'antalya-arac-kiralama.html': 'ant.h1',
+};
+
+// FAQ JSON-LD'lerini dile çevirmek için: script id → { count, qPrefix, aPrefix }
+const FAQ_REBUILD = {
+  'faq-jsonld':     { count: 5, qPrefix: 'faq.q',    aPrefix: 'faq.a' },     // anasayfa
+  'faq-ayt-jsonld': { count: 4, qPrefix: 'ayt.faqQ', aPrefix: 'ayt.faqA' },
+  'faq-ant-jsonld': { count: 4, qPrefix: 'ant.faqQ', aPrefix: 'ant.faqA' },
+};
 const HOME_LABEL = { en: 'Home', ru: 'Главная', de: 'Startseite', ar: 'الرئيسية' };
 const BLOG_LABEL = { en: 'Blog', ru: 'Блог', de: 'Blog', ar: 'المدونة' };
 
@@ -91,42 +104,33 @@ for (const lang of LANGS) {
     document.querySelectorAll('meta[property="og:url"]').forEach(m => m.setAttribute('content', selfUrl));
     document.querySelectorAll('meta[property="og:locale"]').forEach(m => m.setAttribute('content', OG_LOCALE[lang]));
 
-    // FAQ JSON-LD'yi dile çevir (anasayfa)
-    const faq = document.getElementById('faq-jsonld');
-    if (faq && typeof window.t === 'function') {
-      const data = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: [] };
-      for (let i = 1; i <= 5; i++) {
-        data.mainEntity.push({
-          '@type': 'Question',
-          name: window.t('faq.q' + i),
-          acceptedAnswer: { '@type': 'Answer', text: window.t('faq.a' + i) },
-        });
+    // FAQ JSON-LD'lerini dile çevir (anasayfa + lokasyon sayfaları — generic)
+    if (typeof window.t === 'function') {
+      for (const [scriptId, cfg] of Object.entries(FAQ_REBUILD)) {
+        const el = document.getElementById(scriptId);
+        if (!el) continue;
+        const data = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: [] };
+        for (let i = 1; i <= cfg.count; i++) {
+          data.mainEntity.push({
+            '@type': 'Question',
+            name: window.t(cfg.qPrefix + i),
+            acceptedAnswer: { '@type': 'Answer', text: window.t(cfg.aPrefix + i) },
+          });
+        }
+        el.textContent = '\n' + JSON.stringify(data, null, 2) + '\n';
       }
-      faq.textContent = '\n' + JSON.stringify(data, null, 2) + '\n';
     }
 
-    // AYT lokasyon sayfası: FAQ + Breadcrumb JSON-LD'yi dile çevir
-    const aytFaq = document.getElementById('faq-ayt-jsonld');
-    if (aytFaq && typeof window.t === 'function') {
-      const data = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: [] };
-      for (let i = 1; i <= 4; i++) {
-        data.mainEntity.push({
-          '@type': 'Question',
-          name: window.t('ayt.faqQ' + i),
-          acceptedAnswer: { '@type': 'Answer', text: window.t('ayt.faqA' + i) },
-        });
-      }
-      aytFaq.textContent = '\n' + JSON.stringify(data, null, 2) + '\n';
-    }
+    // Lokasyon sayfası breadcrumb'unu dile çevir
     const bc = document.getElementById('breadcrumb-jsonld');
-    if (bc && typeof window.t === 'function' && page === 'antalya-havalimani-arac-kiralama.html') {
+    if (bc && typeof window.t === 'function' && BREADCRUMB_PAGE_TITLE[page]) {
       const homeUrl = (lang === 'tr') ? `${BASE}/` : `${BASE}/${lang}/`;
       const data = {
         '@context': 'https://schema.org',
         '@type': 'BreadcrumbList',
         itemListElement: [
           { '@type': 'ListItem', position: 1, name: HOME_LABEL[lang] || 'Anasayfa', item: homeUrl },
-          { '@type': 'ListItem', position: 2, name: window.t('ayt.h1'), item: selfUrl },
+          { '@type': 'ListItem', position: 2, name: window.t(BREADCRUMB_PAGE_TITLE[page]), item: selfUrl },
         ],
       };
       bc.textContent = '\n' + JSON.stringify(data, null, 2) + '\n';

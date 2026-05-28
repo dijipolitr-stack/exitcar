@@ -12,11 +12,11 @@
 
     { "source": "/tr/reservasyon/antalya-oto-kirama-havalimani", "destination": "/antalya-havalimani-arac-kiralama.html", "permanent": true },
 
-    { "source": "/tr/reservasyon/antalya-alanya-araba-kiralama", "destination": "/search.html?pickup=Antalya+Alanya", "permanent": true },
-    { "source": "/tr/reservasyon/antalya-kemer-ekonomik-araba-kiralama", "destination": "/search.html?pickup=Antalya+Kemer", "permanent": true },
-    { "source": "/tr/reservasyon/antalya-belek-oto-kiralama", "destination": "/search.html?pickup=Antalya+Belek", "permanent": true },
-    { "source": "/tr/reservasyon/antalya-kundu-arac-kiralama", "destination": "/search.html?pickup=Antalya+Kundu", "permanent": true },
-    { "source": "/tr/reservasyon/antalya-konyaalti-ucuz-arac-kiralama", "destination": "/search.html?pickup=Antalya+Konyaalt%C4%B1", "permanent": true },
+    { "source": "/tr/reservasyon/antalya-alanya-araba-kiralama", "destination": "/antalya-arac-kiralama.html#alanya", "permanent": true },
+    { "source": "/tr/reservasyon/antalya-kemer-ekonomik-araba-kiralama", "destination": "/antalya-arac-kiralama.html#kemer", "permanent": true },
+    { "source": "/tr/reservasyon/antalya-belek-oto-kiralama", "destination": "/antalya-arac-kiralama.html#belek", "permanent": true },
+    { "source": "/tr/reservasyon/antalya-kundu-arac-kiralama", "destination": "/antalya-arac-kiralama.html#kundu", "permanent": true },
+    { "source": "/tr/reservasyon/antalya-konyaalti-ucuz-arac-kiralama", "destination": "/antalya-arac-kiralama.html#lara", "permanent": true },
 
     { "source": "/tr/reservasyon/istanbul-havalimani-kiralik-araba-arac-kiralama", "destination": "/search.html?pickup=%C4%B0stanbul+Havaliman%C4%B1", "permanent": true },
     { "source": "/tr/reservasyon/istanbul-sabiha-gokcen-havalimani-otomatik-arac-kiralama", "destination": "/search.html?pickup=%C4%B0stanbul+Sabiha+G%C3%B6k%C3%A7en", "permanent": true },
