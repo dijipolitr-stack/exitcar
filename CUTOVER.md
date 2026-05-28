@@ -2,50 +2,38 @@
 
 Mevcut `exitcar.com` (eski site) → bu repo (yeni site) geçiş planı. Onay geldiğinde kayıpsız çıkarmak için.
 
-## ✅ Hazır olanlar
+## ✅ Hazır olanlar — TAMAMI
 
 - [x] **Çok dilli yapı** (TR/EN/RU/DE/AR, hreflang, canonical, dile özel slug)
 - [x] **Teknik SEO temeli** (robots.txt, sitemap.xml, OG, Twitter, JSON-LD)
-- [x] **Antalya Havalimanı açılış sayfası** (5 dilde, BreadcrumbList + FAQPage)
-- [x] **Blog altyapısı + ilk makale** (Yabancı turist rehberi, 5 dilde)
-- [x] **301 redirect haritası** (`vercel.json`) — eski URL'leri yeni karşılıklarına yönlendirir
+- [x] **Antalya Havalimanı açılış sayfası** (5 dilde)
+- [x] **Antalya Şehir Merkezi hub sayfası** (5 dilde + 6 bölge kartı)
+- [x] **Kemer dedike sayfası** (5 dilde)
+- [x] **Belek dedike sayfası** (5 dilde)
+- [x] **Side dedike sayfası** (5 dilde)
+- [x] **Blog altyapısı + 3 makale** (Yabancı turist rehberi, Filo yönetimi, Araç kiralama hizmetleri rehberi — her biri 5 dilde)
+- [x] **Kurumsal sayfalar** (Hakkımızda + İletişim 5 dilde; KVKK + Gizlilik + Kullanım Koşulları TR)
+- [x] **301 redirect haritası** (`vercel.json` — 53 kural, eski URL'lerin doğrudan yeni karşılıklarına yönlendirilmesi dahil)
 
 ## 🔴 Cutover öncesi MUTLAKA yapılacaklar
 
-### 1. Eski siteden tam URL envanteri çıkar
-Mevcut `exitcar.com`'da Google'da indekslenmiş daha fazla URL olabilir.
-
+### 1. Eski siteden tam URL envanteri ✅ KISMEN
+Mevcut `exitcar.com` WebFetch ile tarandı (~50 URL inventory'lendi). Cutover öncesi son bir tarama önerilir:
 ```bash
-# Google'da site:exitcar.com aramasıyla manuel kontrol
-# veya Screaming Frog SEO Spider ile crawl
-# Listede olmayan ama indekste olan URL'ler için redirect ekle
+# Google'da site:exitcar.com araması ile manuel kontrol
+# veya Screaming Frog ile crawl — listede olmayan URL için redirect ekle
 ```
 
-### 2. Eksik yüksek-değer sayfaları üret (rakipten önce)
-Eski sitedeki şu URL'ler **rank ediyor olabilir**, redirect /search.html'e gidiyor ama dedike sayfa yapsak daha iyi:
+### 2. Eksik yüksek-değer sayfaları üret ✅ TAMAMLANDI
+- [x] Antalya Şehir Merkezi · Antalya Havalimanı · Kemer · Belek · Side
+- [x] Blog: Filo yönetimi · Araç kiralama hizmetleri rehberi
+- [ ] (Opsiyonel/ileride) İstanbul Havalimanı · İzmir Adnan Menderes — Antalya odaklı oldukları için cutover sonrası eklenebilir
+- [ ] (Opsiyonel/ileride) Alanya dedike sayfa — şu an hub'da bölüm olarak var
 
-- [ ] **Antalya Şehir Merkezi Araç Kiralama** — `/antalya-arac-kiralama.html`
-- [ ] **Antalya Kemer Araç Kiralama** — `/antalya-kemer-arac-kiralama.html`
-- [ ] **Antalya Belek Araç Kiralama** — `/antalya-belek-arac-kiralama.html`
-- [ ] **Antalya Alanya Araç Kiralama** — `/antalya-alanya-arac-kiralama.html`
-- [ ] **İstanbul Havalimanı Araç Kiralama** — `/istanbul-havalimani-arac-kiralama.html`
-- [ ] **İzmir Adnan Menderes Araç Kiralama** — `/izmir-arac-kiralama.html`
-- [ ] **Blog: Filo yönetimi** — eski `/tr/blog/filo-yonetimi` için
-- [ ] **Blog: Araç kiralama hizmetleri genel rehber** — eski `/tr/blog/arac-oto-kiralama-hizmetleri` için
-
-Bu sayfalar üretildikçe `vercel.json` redirect hedefini de güncelle.
-
-### 3. Statik sayfalar (kurumsal)
-Eski sitede vardı, biz koymadık. Cutover öncesi en azından temel sayfalar lazım:
-
-- [ ] **Hakkımızda** — `/hakkimizda.html`
-- [ ] **İletişim** — `/iletisim.html` (ya da homepage footer'a anchor)
-- [ ] **KVKK Aydınlatma Metni** — `/kvkk.html`
-- [ ] **Gizlilik Politikası** — `/gizlilik.html`
-- [ ] **Kullanım Koşulları** — `/kullanim-kosullari.html`
-- [ ] **Araç Kiralama Şartları** — `/arac-kiralama-sartlari.html`
-
-Üretilince `vercel.json`'da bu URL'leri direkt yönlendirsin (şu an `/`'ye gidiyorlar).
+### 3. Statik sayfalar (kurumsal) ✅ TAMAMLANDI
+- [x] Hakkımızda · İletişim (her ikisi 5 dilde)
+- [x] KVKK · Gizlilik · Kullanım Koşulları (TR — Türk hukuku gereği)
+- `vercel.json` eski `/tr/hakkimizda`, `/tr/kvkk`, `/tr/gizlilik`, `/tr/site-kullamin-sartlari`, `/tr/arac-kiralama-sartlari` URL'leri doğrudan yeni sayfalara 301
 
 ### 4. www vs non-www karar
 Eski site `www.exitcar.com` kullanıyor (robots.txt'ten görüldü). Yeni site non-www (`exitcar.com`) varsayılıyor.
