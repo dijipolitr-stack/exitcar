@@ -17,20 +17,26 @@ const ROOT = path.resolve(__dirname, '..');
 
 const BASE = 'https://exitcar.com';            // alan adı belli olunca burayı güncelle
 const LANGS = ['en', 'ru', 'de', 'ar'];        // tr = kök, ön-render gerekmez
-const PAGES = ['index.html', 'search.html', 'reservation.html', 'driver-info.html', 'payment.html', 'antalya-havalimani-arac-kiralama.html', 'antalya-arac-kiralama.html', 'blog/index.html', 'hakkimizda.html', 'iletisim.html'];
+const PAGES = ['index.html', 'search.html', 'reservation.html', 'driver-info.html', 'payment.html', 'antalya-havalimani-arac-kiralama.html', 'antalya-arac-kiralama.html', 'antalya-kemer-arac-kiralama.html', 'antalya-belek-arac-kiralama.html', 'antalya-side-arac-kiralama.html', 'blog/index.html', 'hakkimizda.html', 'iletisim.html'];
 // KVKK, gizlilik, kullanım koşulları — yalnızca Türkçe yayımlanır (Türk hukuku), prerender'a dahil değil.
 
 // Lokasyon sayfaları için breadcrumb son madde adının kaynağı (page → i18n key)
 const BREADCRUMB_PAGE_TITLE = {
   'antalya-havalimani-arac-kiralama.html': 'ayt.h1',
   'antalya-arac-kiralama.html': 'ant.h1',
+  'antalya-kemer-arac-kiralama.html': 'kemer.h1',
+  'antalya-belek-arac-kiralama.html': 'belek.h1',
+  'antalya-side-arac-kiralama.html':  'side.h1',
 };
 
 // FAQ JSON-LD'lerini dile çevirmek için: script id → { count, qPrefix, aPrefix }
 const FAQ_REBUILD = {
-  'faq-jsonld':     { count: 5, qPrefix: 'faq.q',    aPrefix: 'faq.a' },     // anasayfa
-  'faq-ayt-jsonld': { count: 4, qPrefix: 'ayt.faqQ', aPrefix: 'ayt.faqA' },
-  'faq-ant-jsonld': { count: 4, qPrefix: 'ant.faqQ', aPrefix: 'ant.faqA' },
+  'faq-jsonld':       { count: 5, qPrefix: 'faq.q',      aPrefix: 'faq.a' },     // anasayfa
+  'faq-ayt-jsonld':   { count: 4, qPrefix: 'ayt.faqQ',   aPrefix: 'ayt.faqA' },
+  'faq-ant-jsonld':   { count: 4, qPrefix: 'ant.faqQ',   aPrefix: 'ant.faqA' },
+  'faq-kemer-jsonld': { count: 3, qPrefix: 'kemer.faqQ', aPrefix: 'kemer.faqA' },
+  'faq-belek-jsonld': { count: 3, qPrefix: 'belek.faqQ', aPrefix: 'belek.faqA' },
+  'faq-side-jsonld':  { count: 3, qPrefix: 'side.faqQ',  aPrefix: 'side.faqA' },
 };
 const HOME_LABEL = { en: 'Home', ru: 'Главная', de: 'Startseite', ar: 'الرئيسية' };
 const BLOG_LABEL = { en: 'Blog', ru: 'Блог', de: 'Blog', ar: 'المدونة' };

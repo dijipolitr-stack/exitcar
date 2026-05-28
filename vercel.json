@@ -13,8 +13,8 @@
     { "source": "/tr/reservasyon/antalya-oto-kirama-havalimani", "destination": "/antalya-havalimani-arac-kiralama.html", "permanent": true },
 
     { "source": "/tr/reservasyon/antalya-alanya-araba-kiralama", "destination": "/antalya-arac-kiralama.html#alanya", "permanent": true },
-    { "source": "/tr/reservasyon/antalya-kemer-ekonomik-araba-kiralama", "destination": "/antalya-arac-kiralama.html#kemer", "permanent": true },
-    { "source": "/tr/reservasyon/antalya-belek-oto-kiralama", "destination": "/antalya-arac-kiralama.html#belek", "permanent": true },
+    { "source": "/tr/reservasyon/antalya-kemer-ekonomik-araba-kiralama", "destination": "/antalya-kemer-arac-kiralama.html", "permanent": true },
+    { "source": "/tr/reservasyon/antalya-belek-oto-kiralama", "destination": "/antalya-belek-arac-kiralama.html", "permanent": true },
     { "source": "/tr/reservasyon/antalya-kundu-arac-kiralama", "destination": "/antalya-arac-kiralama.html#kundu", "permanent": true },
     { "source": "/tr/reservasyon/antalya-konyaalti-ucuz-arac-kiralama", "destination": "/antalya-arac-kiralama.html#lara", "permanent": true },
 
