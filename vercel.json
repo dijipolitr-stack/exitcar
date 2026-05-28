@@ -1,0 +1,72 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "_comment": "Eski exitcar.com sitesinden gelen URL'leri yeni siteye 301 ile yönlendirir. Cutover sırasında SEO değerini korur.",
+  "cleanUrls": false,
+  "trailingSlash": false,
+  "redirects": [
+    { "source": "/tr", "destination": "/", "permanent": true },
+    { "source": "/tr/", "destination": "/", "permanent": true },
+    { "source": "/en", "destination": "/en/", "permanent": true },
+    { "source": "/de", "destination": "/de/", "permanent": true },
+    { "source": "/ru", "destination": "/ru/", "permanent": true },
+
+    { "source": "/tr/reservasyon/antalya-oto-kirama-havalimani", "destination": "/antalya-havalimani-arac-kiralama.html", "permanent": true },
+
+    { "source": "/tr/reservasyon/antalya-alanya-araba-kiralama", "destination": "/search.html?pickup=Antalya+Alanya", "permanent": true },
+    { "source": "/tr/reservasyon/antalya-kemer-ekonomik-araba-kiralama", "destination": "/search.html?pickup=Antalya+Kemer", "permanent": true },
+    { "source": "/tr/reservasyon/antalya-belek-oto-kiralama", "destination": "/search.html?pickup=Antalya+Belek", "permanent": true },
+    { "source": "/tr/reservasyon/antalya-kundu-arac-kiralama", "destination": "/search.html?pickup=Antalya+Kundu", "permanent": true },
+    { "source": "/tr/reservasyon/antalya-konyaalti-ucuz-arac-kiralama", "destination": "/search.html?pickup=Antalya+Konyaalt%C4%B1", "permanent": true },
+
+    { "source": "/tr/reservasyon/istanbul-havalimani-kiralik-araba-arac-kiralama", "destination": "/search.html?pickup=%C4%B0stanbul+Havaliman%C4%B1", "permanent": true },
+    { "source": "/tr/reservasyon/istanbul-sabiha-gokcen-havalimani-otomatik-arac-kiralama", "destination": "/search.html?pickup=%C4%B0stanbul+Sabiha+G%C3%B6k%C3%A7en", "permanent": true },
+    { "source": "/tr/reservasyon/istanbul-basaksehir-kiralik-arac", "destination": "/search.html?pickup=%C4%B0stanbul+Ba%C5%9Fak%C5%9Fehir", "permanent": true },
+    { "source": "/tr/reservasyon/istanbul-umraniye-araba-kiralama", "destination": "/search.html?pickup=%C4%B0stanbul+%C3%9Cmraniye", "permanent": true },
+    { "source": "/tr/reservasyon/istanbul-esenler-ucuz-arac-kiralama", "destination": "/search.html?pickup=%C4%B0stanbul+Esenler", "permanent": true },
+    { "source": "/tr/reservasyon/istanbul-kagithane-kiralik-arac", "destination": "/search.html?pickup=%C4%B0stanbul+Ka%C4%9F%C4%B1thane", "permanent": true },
+    { "source": "/tr/reservasyon/istanbul-sultanbeyli-uzun-sureli-araba-kiralama", "destination": "/search.html?pickup=%C4%B0stanbul+Sultanbeyli", "permanent": true },
+    { "source": "/tr/reservasyon/istanbul-atasehir-uzun-sureli-araba-kiralama", "destination": "/search.html?pickup=%C4%B0stanbul+Ata%C5%9Fehir", "permanent": true },
+
+    { "source": "/tr/reservasyon/izmir-adnan-menderes-havalimani-gunluk-arac-kiralama", "destination": "/search.html?pickup=%C4%B0zmir+Adnan+Menderes", "permanent": true },
+    { "source": "/tr/reservasyon/izmir-narlidere-luks-araba-kiralama", "destination": "/search.html?pickup=%C4%B0zmir+Narl%C4%B1dere", "permanent": true },
+    { "source": "/tr/reservasyon/izmir-torbali-kiralik-oto", "destination": "/search.html?pickup=%C4%B0zmir+Torbal%C4%B1", "permanent": true },
+
+    { "source": "/tr/reservasyon/ankara-esenboga-airport-gunluk-arac-kiralama", "destination": "/search.html?pickup=Ankara+Esenbo%C4%9Fa", "permanent": true },
+    { "source": "/tr/reservasyon/aydin-didim-kiralik-arac", "destination": "/search.html?pickup=Ayd%C4%B1n+Didim", "permanent": true },
+    { "source": "/tr/reservasyon/manisa-salihli-otomatik-arac-kiralama", "destination": "/search.html?pickup=Manisa+Salihli", "permanent": true },
+    { "source": "/tr/reservasyon/diyarbakir-24saat-araba-kiralama-arac-filo-kiralama", "destination": "/search.html?pickup=Diyarbak%C4%B1r", "permanent": true },
+    { "source": "/tr/reservasyon/denizli-kiralik-araba-filo-kiralama", "destination": "/search.html?pickup=Denizli", "permanent": true },
+    { "source": "/tr/reservasyon/karaman-arac-kiralama", "destination": "/search.html?pickup=Karaman", "permanent": true },
+    { "source": "/tr/reservasyon/elazig-havalimani-ekonomik-araba-kiralama", "destination": "/search.html?pickup=Elaz%C4%B1%C4%9F", "permanent": true },
+    { "source": "/tr/reservasyon/mersin-arac-kiralama-filo-kiralama", "destination": "/search.html?pickup=Mersin", "permanent": true },
+    { "source": "/tr/reservasyon/hakkari-yuksekova-selahaddin-eyyubi-havalimani-24saat-arac-kiralama", "destination": "/search.html?pickup=Hakkari+Y%C3%BCksekova", "permanent": true },
+    { "source": "/tr/reservasyon/mugla-dalaman-ekonomik-araba-kiralama", "destination": "/search.html?pickup=Mu%C4%9Fla+Dalaman", "permanent": true },
+
+    { "source": "/tr/reservasyon", "destination": "/search.html", "permanent": true },
+    { "source": "/tr/reservasyon/:slug*", "destination": "/search.html", "permanent": true },
+
+    { "source": "/tr/rent-a-car-firmalari", "destination": "/search.html", "permanent": true },
+    { "source": "/tr/rent-a-car-firmalari/:slug*", "destination": "/search.html", "permanent": true },
+
+    { "source": "/tr/blog", "destination": "/blog/", "permanent": true },
+    { "source": "/tr/blog/filo-yonetimi", "destination": "/blog/", "permanent": true },
+    { "source": "/tr/blog/arac-oto-kiralama-hizmetleri", "destination": "/blog/", "permanent": true },
+    { "source": "/tr/blog/:slug*", "destination": "/blog/", "permanent": true },
+
+    { "source": "/tr/sikca-sorulan-sorular", "destination": "/#faq", "permanent": true },
+    { "source": "/tr/bolgeler", "destination": "/#locations", "permanent": true },
+    { "source": "/tr/site-haritasi", "destination": "/sitemap.xml", "permanent": true },
+    { "source": "/tr/hakkimizda", "destination": "/", "permanent": true },
+    { "source": "/tr/iletisim", "destination": "/", "permanent": true },
+    { "source": "/tr/gizlilik", "destination": "/", "permanent": true },
+    { "source": "/tr/kvkk", "destination": "/", "permanent": true },
+    { "source": "/tr/arac-kiralama-sartlari", "destination": "/", "permanent": true },
+    { "source": "/tr/site-kullamin-sartlari", "destination": "/", "permanent": true },
+
+    { "source": "/kayit-ol.php", "destination": "/", "permanent": true },
+    { "source": "/feed", "destination": "/blog/", "permanent": true },
+    { "source": "/feed/", "destination": "/blog/", "permanent": true },
+
+    { "source": "/tr/:path*", "destination": "/", "permanent": true }
+  ]
+}
