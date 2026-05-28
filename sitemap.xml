@@ -81,4 +81,38 @@
   <url><loc>https://exitcar.com/de/antalya-havalimani-arac-kiralama.html</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
   <url><loc>https://exitcar.com/ar/antalya-havalimani-arac-kiralama.html</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
 
+  <!-- Blog index (5 dil) -->
+  <url>
+    <loc>https://exitcar.com/blog/</loc>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://exitcar.com/blog/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://exitcar.com/en/blog/"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://exitcar.com/ru/blog/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://exitcar.com/de/blog/"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://exitcar.com/ar/blog/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://exitcar.com/blog/"/>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url><loc>https://exitcar.com/en/blog/</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://exitcar.com/ru/blog/</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://exitcar.com/de/blog/</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://exitcar.com/ar/blog/</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
+
+  <!-- Blog makale: Yabancı turistler için araç kiralama rehberi (5 dil) -->
+  <url>
+    <loc>https://exitcar.com/blog/yabancilar-icin-arac-kiralama-rehberi.html</loc>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://exitcar.com/blog/yabancilar-icin-arac-kiralama-rehberi.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://exitcar.com/en/blog/car-rental-turkey-foreign-tourist-guide.html"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://exitcar.com/ru/blog/arenda-avto-turtsiya-dlya-inostrantsev.html"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://exitcar.com/de/blog/mietwagen-tuerkei-fuer-auslaender.html"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://exitcar.com/ar/blog/car-rental-turkey-foreign-tourist-guide.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://exitcar.com/blog/yabancilar-icin-arac-kiralama-rehberi.html"/>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url><loc>https://exitcar.com/en/blog/car-rental-turkey-foreign-tourist-guide.html</loc><changefreq>monthly</changefreq><priority>0.85</priority></url>
+  <url><loc>https://exitcar.com/ru/blog/arenda-avto-turtsiya-dlya-inostrantsev.html</loc><changefreq>monthly</changefreq><priority>0.85</priority></url>
+  <url><loc>https://exitcar.com/de/blog/mietwagen-tuerkei-fuer-auslaender.html</loc><changefreq>monthly</changefreq><priority>0.85</priority></url>
+  <url><loc>https://exitcar.com/ar/blog/car-rental-turkey-foreign-tourist-guide.html</loc><changefreq>monthly</changefreq><priority>0.85</priority></url>
+
 </urlset>

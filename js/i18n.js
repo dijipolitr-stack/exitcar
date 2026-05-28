@@ -209,6 +209,7 @@ const EC_T = {
   'nav.corporate': { tr: '🏢 Kurumsal', en: '🏢 Corporate', ru: '🏢 Бизнес', de: '🏢 Firmenkunden', ar: '🏢 الشركات' },
   'nav.campaigns': { tr: '🎁 Kampanyalar', en: '🎁 Deals', ru: '🎁 Акции', de: '🎁 Angebote', ar: '🎁 العروض' },
   'nav.help':      { tr: '❓ Yardım', en: '❓ Help', ru: '❓ Помощь', de: '❓ Hilfe', ar: '❓ المساعدة' },
+  'nav.blog':      { tr: '📘 Blog', en: '📘 Blog', ru: '📘 Блог', de: '📘 Blog', ar: '📘 المدونة' },
 
   // ---------- HERO ----------
   'hero.title':    { tr: 'Kiralık Araç Fiyatlarını<br><span>Anında Karşılaştır</span>', en: 'Compare Car Rental Prices<br><span>Instantly</span>', ru: 'Сравните цены на аренду<br><span>Мгновенно</span>', de: 'Mietwagenpreise<br><span>Sofort Vergleichen</span>', ar: 'قارن أسعار تأجير السيارات<br><span>فوراً</span>' },
@@ -662,4 +663,17 @@ const EC_T = {
 
   'ayt.ctaTitle': { tr: 'AYT\'deki Aracınızı Şimdi Ayırtın', en: 'Reserve Your Car at AYT Now', ru: 'Забронируйте машину в AYT сейчас', de: 'Reservieren Sie jetzt Ihr Fahrzeug am AYT', ar: 'احجز سيارتك في AYT الآن' },
   'ayt.ctaSub':   { tr: 'Saniyeler içinde 50+ firmayı karşılaştırın, ücretsiz iptal güvencesiyle ayırtın.', en: 'Compare 50+ companies in seconds, book with free cancellation peace of mind.', ru: 'Сравните 50+ компаний за секунды и забронируйте с бесплатной отменой.', de: 'Vergleichen Sie in Sekunden 50+ Anbieter und buchen Sie mit kostenloser Stornierung.', ar: 'قارن 50+ شركة في ثوانٍ، واحجز مع ضمان الإلغاء المجاني.' },
+
+  // ============================================================
+  // BLOG — index sayfası
+  // ============================================================
+  'title.blog': { tr: 'Blog — Araç Kiralama Rehberleri & İpuçları | ExitCar', en: 'Blog — Car Rental Guides & Tips | ExitCar', ru: 'Блог — гиды и советы по аренде авто | ExitCar', de: 'Blog — Mietwagen-Ratgeber & Tipps | ExitCar', ar: 'المدونة — أدلة ونصائح تأجير السيارات | ExitCar' },
+  'desc.blog':  { tr: 'Türkiye\'de araç kiralama, Antalya\'da sürüş, sigorta, ehliyet kuralları — turistler ve yerleşik yabancılar için detaylı rehberler.', en: 'Car rental in Türkiye, driving in Antalya, insurance, license rules — in-depth guides for tourists and residents.', ru: 'Аренда авто в Турции, вождение в Анталье, страховка, правила прав — подробные гиды для туристов и резидентов.', de: 'Mietwagen in der Türkei, Fahren in Antalya, Versicherung, Führerschein-Regeln — ausführliche Ratgeber für Touristen und Residenten.', ar: 'تأجير السيارات في تركيا، القيادة في أنطاليا، التأمين، قواعد الرخص — أدلة معمّقة للسياح والمقيمين.' },
+  'blog.h1':       { tr: 'Rehber & Makaleler', en: 'Guides & Articles', ru: 'Гиды и статьи', de: 'Ratgeber & Artikel', ar: 'الأدلة والمقالات' },
+  'blog.sub':      { tr: 'Antalya ve Türkiye\'de araç kiralamaya dair bilmeniz gereken her şey — özellikle yabancı turistler ve yerleşik yabancılar için.', en: 'Everything you need to know about renting a car in Antalya and Türkiye — especially for foreign tourists and residents.', ru: 'Всё, что нужно знать об аренде авто в Анталье и Турции — особенно для иностранных туристов и резидентов.', de: 'Alles, was Sie zur Anmietung in Antalya und der Türkei wissen müssen — besonders für ausländische Touristen und Residenten.', ar: 'كل ما تحتاج معرفته عن تأجير السيارات في أنطاليا وتركيا — خاصة للسياح الأجانب والمقيمين.' },
+  'blog.readMore': { tr: 'Devamını Oku →', en: 'Read More →', ru: 'Читать дальше →', de: 'Weiterlesen →', ar: '← اقرأ المزيد' },
+  'blog.minRead':  { tr: 'dk okuma', en: 'min read', ru: 'мин чтения', de: 'Min. Lesezeit', ar: 'دقائق قراءة' },
+  'blog.published':{ tr: 'Yayımlanma:', en: 'Published:', ru: 'Опубликовано:', de: 'Veröffentlicht:', ar: 'تاريخ النشر:' },
+  'blog.a1Title':   { tr: 'Türkiye\'de Yabancı Olarak Araç Kiralama Rehberi', en: 'Renting a Car in Türkiye as a Foreign Tourist', ru: 'Аренда авто в Турции для иностранцев', de: 'Mietwagen in der Türkei für Ausländer', ar: 'دليل تأجير السيارات في تركيا للسياح الأجانب' },
+  'blog.a1Excerpt': { tr: 'Pasaport, ehliyet geçerliliği, sigorta paketleri ve Antalya\'da sürüş — yabancı turistlerin bilmesi gereken her şey, sade dille.', en: 'Passport, license validity, insurance packages and driving in Antalya — everything a foreign tourist needs to know, in plain language.', ru: 'Загранпаспорт, действие прав, страховые пакеты и вождение в Анталье — всё, что нужно знать иностранному туристу, простым языком.', de: 'Reisepass, Führerschein-Gültigkeit, Versicherungspakete und Fahren in Antalya — alles, was ein ausländischer Tourist wissen muss, in klarer Sprache.', ar: 'جواز السفر، صلاحية الرخصة، باقات التأمين والقيادة في أنطاليا — كل ما يحتاج السائح الأجنبي معرفته بلغة بسيطة.' },
 };

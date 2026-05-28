@@ -17,8 +17,20 @@ const ROOT = path.resolve(__dirname, '..');
 
 const BASE = 'https://exitcar.com';            // alan adı belli olunca burayı güncelle
 const LANGS = ['en', 'ru', 'de', 'ar'];        // tr = kök, ön-render gerekmez
-const PAGES = ['index.html', 'search.html', 'reservation.html', 'driver-info.html', 'payment.html', 'antalya-havalimani-arac-kiralama.html'];
+const PAGES = ['index.html', 'search.html', 'reservation.html', 'driver-info.html', 'payment.html', 'antalya-havalimani-arac-kiralama.html', 'blog/index.html'];
 const HOME_LABEL = { en: 'Home', ru: 'Главная', de: 'Startseite', ar: 'الرئيسية' };
+const BLOG_LABEL = { en: 'Blog', ru: 'Блог', de: 'Blog', ar: 'المدونة' };
+
+// Makale slug haritası: blog index'ten makale linklerini dile göre yeniden yazmak için
+const ARTICLE_SLUGS = {
+  article1: {
+    tr: 'yabancilar-icin-arac-kiralama-rehberi.html',
+    en: 'car-rental-turkey-foreign-tourist-guide.html',
+    ru: 'arenda-avto-turtsiya-dlya-inostrantsev.html',
+    de: 'mietwagen-tuerkei-fuer-auslaender.html',
+    ar: 'car-rental-turkey-foreign-tourist-guide.html',
+  },
+};
 const OG_LOCALE = { en: 'en_US', ru: 'ru_RU', de: 'de_DE', ar: 'ar_AR' };
 
 const i18nSrc = fs.readFileSync(path.join(ROOT, 'js', 'i18n.js'), 'utf8');
@@ -28,8 +40,16 @@ for (const lang of LANGS) {
   for (const page of PAGES) {
     const srcHtml = fs.readFileSync(path.join(ROOT, page), 'utf8');
     const isIndex = page === 'index.html';
-    const urlPath = isIndex ? `/${lang}/` : `/${lang}/${page}`;
+    const isDirIndex = page.endsWith('/index.html');                 // örn. blog/index.html
+    const urlPath = isIndex
+      ? `/${lang}/`
+      : isDirIndex
+        ? `/${lang}/${page.replace(/index\.html$/, '')}`              // /lang/blog/
+        : `/${lang}/${page}`;
     const selfUrl = BASE + urlPath;
+    // Sayfa derinliği → kök varlıklara kaç ".." gerekli ("blog/index.html" = 2 seviye)
+    const depth = page.split('/').length;
+    const upPrefix = '../'.repeat(depth);
 
     const dom = new JSDOM(srcHtml, {
       url: selfUrl,
@@ -49,13 +69,19 @@ for (const lang of LANGS) {
     document.documentElement.lang = lang;
     document.documentElement.dir = (lang === 'ar') ? 'rtl' : 'ltr';
 
-    // Kök-göreceli varlık yollarını ../ ile düzelt (alt klasördeyiz)
+    // Kök-göreceli varlık yollarını derinliğe göre düzelt (sayfa derinliği × "../")
     document.querySelectorAll('link[href], script[src], img[src]').forEach(el => {
       const attr = el.hasAttribute('href') ? 'href' : 'src';
       const v = el.getAttribute(attr);
       if (v && /^(?:\.\/)?(?:styles|js|assets)\//.test(v)) {
-        el.setAttribute(attr, '../' + v.replace(/^\.\//, ''));
+        el.setAttribute(attr, upPrefix + v.replace(/^\.\//, ''));
       }
+    });
+    // Makale slug'larını dile göre yeniden yaz (blog index'i için)
+    document.querySelectorAll('a[data-slug-key]').forEach(a => {
+      const key = a.getAttribute('data-slug-key');
+      const slug = ARTICLE_SLUGS[key]?.[lang];
+      if (slug) a.setAttribute('href', slug);
     });
 
     // canonical + og:url + og:locale → bu sayfaya özel
@@ -105,9 +131,9 @@ for (const lang of LANGS) {
       bc.textContent = '\n' + JSON.stringify(data, null, 2) + '\n';
     }
 
-    const outDir = path.join(ROOT, lang);
-    fs.mkdirSync(outDir, { recursive: true });
-    fs.writeFileSync(path.join(outDir, page), dom.serialize(), 'utf8');
+    const outFile = path.join(ROOT, lang, page);
+    fs.mkdirSync(path.dirname(outFile), { recursive: true });
+    fs.writeFileSync(outFile, dom.serialize(), 'utf8');
     count++;
     console.log('  ✓', urlPath + (isIndex ? '' : ''));
   }
