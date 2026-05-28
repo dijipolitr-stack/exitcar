@@ -49,8 +49,8 @@
     { "source": "/tr/rent-a-car-firmalari/:slug*", "destination": "/search.html", "permanent": true },
 
     { "source": "/tr/blog", "destination": "/blog/", "permanent": true },
-    { "source": "/tr/blog/filo-yonetimi", "destination": "/blog/", "permanent": true },
-    { "source": "/tr/blog/arac-oto-kiralama-hizmetleri", "destination": "/blog/", "permanent": true },
+    { "source": "/tr/blog/filo-yonetimi", "destination": "/blog/filo-yonetimi-rehberi.html", "permanent": true },
+    { "source": "/tr/blog/arac-oto-kiralama-hizmetleri", "destination": "/blog/arac-kiralama-hizmetleri-rehberi.html", "permanent": true },
     { "source": "/tr/blog/:slug*", "destination": "/blog/", "permanent": true },
 
     { "source": "/tr/sikca-sorulan-sorular", "destination": "/#faq", "permanent": true },

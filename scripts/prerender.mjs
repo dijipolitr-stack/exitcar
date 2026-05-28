@@ -50,6 +50,20 @@ const ARTICLE_SLUGS = {
     de: 'mietwagen-tuerkei-fuer-auslaender.html',
     ar: 'car-rental-turkey-foreign-tourist-guide.html',
   },
+  article2: {
+    tr: 'filo-yonetimi-rehberi.html',
+    en: 'fleet-management-guide.html',
+    ru: 'gid-po-upravleniyu-avtoparkom.html',
+    de: 'flottenmanagement-leitfaden.html',
+    ar: 'fleet-management-guide.html',
+  },
+  article3: {
+    tr: 'arac-kiralama-hizmetleri-rehberi.html',
+    en: 'car-rental-services-guide.html',
+    ru: 'gid-po-uslugam-arendy-avto.html',
+    de: 'mietwagen-leistungen-uebersicht.html',
+    ar: 'car-rental-services-guide.html',
+  },
 };
 const OG_LOCALE = { en: 'en_US', ru: 'ru_RU', de: 'de_DE', ar: 'ar_AR' };
 
