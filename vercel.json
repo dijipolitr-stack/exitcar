@@ -5,7 +5,6 @@
   "trailingSlash": false,
   "headers": [
     {
-      "_comment": "Service worker güncel kalsın: tarayıcı her yüklemede yeniden doğrulasın.",
       "source": "/sw.js",
       "headers": [
         { "key": "Cache-Control", "value": "public, max-age=0, must-revalidate" },
@@ -20,7 +19,6 @@
       ]
     },
     {
-      "_comment": "İkonlar değişmez, uzun süre önbelleğe alınabilir.",
       "source": "/assets/icons/(.*)",
       "headers": [
         { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
