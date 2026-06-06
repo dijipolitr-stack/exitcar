@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#F30006">
+<title>Çevrimdışı — ExitCar</title>
+<link rel="icon" href="/assets/icons/favicon.ico" sizes="any">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Inter',system-ui,sans-serif;background:#F9FAFB;color:#1F2937;
+       min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;text-align:center}
+  .card{max-width:420px}
+  .badge{width:96px;height:96px;border-radius:24px;background:#F30006;display:flex;align-items:center;
+         justify-content:center;margin:0 auto 24px;box-shadow:0 8px 30px rgba(243,0,6,.35)}
+  .badge svg{width:56px;height:56px;fill:#fff}
+  h1{font-size:1.5rem;margin-bottom:8px}
+  p{color:#4B5563;line-height:1.6;margin-bottom:24px}
+  .sub{font-size:.85rem;color:#9CA3AF;margin-top:16px}
+  button{background:#F30006;color:#fff;border:0;border-radius:12px;padding:14px 28px;
+         font-size:1rem;font-weight:600;cursor:pointer;transition:.2s}
+  button:hover{background:#B71C1C}
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="badge">
+      <svg viewBox="0 0 24 24"><path d="M5 11l1.5-4.5A2 2 0 018.4 5h7.2a2 2 0 011.9 1.5L19 11h1a1 1 0 011 1v4a1 1 0 01-1 1h-1a2 2 0 11-4 0H9a2 2 0 11-4 0H4a1 1 0 01-1-1v-4a1 1 0 011-1h1zm2.2 0h9.6l-1-3H8.2l-1 3z"/></svg>
+    </div>
+    <h1>İnternet bağlantısı yok</h1>
+    <p>Şu an çevrimdışısın. Bağlantın gelince tekrar dene.<br><span style="color:#9CA3AF">You are offline. Please check your connection.</span></p>
+    <button onclick="location.reload()">Tekrar Dene · Retry</button>
+    <p class="sub">ExitCar</p>
+  </div>
+</body>
+</html>
